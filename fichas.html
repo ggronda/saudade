@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Saudade — corriente</title>
+    <title>Saudade - Fichas de Archivo</title>
     <link
       href="https://api.fontshare.com/v2/css?f[]=satoshi@300,400,500&display=swap"
       rel="stylesheet"
@@ -135,7 +135,7 @@
       }
       .nav-item {
         font-size: 13px;
-        font-weight: 400;
+        font-weight: 500;
         color: #1a1a18;
         letter-spacing: 0.06em;
         text-transform: lowercase;
@@ -166,7 +166,7 @@
       }
       .foot-item {
         font-size: 13px;
-        font-weight: 400;
+        font-weight: 500;
         color: #1a1a18;
         letter-spacing: 0.06em;
         text-transform: lowercase;
@@ -295,9 +295,8 @@
 
     <!-- Footer -->
     <footer id="foot">
-      <a class="foot-item" href="libro.html">Libro</a>
+      <a class="foot-item" href="libro.html">Publicación</a>
       <a class="foot-item" href="fichas.html">Fichas</a>
-      <a class="foot-item" href="carteles.html">Carteles</a>
       <a class="foot-item" href="videos.html">Videos</a>
     </footer>
 
@@ -471,13 +470,15 @@
           hideSpot();
           return;
         }
-        const hit = drawnFrags.find(
-          (f) =>
-            e.clientX >= f.x &&
-            e.clientX <= f.x + f.w &&
-            e.clientY >= f.y &&
-            e.clientY <= f.y + f.h,
-        );
+        const hit = drawnFrags
+          .reverse()
+          .find(
+            (f) =>
+              e.clientX >= f.x &&
+              e.clientX <= f.x + f.w &&
+              e.clientY >= f.y &&
+              e.clientY <= f.y + f.h,
+          );
         if (hit) {
           showSpot(hit.img);
         } else {

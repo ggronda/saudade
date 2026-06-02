@@ -3,11 +3,12 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Saudade — archivo parcial</title>
+    <title>Saudade - Atlas de Memoria</title>
     <link
       href="https://api.fontshare.com/v2/css?f[]=satoshi@300,400,500&display=swap"
       rel="stylesheet"
     />
+
     <style>
       *,
       *::before,
@@ -58,7 +59,7 @@
       }
       .nav-item {
         font-size: 13px;
-        font-weight: 400;
+        font-weight: 500;
         color: #1a1a18;
         letter-spacing: 0.06em;
         text-transform: lowercase;
@@ -90,7 +91,7 @@
       }
       .foot-item {
         font-size: 13px;
-        font-weight: 400;
+        font-weight: 500;
         color: #1a1a18;
         letter-spacing: 0.06em;
         text-transform: lowercase;
@@ -137,7 +138,7 @@
       }
       #loader-enter {
         font-size: 13px;
-        font-weight: 400;
+        font-weight: 500;
         color: #1a1a18;
         letter-spacing: 0.14em;
         text-decoration: none;
@@ -339,6 +340,342 @@
         height: 0;
         overflow: hidden;
       }
+
+      /* ── UPLOAD BUTTON & MODAL STYLES ── */
+
+      /* Botón flotante */
+      .upload-btn {
+        position: fixed;
+        bottom: 60px;
+        right: 2.5rem;
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: var(--text);
+        color: #f5f4f2;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        font-weight: 300;
+        z-index: 40;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 12px rgba(26, 26, 24, 0.15);
+        pointer-events: all;
+      }
+
+      .upload-btn:hover {
+        transform: scale(1.08);
+        box-shadow: 0 4px 20px rgba(26, 26, 24, 0.25);
+      }
+
+      .upload-btn:active {
+        transform: scale(0.96);
+      }
+
+      .upload-icon {
+        display: block;
+        line-height: 1;
+      }
+
+      /* Modal Backdrop */
+      .upload-modal {
+        position: fixed;
+        inset: 0;
+        z-index: 100;
+        display: none;
+        align-items: flex-end;
+        justify-content: center;
+        animation: fadeIn 0.3s ease;
+      }
+
+      .upload-modal.active {
+        display: flex;
+      }
+
+      .upload-backdrop {
+        position: absolute;
+        inset: 0;
+        background: rgba(26, 26, 24, 0.4);
+        backdrop-filter: blur(4px);
+        cursor: pointer;
+      }
+
+      /* Modal Container */
+      .upload-container {
+        position: relative;
+        background: #f5f4f2;
+        width: 100%;
+        max-width: 500px;
+        border-radius: 16px 16px 0 0;
+        box-shadow: 0 -8px 32px rgba(26, 26, 24, 0.2);
+        z-index: 101;
+        animation: slideUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        max-height: 85vh;
+        overflow-y: auto;
+        pointer-events: all;
+      }
+
+      /* Header */
+      .upload-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1.8rem 1.8rem 1.2rem;
+        border-bottom: 1px solid rgba(74, 74, 71, 0.1);
+        position: sticky;
+        top: 0;
+        background: #f5f4f2;
+        z-index: 102;
+      }
+
+      .upload-header h2 {
+        font-size: 18px;
+        font-weight: 500;
+        color: var(--text);
+        letter-spacing: 0.06em;
+        margin: 0;
+        text-transform: lowercase;
+      }
+
+      .upload-close-btn {
+        background: none;
+        border: none;
+        font-size: 32px;
+        color: var(--text);
+        cursor: pointer;
+        padding: 0;
+        width: 36px;
+        height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: color 0.25s ease;
+      }
+
+      .upload-close-btn:hover {
+        color: var(--muted);
+      }
+
+      /* Form Wrapper */
+      .upload-form-wrapper {
+        padding: 1.8rem;
+      }
+
+      .upload-form {
+        display: flex;
+        flex-direction: column;
+        gap: 1.2rem;
+      }
+
+      .upload-file-input {
+        display: none;
+      }
+
+      /* Upload Area (Drag & Drop) */
+      .upload-area {
+        border: 1px solid rgba(74, 74, 71, 0.2);
+        border-radius: 12px;
+        padding: 2.4rem 1.6rem;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        background: rgba(74, 74, 71, 0.02);
+        position: relative;
+      }
+
+      .upload-area:hover {
+        background: rgba(74, 74, 71, 0.04);
+        border-color: rgba(74, 74, 71, 0.35);
+      }
+
+      .upload-area.dragover {
+        background: rgba(74, 74, 71, 0.08);
+        border-color: var(--text);
+      }
+
+      .upload-area-content {
+        pointer-events: none;
+      }
+
+      .upload-label {
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--text);
+        margin: 0 0 0.4rem;
+        letter-spacing: 0.04em;
+      }
+
+      .upload-sublabel {
+        font-size: 12px;
+        color: var(--muted);
+        margin: 0;
+        letter-spacing: 0.03em;
+      }
+
+      /* Preview Section */
+      .preview-section {
+        display: flex;
+        flex-direction: column;
+        gap: 0.8rem;
+      }
+
+      .preview-container {
+        border: 1px solid rgba(74, 74, 71, 0.15);
+        border-radius: 12px;
+        overflow: hidden;
+        background: rgba(74, 74, 71, 0.02);
+      }
+
+      .preview-canvas {
+        display: block;
+        width: 100%;
+        height: auto;
+        background: #fff;
+      }
+
+      .preview-info {
+        padding: 0.8rem 1rem;
+      }
+
+      .preview-filename {
+        font-size: 12px;
+        color: var(--text);
+        font-weight: 500;
+        margin: 0;
+        letter-spacing: 0.03em;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .preview-hint {
+        font-size: 11px;
+        color: var(--muted);
+        margin: 0.2rem 0 0;
+        letter-spacing: 0.02em;
+      }
+
+      /* Controls */
+      .upload-controls {
+        display: flex;
+        gap: 0.8rem;
+        padding-top: 0.4rem;
+      }
+
+      .upload-btn-cancel,
+      .upload-btn-submit {
+        flex: 1;
+        padding: 0.8rem 1.2rem;
+        border: 1px solid rgba(74, 74, 71, 0.2);
+        border-radius: 8px;
+        font-family: var(--font);
+        font-size: 13px;
+        font-weight: 500;
+        letter-spacing: 0.05em;
+        text-transform: lowercase;
+        cursor: pointer;
+        transition: all 0.25s ease;
+      }
+
+      .upload-btn-cancel {
+        background: transparent;
+        color: var(--text);
+      }
+
+      .upload-btn-cancel:hover {
+        background: rgba(74, 74, 71, 0.05);
+        border-color: rgba(74, 74, 71, 0.35);
+      }
+
+      .upload-btn-submit {
+        background: var(--text);
+        color: #f5f4f2;
+        border-color: var(--text);
+      }
+
+      .upload-btn-submit:hover:not(:disabled) {
+        background: var(--muted);
+        border-color: var(--muted);
+        transform: translateY(-1px);
+      }
+
+      .upload-btn-submit:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      /* Status Messages */
+      .upload-status {
+        min-height: 1.2rem;
+        font-size: 12px;
+        letter-spacing: 0.03em;
+        animation: fadeIn 0.3s ease;
+      }
+
+      .upload-status.success {
+        color: #2d5016;
+      }
+
+      .upload-status.error {
+        color: #8b2e2e;
+      }
+
+      .upload-status.loading {
+        color: var(--muted);
+      }
+
+      /* Animations */
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      @keyframes slideUp {
+        from {
+          transform: translateY(100%);
+          opacity: 0;
+        }
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+
+      /* Responsive */
+      @media (max-width: 640px) {
+        .upload-container {
+          max-width: 100%;
+          border-radius: 20px 20px 0 0;
+        }
+
+        .upload-header {
+          padding: 1.4rem 1.4rem 1rem;
+        }
+
+        .upload-form-wrapper {
+          padding: 1.4rem;
+        }
+
+        .upload-area {
+          padding: 2rem 1.2rem;
+        }
+
+        .upload-header h2 {
+          font-size: 16px;
+        }
+
+        .upload-btn {
+          right: 1.5rem;
+          bottom: 48px;
+        }
+      }
     </style>
   </head>
   <body>
@@ -398,11 +735,90 @@
       <div id="sd-preview"></div>
     </div>
 
-    <!-- Footer: solo los enlaces que existen -->
+    <!-- Upload Button (Floating) -->
+    <button id="upload-toggle" class="upload-btn" aria-label="Añadir memoria">
+      <span class="upload-icon">+</span>
+    </button>
+
+    <!-- Upload Modal -->
+    <div id="upload-modal" class="upload-modal">
+      <!-- Backdrop -->
+      <div class="upload-backdrop"></div>
+
+      <!-- Modal Content -->
+      <div class="upload-container">
+        <div class="upload-header">
+          <h2>Añadir memoria</h2>
+          <button
+            class="upload-close"
+            id="upload-close-btn"
+            aria-label="Cerrar"
+          >
+            <span>×</span>
+          </button>
+        </div>
+
+        <div class="upload-form-wrapper">
+          <form id="upload-form" class="upload-form">
+            <!-- File Input Hidden -->
+            <input
+              type="file"
+              id="upload-file"
+              accept="image/jpeg,image/png,image/jpg"
+              class="upload-file-input"
+            />
+
+            <!-- Upload Area (Drag & Drop) -->
+            <div id="upload-area" class="upload-area">
+              <div class="upload-area-content">
+                <p class="upload-label">Arrastra tu imagen aquí</p>
+                <p class="upload-sublabel">o haz clic para seleccionar</p>
+              </div>
+            </div>
+
+            <!-- Preview Section (Hidden initially) -->
+            <div
+              id="preview-section"
+              class="preview-section"
+              style="display: none"
+            >
+              <div class="preview-container">
+                <canvas id="preview-canvas" class="preview-canvas"></canvas>
+                <div class="preview-info">
+                  <p id="preview-filename" class="preview-filename"></p>
+                  <p class="preview-hint">Procesando imagen...</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Controls -->
+            <div class="upload-controls">
+              <button
+                type="button"
+                id="upload-cancel-btn"
+                class="upload-btn-cancel"
+              >
+                Cancelar
+              </button>
+              <button
+                type="submit"
+                id="upload-submit-btn"
+                class="upload-btn-submit"
+                disabled
+              >
+                Procesar
+              </button>
+            </div>
+
+            <!-- Status Message -->
+            <div id="upload-status" class="upload-status"></div>
+          </form>
+        </div>
+      </div>
+    </div>
     <footer id="foot">
-      <a class="foot-item" href="libro.html">Libro</a>
+      <a class="foot-item" href="libro.html">Publicación</a>
       <a class="foot-item" href="fichas.html">Fichas</a>
-      <a class="foot-item" href="carteles.html">Carteles</a>
       <a class="foot-item" href="videos.html">Videos</a>
     </footer>
 
@@ -460,7 +876,7 @@
 
       let progress = 0;
       const barInterval = setInterval(() => {
-        progress += Math.random() * 3.5 + 0.5;
+        progress += Math.random() * 10 + 0.5;
         if (progress >= 100) {
           progress = 100;
           clearInterval(barInterval);
@@ -472,7 +888,7 @@
         clearInterval(dotInterval);
         loaderDots.textContent = "";
         loaderEnter.classList.add("visible");
-      }, 3500);
+      }, 1500);
 
       function enterSite() {
         loader.style.opacity = "0";
@@ -543,7 +959,7 @@
         if (bgImages.length > 1)
           bgBLayer.style.backgroundImage =
             'url("' + bgImages[shuffleNext(0)] + '")';
-        setInterval(crossfadeBg, 14000);
+        setInterval(crossfadeBg, 5000);
       }
 
       function crossfadeBg() {
@@ -1050,6 +1466,310 @@
           item.y = Math.min(item.y, H() - FOOT_H - item.h);
         });
       });
+      /* ── UPLOAD SYSTEM ── */
+
+      // ── DOM Elements ──
+      const uploadToggle = document.getElementById("upload-toggle");
+      const uploadModal = document.getElementById("upload-modal");
+      const uploadBackdrop = document.querySelector(".upload-backdrop");
+      const uploadCloseBtn = document.getElementById("upload-close-btn");
+      const uploadForm = document.getElementById("upload-form");
+      const uploadFile = document.getElementById("upload-file");
+      const uploadArea = document.getElementById("upload-area");
+      const uploadCancelBtn = document.getElementById("upload-cancel-btn");
+      const uploadSubmitBtn = document.getElementById("upload-submit-btn");
+      const uploadStatus = document.getElementById("upload-status");
+      const previewSection = document.getElementById("preview-section");
+      const previewCanvas = document.getElementById("preview-canvas");
+      const previewFilename = document.getElementById("preview-filename");
+
+      let selectedFile = null;
+      let processedImageData = null;
+
+      // ── MODAL CONTROLS ──
+      function openUploadModal() {
+        uploadModal.classList.add("active");
+      }
+
+      function closeUploadModal() {
+        uploadModal.classList.remove("active");
+        resetUploadForm();
+      }
+
+      uploadToggle.addEventListener("click", openUploadModal);
+      uploadCloseBtn.addEventListener("click", closeUploadModal);
+      uploadBackdrop.addEventListener("click", closeUploadModal);
+
+      // ── FILE INPUT ──
+      uploadArea.addEventListener("click", () => uploadFile.click());
+
+      uploadFile.addEventListener("change", (e) => {
+        if (e.target.files.length > 0) {
+          handleFileSelect(e.target.files[0]);
+        }
+      });
+
+      // ── DRAG & DROP ──
+      uploadArea.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        uploadArea.classList.add("dragover");
+      });
+
+      uploadArea.addEventListener("dragleave", () => {
+        uploadArea.classList.remove("dragover");
+      });
+
+      uploadArea.addEventListener("drop", (e) => {
+        e.preventDefault();
+        uploadArea.classList.remove("dragover");
+        if (e.dataTransfer.files.length > 0) {
+          handleFileSelect(e.dataTransfer.files[0]);
+        }
+      });
+
+      // ── FILE SELECTION ──
+      function handleFileSelect(file) {
+        // Validar tipo
+        if (!["image/jpeg", "image/png", "image/jpg"].includes(file.type)) {
+          showStatus("Solo JPG y PNG", "error");
+          return;
+        }
+
+        // Validar tamaño (máx 20MB)
+        if (file.size > 20 * 1024 * 1024) {
+          showStatus("Archivo muy grande (máx 20MB)", "error");
+          return;
+        }
+
+        selectedFile = file;
+        previewFilename.textContent = file.name;
+
+        // Leer y procesar imagen
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const img = new Image();
+          img.onload = () => {
+            processImage(img);
+          };
+          img.onerror = () => {
+            showStatus("No se pudo cargar la imagen", "error");
+          };
+          img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+
+      // ── IMAGE PROCESSING ──
+      function processImage(sourceImg) {
+        showStatus("Procesando...", "loading");
+
+        // Canvas principal
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+
+        // Dimensiones: mantener aspecto
+        const maxWidth = 1200;
+        const maxHeight = 1200;
+        let w = sourceImg.naturalWidth;
+        let h = sourceImg.naturalHeight;
+
+        if (w > maxWidth) {
+          h = (h * maxWidth) / w;
+          w = maxWidth;
+        }
+        if (h > maxHeight) {
+          w = (w * maxHeight) / h;
+          h = maxHeight;
+        }
+
+        canvas.width = w;
+        canvas.height = h;
+
+        // ── PASO 1: B/N suave como base ──
+        ctx.filter = "grayscale(100%) blur(1.2px)";
+        ctx.drawImage(sourceImg, 0, 0, w, h);
+        ctx.filter = "none";
+
+        // ── PASO 2: Generar 2 cuadrados aleatorios sin overlap ──
+        const rects = generateNonOverlappingRects(w, h);
+        console.log("Rects:", rects);
+
+        // ── PASO 3: Canvas temporal para extraer zonas saturadas ──
+        const tempCanvas = document.createElement("canvas");
+        tempCanvas.width = w;
+        tempCanvas.height = h;
+        const tempCtx = tempCanvas.getContext("2d");
+
+        // Dibujar imagen original saturada en temp
+        tempCtx.filter = "saturate(2) contrast(1.15)";
+        tempCtx.drawImage(sourceImg, 0, 0, w, h);
+        tempCtx.filter = "none";
+
+        // ── PASO 4: Pegar los 2 cuadrados saturados en canvas principal ──
+        rects.forEach((rect) => {
+          const imageData = tempCtx.getImageData(
+            rect.x,
+            rect.y,
+            rect.w,
+            rect.h,
+          );
+          ctx.putImageData(imageData, rect.x, rect.y);
+        });
+
+        // ── PASO 5: Grain texture ──
+        applyGrainEffect(ctx, w, h);
+
+        // ── PREVIEW ──
+        previewCanvas.width = w;
+        previewCanvas.height = h;
+        const previewCtx = previewCanvas.getContext("2d");
+        previewCtx.drawImage(canvas, 0, 0);
+
+        previewSection.style.display = "flex";
+        uploadSubmitBtn.disabled = false;
+
+        // Guardar canvas para upload
+        processedImageData = canvas.toDataURL("image/png");
+
+        showStatus("Listo para procesar", "success");
+      }
+
+      // ── GENERAR RECTÁNGULOS NO OVERLAPPING ──
+      function generateNonOverlappingRects(imgW, imgH) {
+        const minMargin = 40; // margen mínimo desde bordes
+        const minGap = 30; // espacio mínimo entre rects
+
+        function randomRect(rectSize) {
+          const maxX = imgW - rectSize - minMargin;
+          const maxY = imgH - rectSize - minMargin;
+          return {
+            x: minMargin + Math.random() * Math.max(0, maxX - minMargin),
+            y: minMargin + Math.random() * Math.max(0, maxY - minMargin),
+            w: rectSize,
+            h: rectSize,
+          };
+        }
+
+        function rectsCollide(r1, r2) {
+          return !(
+            r1.x + r1.w + minGap < r2.x ||
+            r2.x + r2.w + minGap < r1.x ||
+            r1.y + r1.h + minGap < r2.y ||
+            r2.y + r2.h + minGap < r1.y
+          );
+        }
+
+        // Rect 1: 150-180px
+        const size1 = 150 + Math.random() * 30;
+        const rect1 = randomRect(size1);
+
+        // Rect 2: 220-270px, sin overlap
+        let rect2;
+        let attempts = 0;
+        do {
+          const size2 = 220 + Math.random() * 50;
+          rect2 = randomRect(size2);
+          attempts++;
+        } while (rectsCollide(rect1, rect2) && attempts < 10);
+
+        return [rect1, rect2];
+      }
+
+      // ── GRAIN EFFECT ──
+      function applyGrainEffect(ctx, w, h) {
+        // Crear canvas de grain
+        const grainCanvas = document.createElement("canvas");
+        grainCanvas.width = w;
+        grainCanvas.height = h;
+        const grainCtx = grainCanvas.getContext("2d");
+
+        // Generar noise blanco
+        const imageData = grainCtx.createImageData(w, h);
+        const data = imageData.data;
+
+        for (let i = 0; i < data.length; i += 4) {
+          const noise = Math.random() * 255;
+          data[i] = noise; // R
+          data[i + 1] = noise; // G
+          data[i + 2] = noise; // B
+          data[i + 3] = Math.random() * 80; // A (baja opacidad)
+        }
+
+        grainCtx.putImageData(imageData, 0, 0);
+
+        // Aplicar grain al canvas principal
+        ctx.globalAlpha = 0.08;
+        ctx.drawImage(grainCanvas, 0, 0);
+        ctx.globalAlpha = 1;
+      }
+
+      // ── CANCEL ──
+      uploadCancelBtn.addEventListener("click", () => {
+        closeUploadModal();
+      });
+
+      // ── SUBMIT (Upload) ──
+      uploadForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        if (!processedImageData) {
+          showStatus("Por favor procesa una imagen primero", "error");
+          return;
+        }
+
+        uploadSubmitBtn.disabled = true;
+        showStatus("Enviando...", "loading");
+
+        try {
+          const response = await fetch("/api/upload-sd", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              imageData: processedImageData,
+            }),
+          });
+
+          const result = await response.json();
+
+          if (!response.ok) {
+            throw new Error(result.error || "Error en el upload");
+          }
+
+          showStatus(
+            `✓ Guardado como ${result.filename}. Recargando...`,
+            "success",
+          );
+
+          // Recargar página después de 1.5s
+          setTimeout(() => {
+            location.reload();
+          }, 1500);
+        } catch (error) {
+          console.error("Upload error:", error);
+          showStatus(`Error: ${error.message}`, "error");
+          uploadSubmitBtn.disabled = false;
+        }
+      });
+
+      // ── RESET FORM ──
+      function resetUploadForm() {
+        selectedFile = null;
+        processedImageData = null;
+        uploadFile.value = "";
+        uploadArea.classList.remove("dragover");
+        previewSection.style.display = "none";
+        uploadSubmitBtn.disabled = true;
+        uploadStatus.textContent = "";
+        uploadStatus.className = "upload-status";
+      }
+
+      // ── STATUS MESSAGES ──
+      function showStatus(message, type = "") {
+        uploadStatus.textContent = message;
+        uploadStatus.className = `upload-status ${type}`;
+      }
     </script>
   </body>
 </html>

@@ -1,0 +1,20 @@
+{
+  "name": "saudade-backend",
+  "version": "1.0.0",
+  "description": "Backend mínimo para Saudade - upload de memorias",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": [
+    "saudade",
+    "memories",
+    "atlas"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.22.2"
+  }
+}
