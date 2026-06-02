@@ -1,0 +1,438 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Saudade — Observatorio de Memoria</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Share+Tech+Mono&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --space:#07090f;
+  --deep:#0c1020;
+  --mid-blue:#1a2344;
+  --dim:#2a3560;
+  --star:#e8e4d8;
+  --pale:#9fa8c2;
+  --amber:#c8a96e;
+  --garamond:'Cormorant Garamond',serif;
+  --mono:'Share Tech Mono',monospace;
+}
+html,body{width:100%;height:100%;overflow:hidden;background:var(--space);color:var(--star);font-family:var(--garamond);-webkit-font-smoothing:antialiased;cursor:none}
+
+
+/* ── Cursor ── */
+#cur{position:fixed;width:6px;height:6px;border-radius:50%;background:var(--amber);pointer-events:none;z-index:9999;transform:translate(-3px,-3px);transition:width .25s,height .25s,background .25s}
+#cur-ring{position:fixed;width:28px;height:28px;border-radius:50%;border:1px solid rgba(200,169,110,.4);pointer-events:none;z-index:9998;transform:translate(-14px,-14px);transition:width .4s cubic-bezier(.16,1,.3,1),height .4s cubic-bezier(.16,1,.3,1),border-color .3s}
+#cur-ring.hover{width:50px;height:50px;border-color:rgba(200,169,110,.7)}
+
+
+/* ── Loader ── */
+#loader{position:fixed;inset:0;background:var(--space);z-index:800;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:2rem;transition:opacity 1.5s ease}
+.ld-cross{width:40px;height:40px;position:relative;opacity:.7}
+.ld-cross::before,.ld-cross::after{content:'';position:absolute;background:var(--amber)}
+.ld-cross::before{width:1px;height:100%;left:50%;transform:translateX(-50%)}
+.ld-cross::after{height:1px;width:100%;top:50%;transform:translateY(-50%)}
+.ld-title{font-size:clamp(1.5rem,4vw,2.5rem);font-weight:300;font-style:italic;letter-spacing:.04em;color:var(--star)}
+.ld-sub{font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--pale)}
+#ld-progress{font-family:var(--mono);font-size:10px;letter-spacing:.15em;color:var(--amber)}
+#ld-enter{font-family:var(--mono);font-size:11px;letter-spacing:.3em;color:var(--amber);opacity:0;pointer-events:none;transition:opacity .8s;cursor:none;border-bottom:1px solid rgba(200,169,110,.4);padding-bottom:3px}
+#ld-enter.on{opacity:1;pointer-events:all}
+#ld-enter:hover{letter-spacing:.42em}
+
+
+/* ── Canvas stars ── */
+#starfield{position:fixed;inset:0;pointer-events:none;z-index:0}
+
+
+/* ── Constellation SVG ── */
+#constellation{position:fixed;inset:0;pointer-events:none;z-index:2}
+
+
+/* ── Scene ── */
+#scene{position:fixed;inset:0;display:none;opacity:0;transition:opacity 2s ease;z-index:3}
+#scene.show{opacity:1}
+
+
+/* ── HUD corners ── */
+.hud{position:fixed;font-family:var(--mono);font-size:10px;letter-spacing:.18em;color:var(--dim);z-index:20;pointer-events:none;line-height:1.8}
+#hud-tl{top:1.8rem;left:2rem}
+#hud-tr{top:1.8rem;right:2rem;text-align:right}
+#hud-bl{bottom:1.8rem;left:2rem}
+#hud-br{bottom:1.8rem;right:2rem;text-align:right}
+.hud-val{color:var(--pale)}
+
+
+/* ── Center title ── */
+#title{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;z-index:10;pointer-events:none}
+#title h1{font-size:clamp(4rem,9vw,11rem);font-weight:300;font-style:italic;letter-spacing:-.01em;line-height:.9;color:var(--star);opacity:.9}
+#title .sub{font-family:var(--mono);font-size:10px;letter-spacing:.4em;color:var(--dim);margin-top:1.5rem}
+
+
+/* ── SD nodes (stars) ── */
+.sd-star{position:fixed;z-index:15;cursor:none;transform:translate(-50%,-50%)}
+.sd-dot{width:6px;height:6px;border-radius:50%;background:var(--star);transition:transform .3s,background .3s,box-shadow .3s;position:relative}
+.sd-star:hover .sd-dot{transform:scale(2.5);background:var(--amber);box-shadow:0 0 12px rgba(200,169,110,.6)}
+.sd-code{font-family:var(--mono);font-size:9px;letter-spacing:.2em;color:var(--pale);margin-top:.5rem;text-align:center;opacity:0;transition:opacity .3s}
+.sd-star:hover .sd-code{opacity:1}
+.sd-readout{position:fixed;font-family:var(--mono);font-size:10px;letter-spacing:.12em;color:var(--amber);pointer-events:none;z-index:20;opacity:0;transition:opacity .3s;line-height:1.7}
+
+
+/* ── Floating texts (stellar) ── */
+.float-txt{position:fixed;font-size:13px;font-weight:300;font-style:italic;color:var(--pale);letter-spacing:.06em;z-index:12;cursor:none;transition:color .3s;will-change:transform;white-space:nowrap}
+.float-txt:hover{color:var(--star)}
+
+
+/* ── Scan line ── */
+#scanline{position:fixed;inset:0;pointer-events:none;z-index:25;background:repeating-linear-gradient(to bottom,transparent 0px,transparent 3px,rgba(7,9,15,.06) 3px,rgba(7,9,15,.06) 4px)}
+
+
+/* ── Image overlay on star click ── */
+#img-reveal{position:fixed;inset:0;background-size:cover;background-position:center;opacity:0;z-index:6;pointer-events:none;transition:opacity 2s ease;filter:saturate(.3) brightness(.25) sepia(.4)}
+</style>
+</head>
+<body>
+
+
+<div id="cur"></div>
+<div id="cur-ring"></div>
+
+
+<!-- Loader -->
+<div id="loader">
+  <div class="ld-cross"></div>
+  <p class="ld-title">Saudade</p>
+  <p class="ld-sub">observatorio de memoria — SD-07</p>
+  <p id="ld-progress">calibrando instrumentos...</p>
+  <span id="ld-enter">observar</span>
+</div>
+
+
+<!-- Starfield canvas -->
+<canvas id="starfield"></canvas>
+
+
+<!-- Constellation lines SVG -->
+<svg id="constellation" xmlns="http://www.w3.org/2000/svg"></svg>
+
+
+<!-- Image reveal -->
+<div id="img-reveal"></div>
+
+
+<!-- Scene -->
+<div id="scene">
+
+
+  <!-- HUD -->
+  <div class="hud" id="hud-tl">
+    SAUDADE<br/>
+    <span class="hud-val">archivo parcial</span>
+  </div>
+  <div class="hud" id="hud-tr">
+    FRAGMENTOS: <span class="hud-val" id="hud-frags">024</span><br/>
+    ESTADO: <span class="hud-val">activo</span>
+  </div>
+  <div class="hud" id="hud-bl">
+    RA: <span class="hud-val" id="hud-ra">—</span><br/>
+    DEC: <span class="hud-val" id="hud-dec">—</span>
+  </div>
+  <div class="hud" id="hud-br">
+    <span class="hud-val" id="hud-time">00:00:00</span><br/>
+    <span id="hud-node" class="hud-val">—</span>
+  </div>
+
+
+  <!-- Center title -->
+  <div id="title">
+    <h1>Saudade</h1>
+    <p class="sub">SD — 07 ◦ observatorio de memoria</p>
+  </div>
+
+
+  <!-- Floating texts -->
+  <span class="float-txt" id="ft-reg">registros</span>
+  <span class="float-txt" id="ft-frag">fragmentos</span>
+  <span class="float-txt" id="ft-pres">presencias</span>
+  <span class="float-txt" id="ft-sub">subir archivo</span>
+  <span class="float-txt" id="ft-sf">sin fecha</span>
+
+
+  <!-- SD star nodes -->
+  <div class="sd-star" id="star-01" style="left:14%;top:22%"><div class="sd-dot"></div><div class="sd-code">SD-01</div></div>
+  <div class="sd-star" id="star-13" style="left:81%;top:18%"><div class="sd-dot"></div><div class="sd-code">SD-13</div></div>
+  <div class="sd-star" id="star-21" style="left:18%;top:74%"><div class="sd-dot"></div><div class="sd-code">SD-21</div></div>
+  <div class="sd-star" id="star-34" style="left:76%;top:68%"><div class="sd-dot"></div><div class="sd-code">SD-34</div></div>
+  <div class="sd-star" id="star-07" style="left:52%;top:34%"><div class="sd-dot"></div><div class="sd-code">SD-07</div></div>
+  <div class="sd-star" id="star-42" style="left:40%;top:65%"><div class="sd-dot"></div><div class="sd-code">SD-42</div></div>
+
+
+  <!-- Readout popup -->
+  <div class="sd-readout" id="readout"></div>
+
+
+  <!-- Scan lines -->
+  <div id="scanline"></div>
+</div>
+
+
+<script>
+const imgs=['resources/fondos/inicio_01.jpg','resources/fondos/inicio_02.jpg','resources/fondos/inicio_03.jpg','resources/fondos/inicio_04.jpg','resources/fondos/inicio_05.jpg'];
+
+
+// Cursor
+const cur=document.getElementById('cur'),ring=document.getElementById('cur-ring');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px'});
+(function ringLoop(){rx+=(mx-rx)*.1;ry+=(my-ry)*.1;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(ringLoop)})();
+function hoverCursor(on){ring.classList.toggle('hover',on)}
+document.querySelectorAll('.sd-star,.float-txt,#ld-enter').forEach(el=>{
+  el.addEventListener('mouseenter',()=>hoverCursor(true));
+  el.addEventListener('mouseleave',()=>hoverCursor(false));
+});
+
+
+// Loader
+const progEl=document.getElementById('ld-progress'),enterEl=document.getElementById('ld-enter');
+const msgs=['calibrando instrumentos...','mapeando constelaciones...','localizando fragmentos...','sincronizando memoria...','listo para observar'];
+let mi=0;
+const msgInt=setInterval(()=>{
+  mi++;
+  if(mi<msgs.length){progEl.textContent=msgs[mi]}
+  else{clearInterval(msgInt);enterEl.classList.add('on')}
+},900);
+enterEl.addEventListener('click',()=>{
+  document.getElementById('loader').style.opacity='0';
+  setTimeout(()=>{
+    document.getElementById('loader').style.display='none';
+    initStarfield();
+    drawConstellation();
+    const s=document.getElementById('scene');
+    s.style.display='block';
+    setTimeout(()=>s.classList.add('show'),50);
+    startFloat();
+    startClock();
+  },1500);
+});
+
+
+// Starfield
+function initStarfield(){
+  const cv=document.getElementById('starfield');
+  const ctx=cv.getContext('2d');
+  cv.width=window.innerWidth;cv.height=window.innerHeight;
+  for(let i=0;i<320;i++){
+    const x=Math.random()*cv.width,y=Math.random()*cv.height;
+    const r=Math.random()<.05?1.5:Math.random()<.2?.8:.4;
+    const a=.15+Math.random()*.55;
+    ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);
+    ctx.fillStyle=`rgba(232,228,216,${a})`;ctx.fill();
+  }
+}
+
+
+// Constellation lines
+function drawConstellation(){
+  const svg=document.getElementById('constellation');
+  const pairs=[['star-01','star-07'],['star-07','star-13'],['star-07','star-42'],['star-42','star-21'],['star-42','star-34']];
+  pairs.forEach(([a,b])=>{
+    const ea=document.getElementById(a),eb=document.getElementById(b);
+    if(!ea||!eb)return;
+    const ra=ea.getBoundingClientRect(),rb=eb.getBoundingClientRect();
+    const line=document.createElementNS('http://www.w3.org/2000/svg','line');
+    line.setAttribute('x1',ra.left+ra.width/2);line.setAttribute('y1',ra.top+ra.height/2);
+    line.setAttribute('x2',rb.left+rb.width/2);line.setAttribute('y2',rb.top+rb.height/2);
+    line.setAttribute('stroke','rgba(42,53,96,.8)');line.setAttribute('stroke-width','.5');
+    line.setAttribute('stroke-dasharray','4 6');
+    svg.appendChild(line);
+  });
+}
+
+
+// SD star interactions
+const starData={
+  'star-01':{code:'SD-01',img:0,ra:'02h 31m',dec:'+89° 15\'',desc:'primera presencia'},
+  'star-13':{code:'SD-13',img:1,ra:'05h 16m',dec:'+45° 59\'',desc:'lugar borrado'},
+  'star-21':{code:'SD-21',img:2,ra:'11h 02m',dec:'-61° 44\'',desc:'sin coordenadas'},
+  'star-34':{code:'SD-34',img:3,ra:'18h 29m',dec:'+30° 12\'',desc:'hora sin registrar'},
+  'star-07':{code:'SD-07',img:4,ra:'07h 45m',dec:'+28° 01\'',desc:'archivo central'},
+  'star-42':{code:'SD-42',img:0,ra:'14h 39m',dec:'-60° 50\'',desc:'memoria difusa'},
+};
+const readout=document.getElementById('readout');
+const reveal=document.getElementById('img-reveal');
+let revealTimer=null;
+
+
+document.querySelectorAll('.sd-star').forEach(el=>{
+  const d=starData[el.id];
+  if(!d)return;
+  el.addEventListener('mouseenter',()=>{
+    document.getElementById('hud-ra').textContent=d.ra;
+    document.getElementById('hud-dec').textContent=d.dec;
+    document.getElementById('hud-node').textContent=d.code;
+    readout.innerHTML=`${d.code}<br/><span style="color:var(--pale);font-size:9px">${d.desc}</span>`;
+    const r=el.getBoundingClientRect();
+    readout.style.left=(r.left+20)+'px';readout.style.top=(r.top-10)+'px';
+    readout.style.opacity='1';
+  });
+  el.addEventListener('mouseleave',()=>{
+    readout.style.opacity='0';
+    document.getElementById('hud-ra').textContent='—';
+    document.getElementById('hud-dec').textContent='—';
+    document.getElementById('hud-node').textContent='—';
+  });
+  el.addEventListener('click',()=>{
+    reveal.style.backgroundImage=`url("${imgs[d.img]}")`;
+    reveal.style.opacity='1';
+    clearTimeout(revealTimer);
+    revealTimer=setTimeout(()=>reveal.style.opacity='0',3000);
+  });
+});
+
+
+// Floating texts — con movimiento vertical/diagonal y menos enganche abajo
+const floatConfig={
+  'ft-reg':{x:72,y:20,vx:-0.35,vy:0.28},
+  'ft-frag':{x:20,y:38,vx:0.4,vy:-0.22},
+  'ft-pres':{x:62,y:55,vx:-0.3,vy:0.35},
+  'ft-sub':{x:30,y:68,vx:0.38,vy:-0.3},
+  'ft-sf':{x:78,y:72,vx:-0.25,vy:0.4},
+};
+const floats={};
+
+function rand(a,b){return a+Math.random()*(b-a);}
+
+function startFloat(){
+  Object.keys(floatConfig).forEach(id=>{
+    const el=document.getElementById(id);if(!el)return;
+    const c=floatConfig[id];
+    const W=window.innerWidth,H=window.innerHeight;
+    
+    // Posición inicial con un poco de variación aleatoria
+    const x = (c.x/100)*W + rand(-40,40);
+    const y = (c.y/100)*H + rand(-30,30);
+    
+    // Velocidad con componente vertical más fuerte y algo de caos
+    const baseVx = c.vx;
+    const baseVy = c.vy;
+    // Añadir un poco de aleatoriedad a la velocidad
+    const vx = baseVx + rand(-0.15,0.15);
+    const vy = baseVy + rand(-0.15,0.15);
+    
+    // Asegurar que haya movimiento vertical mínimo
+    const minVy = 0.2;
+    const finalVy = Math.abs(vy) < minVy ? (Math.random() < 0.5 ? -minVy : minVy) : vy;
+    
+    floats[id]={
+      el,
+      x,
+      y,
+      vx,
+      vy: finalVy,
+      w:0,
+      h:0
+    };
+  });
+  
+  // Medir dimensiones después de que el DOM esté listo
+  setTimeout(()=>{
+    Object.keys(floats).forEach(id=>{
+      const f=floats[id];
+      f.w=f.el.offsetWidth;
+      f.h=f.el.offsetHeight;
+    });
+  },50);
+  
+  (function loop(){
+    const W=window.innerWidth;
+    const H=window.innerHeight;
+    
+    Object.values(floats).forEach(f=>{
+      // Aplicar movimiento
+      f.x += f.vx;
+      f.y += f.vy;
+      
+      // Rebotar en bordes (con margen para no pegar al borde)
+      const margin = 20;
+      
+      if(f.x < margin){
+        f.x = margin;
+        f.vx = Math.abs(f.vx) * rand(0.9,1.1);
+      }
+      if(f.x + f.w > W - margin){
+        f.x = W - margin - f.w;
+        f.vx = -Math.abs(f.vx) * rand(0.9,1.1);
+      }
+      if(f.y < margin){
+        f.y = margin;
+        f.vy = Math.abs(f.vy) * rand(0.9,1.1);
+      }
+      if(f.y + f.h > H - margin){
+        f.y = H - margin - f.h;
+        f.vy = -Math.abs(f.vy) * rand(0.9,1.1);
+      }
+      
+      // Repeler del título central (zona más amplia)
+      const cx = W/2, cy = H/2;
+      const dx = f.x + f.w/2 - cx;
+      const dy = f.y + f.h/2 - cy;
+      const repelDistX = W * 0.28;
+      const repelDistY = H * 0.18;
+      
+      if(Math.abs(dx) < repelDistX && Math.abs(dy) < repelDistY){
+        const l = Math.sqrt(dx*dx + dy*dy) || 1;
+        const force = 0.4;
+        f.vx = (dx/l) * force + rand(-0.05,0.05);
+        f.vy = (dy/l) * force + rand(-0.05,0.05);
+        
+        // Asegurar movimiento vertical mínimo
+        if(Math.abs(f.vy) < 0.15){
+          f.vy = f.vy < 0 ? -0.2 : 0.2;
+        }
+      }
+      
+      // Suavizar velocidad (evitar caos extremo)
+      f.vx = f.vx * 0.995;
+      f.vy = f.vy * 0.995;
+      
+      // Mínimo movimiento para que no se detengan
+      const minSpeed = 0.12;
+      const speed = Math.sqrt(f.vx*f.vx + f.vy*f.vy);
+      if(speed < minSpeed){
+        const angle = rand(0, Math.PI*2);
+        f.vx = Math.cos(angle) * minSpeed;
+        f.vy = Math.sin(angle) * minSpeed;
+      }
+      
+      f.el.style.transform = `translate(${f.x}px, ${f.y}px)`;
+    });
+    
+    requestAnimationFrame(loop);
+  })();
+}
+
+
+// HUD clock
+function startClock(){
+  setInterval(()=>{
+    const now=new Date();
+    document.getElementById('hud-time').textContent=
+      String(now.getHours()).padStart(2,'0')+':'+
+      String(now.getMinutes()).padStart(2,'0')+':'+
+      String(now.getSeconds()).padStart(2,'0');
+  },1000);
+}
+
+
+// Random star twinkle
+setInterval(()=>{
+  const stars=document.querySelectorAll('.sd-star:not(:hover)');
+  const s=stars[Math.floor(Math.random()*stars.length)];
+  if(!s)return;
+  const dot=s.querySelector('.sd-dot');
+  dot.style.opacity='.3';
+  setTimeout(()=>dot.style.opacity='1',300+Math.random()*500);
+},2200);
+</script>
+</body>
+</html>

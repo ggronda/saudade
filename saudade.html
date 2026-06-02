@@ -1,0 +1,1055 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Saudade — archivo parcial</title>
+    <link
+      href="https://api.fontshare.com/v2/css?f[]=satoshi@300,400,500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      * {
+        -webkit-user-select: none;
+        user-select: none;
+      }
+      ::selection,
+      ::-moz-selection {
+        background: transparent;
+      }
+
+      :root {
+        --font: "Satoshi", "Helvetica Neue", sans-serif;
+        --text: #1a1a18;
+        --muted: #4a4a47;
+      }
+
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        font-family: var(--font);
+        -webkit-font-smoothing: antialiased;
+        background: #f5f4f2;
+        color: var(--text);
+      }
+
+      /* ── Nav ── */
+      #nav {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 clamp(1.2rem, 3vw, 2.5rem);
+        z-index: 50;
+        pointer-events: none;
+      }
+      .nav-item {
+        font-size: 13px;
+        font-weight: 400;
+        color: #1a1a18;
+        letter-spacing: 0.06em;
+        text-transform: lowercase;
+        pointer-events: all;
+        text-decoration: none;
+        transition: color 0.25s ease;
+      }
+      .nav-item:first-child {
+        font-weight: 500;
+        color: #1a1a18;
+      }
+      .nav-item:hover {
+        color: var(--text);
+      }
+
+      /* ── Footer ── */
+      #foot {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 clamp(1.2rem, 3vw, 2.5rem);
+        z-index: 50;
+        pointer-events: none;
+      }
+      .foot-item {
+        font-size: 13px;
+        font-weight: 400;
+        color: #1a1a18;
+        letter-spacing: 0.06em;
+        text-transform: lowercase;
+        pointer-events: all;
+        transition: color 0.25s ease;
+        text-decoration: none;
+      }
+      .foot-item:hover {
+        color: var(--text);
+      }
+
+      /* ── Loader ── */
+      #loader {
+        position: fixed;
+        inset: 0;
+        background: #f5f4f2;
+        z-index: 200;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        transition: opacity 1.2s ease;
+      }
+      #loader-inner {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2.5rem;
+      }
+      #loader-text {
+        font-size: 13px;
+        font-weight: 300;
+        color: #7a7974;
+        letter-spacing: 0.18em;
+        text-transform: lowercase;
+      }
+      #loader-dots {
+        font-size: 13px;
+        font-weight: 300;
+        color: #7a7974;
+        letter-spacing: 0.08em;
+        display: inline-block;
+        min-width: 1.5ch;
+      }
+      #loader-enter {
+        font-size: 13px;
+        font-weight: 400;
+        color: #1a1a18;
+        letter-spacing: 0.14em;
+        text-decoration: none;
+        text-transform: lowercase;
+        opacity: 0;
+        pointer-events: none;
+        transition:
+          opacity 0.8s ease,
+          letter-spacing 0.4s ease;
+        padding-bottom: 2px;
+      }
+      #loader-enter.visible {
+        opacity: 1;
+        pointer-events: all;
+      }
+      #loader-enter:hover {
+        letter-spacing: 0.22em;
+      }
+      #loader-bar {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 1px;
+        background: rgba(100, 95, 88, 0.12);
+      }
+      #loader-fill {
+        display: block;
+        height: 100%;
+        width: 0%;
+        background: rgba(100, 95, 88, 0.45);
+        transition: width 0.1s linear;
+      }
+
+      /* ── Escena ── */
+      #scene {
+        position: fixed;
+        inset: 0;
+        opacity: 0;
+        transition: opacity 1.2s ease;
+        pointer-events: none;
+      }
+      #scene.active {
+        opacity: 1;
+        pointer-events: all;
+      }
+
+      /* ── Fondos crossfade ── */
+      .bg-layer {
+        position: fixed;
+        inset: 0;
+        background-size: cover;
+        background-position: center;
+        z-index: 0;
+        transition: opacity 3.8s ease;
+      }
+      #bg-a {
+        opacity: 1;
+      }
+      #bg-b {
+        opacity: 0;
+      }
+
+      /* ── Aberración cromática ── */
+      #bg-r,
+      #bg-g,
+      #bg-chb {
+        position: fixed;
+        inset: 0;
+        background-image: url("resources/fondos/inicio_01.jpg");
+        background-size: cover;
+        background-position: center;
+        z-index: 1;
+        pointer-events: none;
+        opacity: 0;
+        mix-blend-mode: screen;
+        transition: opacity 0.4s ease;
+      }
+      #bg-r {
+        filter: url(#filter-r);
+      }
+      #bg-g {
+        filter: url(#filter-g);
+      }
+      #bg-chb {
+        filter: url(#filter-b);
+      }
+
+      /* ── Ruido ── */
+      #noise-layer {
+        position: fixed;
+        inset: 0;
+        z-index: 2;
+        pointer-events: none;
+        opacity: 0.045;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+        animation: noiseShift 1.2s steps(4) infinite;
+      }
+      @keyframes noiseShift {
+        0% {
+          background-position: 0 0;
+        }
+        25% {
+          background-position: -15px 10px;
+        }
+        50% {
+          background-position: 8px -12px;
+        }
+        75% {
+          background-position: 12px 5px;
+        }
+        100% {
+          background-position: 0 0;
+        }
+      }
+
+      /* ── Título ── */
+      #title-fixed {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 20;
+        text-align: center;
+        pointer-events: none;
+      }
+      #title-fixed h1 {
+        font-size: clamp(3rem, 0.5rem + 7vw, 8rem);
+        font-weight: 500;
+        letter-spacing: -0.02em;
+        line-height: 1;
+        color: var(--text);
+      }
+      #title-fixed .subtitle {
+        font-size: clamp(1rem, 1.8vw, 2rem);
+        font-weight: 500;
+        color: var(--text);
+        letter-spacing: 0.06em;
+        margin-top: 0.7rem;
+      }
+
+      .sd-node {
+        position: fixed;
+        left: 0;
+        top: 0;
+        font-size: 13px;
+        font-weight: 400;
+        color: var(--muted);
+        letter-spacing: 0.08em;
+        z-index: 15;
+        will-change: transform, opacity;
+        transition:
+          color 0.25s ease,
+          opacity 1.2s ease;
+        white-space: nowrap;
+        opacity: 0;
+        pointer-events: none;
+      }
+      .sd-node.visible {
+        pointer-events: all;
+      }
+      .sd-node:hover,
+      .sd-node.frozen {
+        color: var(--text);
+      }
+
+      /* ── SD Preview ── */
+      #sd-preview {
+        position: fixed;
+        width: 200px;
+        height: 140px;
+        background-size: cover;
+        background-position: center;
+        pointer-events: none;
+        z-index: 30;
+        opacity: 0;
+        transition: opacity 0.35s ease;
+        mix-blend-mode: multiply;
+        filter: saturate(0.6) contrast(1.1);
+      }
+
+      /* ── Persistencia ── */
+      #persistence-layer {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: 3;
+        opacity: 0;
+        background-image: url("resources/fondos/inicio_01.jpg");
+        background-size: cover;
+        background-position: center;
+        filter: saturate(0) contrast(0.6);
+        transition: opacity 3.8s ease;
+      }
+
+      #svg-filters {
+        position: absolute;
+        width: 0;
+        height: 0;
+        overflow: hidden;
+      }
+    </style>
+  </head>
+  <body>
+    <svg id="svg-filters" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <filter id="filter-r" color-interpolation-filters="sRGB">
+          <feColorMatrix
+            type="matrix"
+            values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0"
+          />
+        </filter>
+        <filter id="filter-g" color-interpolation-filters="sRGB">
+          <feColorMatrix
+            type="matrix"
+            values="0 0 0 0 0  0 1 0 0 0  0 0 0 0 0  0 0 0 1 0"
+          />
+        </filter>
+        <filter id="filter-b" color-interpolation-filters="sRGB">
+          <feColorMatrix
+            type="matrix"
+            values="0 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 1 0"
+          />
+        </filter>
+      </defs>
+    </svg>
+
+    <!-- Loader -->
+    <div id="loader">
+      <div id="loader-inner">
+        <span id="loader-text">recordando</span><span id="loader-dots"></span>
+        <a id="loader-enter" href="javascript:void(0);">entrar</a>
+      </div>
+      <div id="loader-bar"><span id="loader-fill"></span></div>
+    </div>
+
+    <!-- Nav -->
+    <nav id="nav">
+      <a class="nav-item" href="saudade.html">Saudade</a>
+      <a class="nav-item" href="explicativa.html">¿Qué es Saudade?</a>
+    </nav>
+
+    <!-- Escena -->
+    <div id="scene">
+      <div class="bg-layer" id="bg-a"></div>
+      <div class="bg-layer" id="bg-b"></div>
+      <div id="bg-r"></div>
+      <div id="bg-g"></div>
+      <div id="bg-chb"></div>
+      <div id="noise-layer"></div>
+      <div id="persistence-layer"></div>
+
+      <div id="title-fixed">
+        <h1>Saudade</h1>
+        <p class="subtitle">atlas de memoria</p>
+      </div>
+
+      <div id="sd-preview"></div>
+    </div>
+
+    <!-- Footer: solo los enlaces que existen -->
+    <footer id="foot">
+      <a class="foot-item" href="libro.html">Libro</a>
+      <a class="foot-item" href="fichas.html">Fichas</a>
+      <a class="foot-item" href="carteles.html">Carteles</a>
+      <a class="foot-item" href="videos.html">Videos</a>
+    </footer>
+
+    <script>
+      const SPEED = 0.65;
+      // Invisibles la mayor parte del tiempo
+      const FADE_VIS_MIN = 800,
+        FADE_VIS_MAX = 2500; // visible solo 0.8–2.5 s
+      const FADE_INV_MIN = 7000,
+        FADE_INV_MAX = 20000; // invisible 7–20 s
+      const FADE_DUR = 1200;
+      // 33 nodos pares: SD-02, SD-04 ... SD-66
+      const SD_NUMBERS = Array.from({ length: 33 }, (_, i) => (i + 1) * 2);
+
+      const bgImages = [
+        "resources/fondos/inicio_01.jpg",
+        "resources/fondos/inicio_02.jpg",
+        "resources/fondos/inicio_03.jpg",
+        "resources/fondos/inicio_04.jpg",
+        "resources/fondos/inicio_05.jpg",
+        "resources/fondos/inicio_06.jpg",
+        "resources/fondos/inicio_07.jpg",
+      ];
+
+      // Placeholder hasta tener las imágenes reales.
+      // Cuando las tengas descomenta la línea siguiente:
+      const sdImages = SD_NUMBERS.map((n) => `resources/SD/sd_${n}.png`);
+
+      // ── Aberración cromática via mousemove ──
+      let prevMouseX = 0,
+        prevMouseY = 0;
+
+      document.addEventListener("mousemove", (e) => {
+        const dx = e.clientX - prevMouseX;
+        const dy = e.clientY - prevMouseY;
+        const vel = Math.sqrt(dx * dx + dy * dy);
+        prevMouseX = e.clientX;
+        prevMouseY = e.clientY;
+        applyChromaticAberration(dx, dy, vel);
+      });
+
+      // ── Loader ──
+      const scene = document.getElementById("scene");
+      const loader = document.getElementById("loader");
+      const loaderFill = document.getElementById("loader-fill");
+      const loaderDots = document.getElementById("loader-dots");
+      const loaderEnter = document.getElementById("loader-enter");
+
+      const dotStates = ["", ".", "..", "..."];
+      let dotIdx = 0;
+      const dotInterval = setInterval(() => {
+        dotIdx = (dotIdx + 1) % dotStates.length;
+        loaderDots.textContent = dotStates[dotIdx];
+      }, 420);
+
+      let progress = 0;
+      const barInterval = setInterval(() => {
+        progress += Math.random() * 3.5 + 0.5;
+        if (progress >= 100) {
+          progress = 100;
+          clearInterval(barInterval);
+        }
+        loaderFill.style.width = progress + "%";
+      }, 80);
+
+      setTimeout(() => {
+        clearInterval(dotInterval);
+        loaderDots.textContent = "";
+        loaderEnter.classList.add("visible");
+      }, 3500);
+
+      function enterSite() {
+        loader.style.opacity = "0";
+        setTimeout(() => {
+          loader.style.display = "none";
+          scene.classList.add("active");
+          startBackgrounds();
+          initSDNodes();
+        }, 1200);
+      }
+      loaderEnter.addEventListener("click", enterSite);
+
+      // ── Aberración cromática ──
+      const bgR = document.getElementById("bg-r");
+      const bgG = document.getElementById("bg-g");
+      const bgB = document.getElementById("bg-chb");
+      let chromaTimeout = null;
+
+      function applyChromaticAberration(dx, dy, vel) {
+        if (vel < 2) return;
+        const intensity = Math.min(vel * 0.4, 12);
+        const alpha = Math.min(vel / 80, 0.55);
+        bgR.style.opacity = alpha.toString();
+        bgG.style.opacity = (alpha * 0.6).toString();
+        bgB.style.opacity = alpha.toString();
+        bgR.style.transform =
+          "translate(" +
+          dx * 0.03 * intensity +
+          "px, " +
+          dy * 0.03 * intensity +
+          "px)";
+        bgB.style.transform =
+          "translate(" +
+          -dx * 0.03 * intensity +
+          "px, " +
+          -dy * 0.03 * intensity +
+          "px)";
+        bgG.style.transform =
+          "translate(" +
+          dy * 0.01 * intensity +
+          "px, " +
+          dx * 0.01 * intensity +
+          "px)";
+        clearTimeout(chromaTimeout);
+        chromaTimeout = setTimeout(() => {
+          bgR.style.opacity = "0";
+          bgG.style.opacity = "0";
+          bgB.style.opacity = "0";
+        }, 120);
+      }
+
+      // ── Fondos crossfade ──
+      const bgA = document.getElementById("bg-a");
+      const bgBLayer = document.getElementById("bg-b");
+      let bgIndex = 0;
+      let bgActive = "a";
+
+      function shuffleNext(current) {
+        if (bgImages.length <= 1) return current;
+        let next = current;
+        while (next === current)
+          next = Math.floor(Math.random() * bgImages.length);
+        return next;
+      }
+
+      function startBackgrounds() {
+        bgA.style.backgroundImage = 'url("' + bgImages[0] + '")';
+        if (bgImages.length > 1)
+          bgBLayer.style.backgroundImage =
+            'url("' + bgImages[shuffleNext(0)] + '")';
+        setInterval(crossfadeBg, 14000);
+      }
+
+      function crossfadeBg() {
+        if (bgImages.length <= 1) return;
+        const nextIdx = shuffleNext(bgIndex);
+        if (bgActive === "a") {
+          bgBLayer.style.backgroundImage = 'url("' + bgImages[nextIdx] + '")';
+          bgBLayer.style.opacity = "1";
+          bgA.style.opacity = "0";
+          bgActive = "b";
+        } else {
+          bgA.style.backgroundImage = 'url("' + bgImages[nextIdx] + '")';
+          bgA.style.opacity = "1";
+          bgBLayer.style.opacity = "0";
+          bgActive = "a";
+        }
+        bgIndex = nextIdx;
+      }
+
+      // ── SD Nodos flotantes ──
+      const sdPreview = document.getElementById("sd-preview");
+      const items = {};
+      let dragTarget = null,
+        dragOffX = 0,
+        dragOffY = 0;
+      let lastDX = 0,
+        lastDY = 0,
+        prevDX = 0,
+        prevDY = 0;
+
+      function W() {
+        return window.innerWidth;
+      }
+      function H() {
+        return window.innerHeight;
+      }
+      function rand(a, b) {
+        return a + Math.random() * (b - a);
+      }
+
+      function randomDir() {
+        const a = Math.random() * Math.PI * 2;
+        return { vx: Math.cos(a) * SPEED, vy: Math.sin(a) * SPEED };
+      }
+
+      function randomDirWithVertical() {
+        const angle = Math.random() * Math.PI * 2;
+
+        let vx = Math.cos(angle);
+        let vy = Math.sin(angle);
+
+        const minVertical = 0.45;
+
+        if (Math.abs(vy) < minVertical) {
+          vy = vy < 0 ? -minVertical : minVertical;
+        }
+
+        const len = Math.hypot(vx, vy);
+
+        return {
+          vx: (vx / len) * SPEED,
+          vy: (vy / len) * SPEED,
+        };
+      }
+      function normalize(vx, vy) {
+        const l = Math.sqrt(vx * vx + vy * vy) || 1;
+        return { vx: (vx / l) * SPEED, vy: (vy / l) * SPEED };
+      }
+
+      // Margen superior/inferior para nav y footer
+      const NAV_H = 52;
+      const FOOT_H = 52;
+
+      // Función: posición del preview que no se sale, ni choca con título ni con el nodo
+      function getPreviewPosition(mouseX, mouseY, nodeX, nodeY, nodeW, nodeH) {
+        const previewW = 200;
+        const previewH = 140;
+        const gap = 20;
+
+        // Zona del título (la misma que usa floatLoop)
+        const cx = W() / 2;
+        const cy = H() / 2;
+        const titleX1 = cx - W() * 0.24;
+        const titleX2 = cx + W() * 0.24;
+        const titleY1 = cy - H() * 0.14;
+        const titleY2 = cy + H() * 0.14;
+
+        // Intentar posición a la derecha del nodo
+        let x = nodeX + nodeW + gap;
+        let y = nodeY;
+
+        // Si choca con el título o se sale por la derecha, poner a la izquierda del nodo
+        if (
+          x + previewW > W() ||
+          (x < titleX2 &&
+            x + previewW > titleX1 &&
+            y < titleY2 &&
+            y + previewH > titleY1)
+        ) {
+          x = nodeX - previewW - gap;
+        }
+
+        // Verificar si todavía choca con el título
+        const collidesWithTitle =
+          x < titleX2 &&
+          x + previewW > titleX1 &&
+          y < titleY2 &&
+          y + previewH > titleY1;
+        if (collidesWithTitle) {
+          // Poner encima del nodo
+          y = nodeY - previewH - gap;
+          if (y < NAV_H) {
+            // Si no cabe encima, poner debajo
+            y = nodeY + nodeH + gap;
+          }
+        }
+
+        // Clamper dentro de la pantalla (respetando nav/footer)
+        x = Math.max(0, Math.min(W() - previewW, x));
+        y = Math.max(NAV_H, Math.min(H() - FOOT_H - previewH, y));
+
+        return { x, y };
+      }
+
+      function scheduleFade(id) {
+        const item = items[id];
+        if (!item || item.dragging || item.frozen) return;
+        const visible = parseFloat(item.el.style.opacity) > 0;
+        if (visible) {
+          // Visible → desaparece pronto
+          item.fadeTimer = setTimeout(
+            () => {
+              item.el.style.transition = `opacity ${FADE_DUR}ms ease, color 0.25s ease`;
+              item.el.style.opacity = "0";
+              item.el.classList.remove("visible");
+              item.fadeTimer = setTimeout(
+                () => scheduleFade(id),
+                FADE_DUR + rand(FADE_INV_MIN, FADE_INV_MAX),
+              );
+            },
+            rand(FADE_VIS_MIN, FADE_VIS_MAX),
+          );
+        } else {
+          // Invisible → espera bastante y aparece
+          item.fadeTimer = setTimeout(
+            () => {
+              item.el.style.transition = `opacity ${FADE_DUR}ms ease, color 0.25s ease`;
+              item.el.style.opacity = "1";
+              item.el.classList.add("visible");
+              item.fadeTimer = setTimeout(
+                () => scheduleFade(id),
+                FADE_DUR + rand(FADE_VIS_MIN, FADE_VIS_MAX),
+              );
+            },
+            rand(FADE_INV_MIN, FADE_INV_MAX),
+          );
+        }
+      }
+
+      function initSDNodes() {
+        SD_NUMBERS.forEach((n, i) => {
+          const id = `sd-${String(n).padStart(2, "0")}`;
+          const label = `SD-${String(n).padStart(2, "0")}`;
+
+          const el = document.createElement("span");
+          el.className = "sd-node";
+          el.id = id;
+          el.textContent = label;
+          scene.appendChild(el);
+
+          // Posición inicial distribuida por toda la pantalla
+          const x = rand(0.03, 0.93) * W();
+          const y = NAV_H + rand(0.03, 0.93) * (H() - NAV_H - FOOT_H);
+
+          // Usar nueva función para asegurar movimiento vertical/diagonal
+          const { vx, vy } = randomDirWithVertical();
+
+          // Empieza invisible
+          el.style.opacity = "0";
+          el.style.transition = `opacity ${FADE_DUR}ms ease, color 0.25s ease`;
+
+          items[id] = {
+            el,
+            x,
+            y,
+            vx,
+            vy,
+            w: 0,
+            h: 0,
+            dragging: false,
+            frozen: false,
+            fadeTimer: null,
+            imgSrc: sdImages[i],
+          };
+
+          // Hover: congelar + preview inteligente (evita nodo, título, bordes)
+          el.addEventListener("mouseenter", (e) => {
+            const it = items[id];
+            it.frozen = true;
+            el.classList.add("frozen");
+            sdPreview.style.backgroundImage = `url("${it.imgSrc}")`;
+            sdPreview.style.opacity = "0.8";
+
+            // Esperar un frame para que el elemento tenga dimensiones
+            setTimeout(() => {
+              const pos = getPreviewPosition(
+                e.clientX,
+                e.clientY,
+                it.x,
+                it.y,
+                it.w,
+                it.h,
+              );
+              sdPreview.style.left = pos.x + "px";
+              sdPreview.style.top = pos.y + "px";
+            }, 0);
+          });
+
+          el.addEventListener("mousemove", (e) => {
+            const it = items[id];
+            const pos = getPreviewPosition(
+              e.clientX,
+              e.clientY,
+              it.x,
+              it.y,
+              it.w,
+              it.h,
+            );
+            sdPreview.style.left = pos.x + "px";
+            sdPreview.style.top = pos.y + "px";
+          });
+
+          el.addEventListener("mouseleave", () => {
+            const it = items[id];
+            it.frozen = false;
+            el.classList.remove("frozen");
+            sdPreview.style.opacity = "0";
+            clearTimeout(it.fadeTimer);
+            scheduleFade(id);
+          });
+
+          // Drag
+          el.addEventListener("mousedown", (e) =>
+            startDrag(e, id, e.clientX, e.clientY),
+          );
+          el.addEventListener(
+            "touchstart",
+            (e) => {
+              e.preventDefault();
+              startDrag(e, id, e.touches[0].clientX, e.touches[0].clientY);
+            },
+            { passive: false },
+          );
+
+          // Escalonar la medición de dimensiones y arrancar ciclo de fade
+          // muy escalonado para que no aparezcan todos a la vez
+          const delay = rand(300, 1200) + i * rand(80, 220);
+          setTimeout(() => {
+            items[id].w = el.offsetWidth;
+            items[id].h = el.offsetHeight;
+            // La mayoría arranca invisible; solo unos pocos aparecen al inicio
+            if (Math.random() < 0.2) {
+              el.style.opacity = "1";
+              el.classList.add("visible");
+              items[id].fadeTimer = setTimeout(
+                () => scheduleFade(id),
+                rand(FADE_VIS_MIN, FADE_VIS_MAX),
+              );
+            } else {
+              scheduleFade(id); // arranca desde invisible con delay largo
+            }
+          }, delay);
+        });
+
+        requestAnimationFrame(floatLoop);
+      }
+
+      function startDrag(e, id, cx, cy) {
+        dragTarget = id;
+        const item = items[id];
+        item.dragging = true;
+        item.frozen = true;
+        item.el.classList.add("dragging");
+        clearTimeout(item.fadeTimer);
+        item.el.style.transition = "opacity 200ms ease, color 0.25s ease";
+        item.el.style.opacity = "1";
+        dragOffX = cx - item.x;
+        dragOffY = cy - item.y;
+        item.vx = 0;
+        item.vy = 0;
+        lastDX = cx;
+        lastDY = cy;
+        prevDX = cx;
+        prevDY = cy;
+      }
+
+      window.addEventListener("mousemove", (e) =>
+        moveDrag(e.clientX, e.clientY),
+      );
+      window.addEventListener(
+        "touchmove",
+        (e) => {
+          if (dragTarget) {
+            e.preventDefault();
+            moveDrag(e.touches[0].clientX, e.touches[0].clientY);
+          }
+        },
+        { passive: false },
+      );
+
+      function moveDrag(cx, cy) {
+        if (!dragTarget) return;
+        const item = items[dragTarget];
+        prevDX = lastDX;
+        prevDY = lastDY;
+        lastDX = cx;
+        lastDY = cy;
+        item.x = cx - dragOffX;
+        item.y = cy - dragOffY;
+      }
+
+      function endDrag() {
+        if (!dragTarget) return;
+        const item = items[dragTarget];
+        item.dragging = false;
+        item.frozen = false;
+        item.el.classList.remove("dragging");
+        const throwVx = lastDX - prevDX,
+          throwVy = lastDY - prevDY;
+        const len = Math.sqrt(throwVx * throwVx + throwVy * throwVy);
+        if (len > 0.1) {
+          const n = normalize(throwVx, throwVy);
+          item.vx = n.vx;
+          item.vy = n.vy;
+        } else {
+          const d = randomDirWithVertical();
+          item.vx = d.vx;
+          item.vy = d.vy;
+        }
+        dragTarget = null;
+        setTimeout(
+          () => scheduleFade(item.el.id),
+          rand(FADE_VIS_MIN, FADE_VIS_MAX),
+        );
+      }
+      window.addEventListener("mouseup", endDrag);
+      window.addEventListener("touchend", endDrag);
+
+      function getTitleZone() {
+        const cx = W() / 2,
+          cy = H() / 2;
+        return {
+          x1: cx - W() * 0.24,
+          x2: cx + W() * 0.24,
+          y1: cy - H() * 0.14,
+          y2: cy + H() * 0.14,
+        };
+      }
+
+      function floatLoop() {
+        const ids = Object.keys(items);
+
+        ids.forEach((id) => {
+          const a = items[id];
+          if (a.dragging || a.frozen) return;
+
+          a.x += a.vx;
+          a.y += a.vy;
+
+          // Rebotar en bordes (respetando nav/footer)
+          const minY = NAV_H;
+          const maxY = H() - FOOT_H - a.h;
+
+          if (a.x <= 0) {
+            a.x = 0;
+            a.vx = Math.abs(a.vx) * rand(0.9, 1.1);
+          }
+          if (a.x + a.w >= W()) {
+            a.x = W() - a.w;
+            a.vx = -Math.abs(a.vx) * rand(0.9, 1.1);
+          }
+          if (a.y <= minY) {
+            a.y = minY;
+            a.vy = Math.abs(a.vy) * rand(0.9, 1.1);
+          }
+          if (a.y + a.h >= maxY) {
+            a.y = maxY;
+
+            a.vy = -rand(0.35, 0.8);
+
+            if (Math.abs(a.vx) > 0.5) {
+              a.vx *= rand(0.7, 0.9);
+            }
+          }
+
+          // Repeler del título central (zona más amplia para evitar congestión)
+          const z = getTitleZone();
+          const cx = a.x + a.w / 2,
+            cy = a.y + a.h / 2;
+          if (cx > z.x1 && cx < z.x2 && cy > z.y1 && cy < z.y2) {
+            const dx = cx - W() / 2,
+              dy = cy - H() / 2;
+            const l = Math.sqrt(dx * dx + dy * dy) || 1;
+            const force = 0.4;
+            a.vx = (dx / l) * force + rand(-0.08, 0.08);
+            a.vy = (dy / l) * force + rand(-0.08, 0.08);
+
+            // Asegurar movimiento vertical mínimo
+            if (Math.abs(a.vy) < 0.2) {
+              a.vy = a.vy < 0 ? -0.25 : 0.25;
+            }
+          }
+
+          // Suavizar velocidad y evitar que se detengan
+          // Pequeñas variaciones continuas para evitar trayectorias planas
+          a.vx += rand(-0.003, 0.003);
+          a.vy += rand(-0.008, 0.008);
+
+          if (Math.random() < 0.0015) {
+            a.vy += rand(-0.25, 0.25);
+          }
+
+          // Suavizar velocidad y evitar que se detengan
+          a.vx *= 0.995;
+          a.vy *= 0.995;
+
+          // Velocidad mínima para que sigan moviéndose
+          const minSpeed = 0.18;
+          const speed = Math.sqrt(a.vx * a.vx + a.vy * a.vy);
+          if (speed < minSpeed) {
+            const angle = rand(0, Math.PI * 2);
+            a.vx = Math.cos(angle) * minSpeed;
+            a.vy = Math.sin(angle) * minSpeed;
+
+            // Asegurar componente vertical
+            if (Math.abs(a.vy) < 0.2) {
+              a.vy = a.vy < 0 ? -0.25 : 0.25;
+            }
+          }
+
+          const n = normalize(a.vx, a.vy);
+          a.vx = n.vx;
+          a.vy = n.vy;
+        });
+
+        // Colisiones entre nodos
+        for (let i = 0; i < ids.length; i++) {
+          for (let j = i + 1; j < ids.length; j++) {
+            const a = items[ids[i]],
+              b = items[ids[j]];
+            const ox1 = a.x + a.w - b.x,
+              ox2 = b.x + b.w - a.x;
+            const oy1 = a.y + a.h - b.y,
+              oy2 = b.y + b.h - a.y;
+            if (ox1 > 0 && ox2 > 0 && oy1 > 0 && oy2 > 0) {
+              if (Math.min(ox1, ox2) < Math.min(oy1, oy2)) {
+                if (!a.dragging && !a.frozen && !b.dragging && !b.frozen) {
+                  const t = a.vx;
+                  a.vx = b.vx;
+                  b.vx = t;
+                } else if (a.dragging || a.frozen) b.vx = -b.vx;
+                else a.vx = -a.vx;
+              } else {
+                if (!a.dragging && !a.frozen && !b.dragging && !b.frozen) {
+                  const t = a.vy;
+                  a.vy = b.vy;
+                  b.vy = t;
+                } else if (a.dragging || a.frozen) b.vy = -b.vy;
+                else a.vy = -a.vy;
+              }
+              if (!a.dragging && !a.frozen) {
+                a.x += a.vx * 0.5;
+                a.y += a.vy * 0.5;
+                const n = normalize(a.vx, a.vy);
+                a.vx = n.vx;
+                a.vy = n.vy;
+              }
+              if (!b.dragging && !b.frozen) {
+                b.x += b.vx * 0.5;
+                b.y += b.vy * 0.5;
+                const n = normalize(b.vx, b.vy);
+                b.vx = n.vx;
+                b.vy = n.vy;
+              }
+            }
+          }
+        }
+
+        ids.forEach((id) => {
+          const item = items[id];
+          item.el.style.transform =
+            "translate(" + item.x + "px, " + item.y + "px)";
+        });
+
+        requestAnimationFrame(floatLoop);
+      }
+
+      window.addEventListener("resize", () => {
+        Object.keys(items).forEach((id) => {
+          const item = items[id];
+          item.w = item.el.offsetWidth;
+          item.h = item.el.offsetHeight;
+          item.x = Math.min(item.x, W() - item.w);
+          item.y = Math.min(item.y, H() - FOOT_H - item.h);
+        });
+      });
+    </script>
+  </body>
+</html>

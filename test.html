@@ -1,0 +1,975 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Presencias — archivo de memoria</title>
+    <link
+      href="https://api.fontshare.com/v2/css?f[]=satoshi@300,400,500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      * {
+        -webkit-user-select: none;
+        user-select: none;
+      }
+      ::selection,
+      ::-moz-selection {
+        background: transparent;
+      }
+      :root {
+        --font: "Satoshi", "Helvetica Neue", sans-serif;
+        --text: #1a1a18;
+        --muted: #7a7974;
+      }
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        font-family: var(--font);
+        -webkit-font-smoothing: antialiased;
+        background: #f5f4f2;
+        color: var(--text);
+        cursor: none;
+      }
+      /* ── Cursor ── */
+      #cursor-trail {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: 9997;
+      }
+      #cursor-ring {
+        position: fixed;
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        border: 1px solid rgba(26, 26, 24, 0.5);
+        background: transparent;
+        pointer-events: none;
+        z-index: 9999;
+        left: 0;
+        top: 0;
+        transition:
+          width 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+          height 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+          background 0.3s ease,
+          border-color 0.3s ease;
+        mix-blend-mode: multiply;
+      }
+      #cursor-ring.hover {
+        width: 48px;
+        height: 48px;
+        border-color: rgba(26, 24, 20, 0.15);
+        background: rgba(26, 24, 20, 0.05);
+      }
+      #cursor-ring.click {
+        width: 16px;
+        height: 16px;
+        background: rgba(26, 24, 20, 0.1);
+        border-color: rgba(26, 24, 20, 0.7);
+      }
+      /* ── Loader ── */
+      #loader {
+        position: fixed;
+        inset: 0;
+        background: #f5f4f2;
+        z-index: 200;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        transition: opacity 1.2s ease;
+      }
+      #loader-inner {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2.5rem;
+      }
+      #loader-text {
+        font-size: 13px;
+        font-weight: 300;
+        color: #7a7974;
+        letter-spacing: 0.18em;
+        text-transform: lowercase;
+      }
+      #loader-dots {
+        font-size: 13px;
+        font-weight: 300;
+        color: #7a7974;
+        letter-spacing: 0.08em;
+        display: inline-block;
+        min-width: 1.5ch;
+      }
+      #loader-enter {
+        font-size: 13px;
+        font-weight: 400;
+        color: #1a1a18;
+        letter-spacing: 0.14em;
+        text-decoration: none;
+        text-transform: lowercase;
+        opacity: 0;
+        pointer-events: none;
+        transition:
+          opacity 0.8s ease,
+          letter-spacing 0.4s ease;
+        padding-bottom: 2px;
+      }
+      #loader-enter.visible {
+        opacity: 1;
+        pointer-events: all;
+      }
+      #loader-enter:hover {
+        letter-spacing: 0.22em;
+      }
+      #loader-bar {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 1px;
+        background: rgba(100, 95, 88, 0.12);
+      }
+      #loader-fill {
+        display: block;
+        height: 100%;
+        width: 0%;
+        background: rgba(100, 95, 88, 0.45);
+        transition: width 0.1s linear;
+      }
+      /* ── Intro ── */
+      #intro {
+        position: fixed;
+        inset: 0;
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        z-index: 100;
+        background: #f5f4f2;
+        transition: opacity 1.8s ease;
+      }
+      #intro h1 {
+        font-size: clamp(3.5rem, 8vw, 9rem);
+        font-weight: 500;
+        letter-spacing: -0.025em;
+        color: var(--text);
+        line-height: 1;
+      }
+      #intro .tagline {
+        margin-top: 0.8rem;
+        font-size: 13px;
+        font-weight: 300;
+        color: var(--muted);
+        letter-spacing: 0.08em;
+      }
+      /* ── Fantasma ── */
+      #ghost-bg {
+        position: fixed;
+        inset: 0;
+        background-image: url("resources/fondos/inicio_01.jpg");
+        background-size: cover;
+        background-position: center;
+        opacity: 0;
+        transition: opacity 3.5s ease;
+        z-index: 99;
+        pointer-events: none;
+      }
+      /* ── Escena ── */
+      #scene {
+        position: fixed;
+        inset: 0;
+        opacity: 0;
+        transition: opacity 1.2s ease;
+        pointer-events: none;
+      }
+      #scene.active {
+        opacity: 1;
+        pointer-events: all;
+      }
+      /* ── Fondos crossfade ── */
+      .bg-layer {
+        position: fixed;
+        inset: 0;
+        background-size: cover;
+        background-position: center;
+        z-index: 0;
+        transition: opacity 3.8s ease;
+      }
+      #bg-a {
+        opacity: 1;
+      }
+      #bg-b {
+        opacity: 0;
+      }
+      /* ── Aberración cromática ── */
+      #bg-r,
+      #bg-g,
+      #bg-chb {
+        position: fixed;
+        inset: 0;
+        background-image: url("resources/fondos/inicio_01.jpg");
+        background-size: cover;
+        background-position: center;
+        z-index: 1;
+        pointer-events: none;
+        opacity: 0;
+        mix-blend-mode: screen;
+        transition: opacity 0.4s ease;
+      }
+      #bg-r {
+        filter: url(#filter-r);
+      }
+      #bg-g {
+        filter: url(#filter-g);
+      }
+      #bg-chb {
+        filter: url(#filter-b);
+      }
+      /* ── Ruido ── */
+      #noise-layer {
+        position: fixed;
+        inset: 0;
+        z-index: 2;
+        pointer-events: none;
+        opacity: 0.045;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+        animation: noiseShift 1.2s steps(4) infinite;
+      }
+      @keyframes noiseShift {
+        0% {
+          background-position: 0 0;
+        }
+        25% {
+          background-position: -15px 10px;
+        }
+        50% {
+          background-position: 8px -12px;
+        }
+        75% {
+          background-position: 12px 5px;
+        }
+        100% {
+          background-position: 0 0;
+        }
+      }
+      /* ── Título ── */
+      #title-fixed {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 20;
+        text-align: center;
+        pointer-events: none;
+      }
+      #title-fixed h1 {
+        font-size: clamp(3rem, 0.5rem + 7vw, 8rem);
+        font-weight: 500;
+        letter-spacing: -0.02em;
+        line-height: 1;
+        color: var(--text);
+      }
+      #title-fixed .subtitle {
+        font-size: 13px;
+        font-weight: 300;
+        color: var(--muted);
+        letter-spacing: 0.06em;
+        margin-top: 0.7rem;
+      }
+      /* ── Código / etiqueta ── */
+      .code-tag {
+        position: fixed;
+        top: clamp(1.2rem, 3vw, 2.5rem);
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 13px;
+        font-weight: 400;
+        color: var(--muted);
+        letter-spacing: 0.08em;
+        z-index: 20;
+        pointer-events: none;
+      }
+      /* ── Textos flotantes (índice de presencias) ── */
+      .floating-text {
+        position: fixed;
+        left: 0;
+        top: 0;
+        font-size: 15px;
+        font-weight: 300;
+        color: var(--muted);
+        letter-spacing: 0.02em;
+        white-space: nowrap;
+        z-index: 15;
+        will-change: transform, opacity;
+        cursor: none;
+        transition: color 0.3s ease;
+      }
+      .floating-text:hover {
+        color: var(--text);
+      }
+      .floating-text.dragging {
+        color: var(--text);
+      }
+      /* ── Nodos de “presencia” ── */
+      .sd-node {
+        position: fixed;
+        font-size: 13px;
+        font-weight: 400;
+        color: var(--muted);
+        letter-spacing: 0.08em;
+        z-index: 15;
+        cursor: none;
+        transition:
+          color 0.25s ease,
+          opacity 0.8s ease;
+      }
+      .sd-node:hover {
+        color: var(--text);
+      }
+      .sd-preview {
+        position: fixed;
+        width: 180px;
+        height: 120px;
+        background-image: url("resources/fondos/inicio_01.jpg");
+        background-size: cover;
+        pointer-events: none;
+        z-index: 30;
+        opacity: 0;
+        transition: opacity 0.35s ease;
+        mix-blend-mode: multiply;
+        filter: saturate(0.6) contrast(1.1);
+      }
+      /* ── Persistencia ── */
+      #persistence-layer {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: 3;
+        opacity: 0;
+        background-image: url("resources/fondos/inicio_01.jpg");
+        background-size: cover;
+        background-position: center;
+        filter: saturate(0) contrast(0.6);
+        transition: opacity 3.8s ease;
+      }
+      /* ── SVG filtros ── */
+      #svg-filters {
+        position: absolute;
+        width: 0;
+        height: 0;
+        overflow: hidden;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- ───── SVG filtros ───── -->
+    <svg id="svg-filters" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <filter id="filter-r" color-interpolation-filters="sRGB">
+          <feColorMatrix
+            type="matrix"
+            values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0"
+          />
+        </filter>
+        <filter id="filter-g" color-interpolation-filters="sRGB">
+          <feColorMatrix
+            type="matrix"
+            values="0 0 0 0 0  0 1 0 0 0  0 0 0 0 0  0 0 0 1 0"
+          />
+        </filter>
+        <filter id="filter-b" color-interpolation-filters="sRGB">
+          <feColorMatrix
+            type="matrix"
+            values="0 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 1 0"
+          />
+        </filter>
+      </defs>
+    </svg>
+
+    <!-- ───── Loader ───── -->
+    <div id="loader">
+      <div id="loader-inner">
+        <span id="loader-text">buscando</span><span id="loader-dots"></span>
+        <a id="loader-enter" href="javascript:void(0);">invocar presencia</a>
+      </div>
+      <div id="loader-bar"><span id="loader-fill"></span></div>
+    </div>
+
+    <!-- ───── Cursor ───── -->
+    <canvas id="cursor-trail"></canvas>
+    <div id="cursor-ring"></div>
+
+    <!-- ───── Intro ───── -->
+    <div id="intro">
+      <h1>Presencias</h1>
+      <p class="tagline">archivo de huellas</p>
+    </div>
+
+    <!-- ───── Fantasma ───── -->
+    <div id="ghost-bg"></div>
+
+    <!-- ───── Escena ───── -->
+    <div id="scene">
+      <div class="bg-layer" id="bg-a"></div>
+      <div class="bg-layer" id="bg-b"></div>
+      <div id="bg-r"></div>
+      <div id="bg-g"></div>
+      <div id="bg-chb"></div>
+      <div id="noise-layer"></div>
+      <div id="persistence-layer"></div>
+
+      <span class="code-tag">PR-07</span>
+
+      <div id="title-fixed">
+        <h1>Presencias</h1>
+        <p class="subtitle">recuerdos que pasan por aquí</p>
+      </div>
+
+      <!-- ───── ÍNDICE DE PRESENCIAS ───── -->
+      <span class="floating-text" id="ft-registros">paso</span>
+      <span class="floating-text" id="ft-fragmentos">silencio</span>
+      <span class="floating-text" id="ft-presencias">eco</span>
+      <span class="floating-text" id="ft-subir">vuelta</span>
+      <span class="floating-text" id="ft-sinfecha">atrás</span>
+
+      <!-- ───── Nodos (ahora son presencias) ───── -->
+      <span class="sd-node" id="sd-01" style="left: 8%; top: 15%">PR-01</span>
+      <span class="sd-node" id="sd-13" style="left: 85%; top: 22%">PR-13</span>
+      <span class="sd-node" id="sd-21" style="left: 12%; top: 75%">PR-21</span>
+      <span class="sd-node" id="sd-34" style="left: 78%; top: 70%">PR-34</span>
+
+      <div id="sd-preview" class="sd-preview"></div>
+    </div>
+
+    <script>
+      const SPEED = 0.65;
+      const FADE_VIS_MIN = 3000,
+        FADE_VIS_MAX = 7000;
+      const FADE_INV_MIN = 1500,
+        FADE_INV_MAX = 4000;
+      const FADE_DUR = 900;
+
+      // ── Fondos ──
+      const bgImages = [
+        "resources/fondos/inicio_01.jpg",
+        "resources/fondos/inicio_02.jpg",
+        "resources/fondos/inicio_03.jpg",
+        "resources/fondos/inicio_04.jpg",
+        "resources/fondos/inicio_05.jpg",
+      ];
+
+      // ── Cursor con estela ──
+      const cursorRing = document.getElementById("cursor-ring");
+      const trailCanvas = document.getElementById("cursor-trail");
+      const tCtx = trailCanvas.getContext("2d");
+
+      function resizeTrail() {
+        trailCanvas.width = window.innerWidth;
+        trailCanvas.height = window.innerHeight;
+      }
+      resizeTrail();
+      window.addEventListener("resize", resizeTrail);
+
+      let mouseX = 0,
+        mouseY = 0;
+      let ringX = 0,
+        ringY = 0;
+      let prevMouseX = 0,
+        prevMouseY = 0;
+      let velocity = 0;
+      const trail = [];
+      const TRAIL_LEN = 18;
+
+      document.addEventListener("mousemove", (e) => {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+        const dx = mouseX - prevMouseX;
+        const dy = mouseY - prevMouseY;
+        velocity = Math.sqrt(dx * dx + dy * dy);
+        prevMouseX = mouseX;
+        prevMouseY = mouseY;
+        applyChromaticAberration(dx, dy, velocity);
+      });
+
+      (function cursorLoop() {
+        ringX += (mouseX - ringX) * 0.13;
+        ringY += (mouseY - ringY) * 0.13;
+        cursorRing.style.transform =
+          "translate(" + (ringX - 13) + "px, " + (ringY - 13) + "px)";
+
+        trail.push({ x: ringX, y: ringY });
+        if (trail.length > TRAIL_LEN) trail.shift();
+
+        tCtx.clearRect(0, 0, trailCanvas.width, trailCanvas.height);
+        for (let i = 1; i < trail.length; i++) {
+          const alpha = (i / trail.length) * 0.18;
+          const radius = (i / trail.length) * 4.5;
+          tCtx.beginPath();
+          tCtx.arc(
+            trail[i].x,
+            trail[i].y,
+            Math.max(radius, 0.5),
+            0,
+            Math.PI * 2,
+          );
+          tCtx.fillStyle = "rgba(26,26,24," + alpha + ")";
+          tCtx.fill();
+        }
+        requestAnimationFrame(cursorLoop);
+      })();
+
+      document
+        .querySelectorAll("a, button, .floating-text, .sd-node, #loader-enter")
+        .forEach((el) => {
+          el.addEventListener("mouseenter", () =>
+            cursorRing.classList.add("hover"),
+          );
+          el.addEventListener("mouseleave", () =>
+            cursorRing.classList.remove("hover"),
+          );
+        });
+      document.addEventListener("mousedown", () =>
+        cursorRing.classList.add("click"),
+      );
+      document.addEventListener("mouseup", () =>
+        cursorRing.classList.remove("click"),
+      );
+
+      // ── Loader ──
+      const scene = document.getElementById("scene");
+      const loader = document.getElementById("loader");
+      const loaderFill = document.getElementById("loader-fill");
+      const loaderDots = document.getElementById("loader-dots");
+      const loaderEnter = document.getElementById("loader-enter");
+
+      const dotStates = ["", ".", "..", "..."];
+      let dotIdx = 0;
+      const dotInterval = setInterval(() => {
+        dotIdx = (dotIdx + 1) % dotStates.length;
+        loaderDots.textContent = dotStates[dotIdx];
+      }, 420);
+
+      let progress = 0;
+      const barInterval = setInterval(() => {
+        progress += Math.random() * 3.5 + 0.5;
+        if (progress >= 100) {
+          progress = 100;
+          clearInterval(barInterval);
+        }
+        loaderFill.style.width = progress + "%";
+      }, 80);
+
+      setTimeout(() => {
+        clearInterval(dotInterval);
+        loaderDots.textContent = "";
+        loaderEnter.classList.add("visible");
+      }, 3500);
+
+      function enterSite() {
+        loader.style.opacity = "0";
+        setTimeout(() => {
+          loader.style.display = "none";
+          scene.classList.add("active");
+          // startBackgrounds(); en tu código original
+        }, 1200);
+      }
+      loaderEnter.addEventListener("click", enterSite);
+
+      // ── Aberración cromática ──
+      const bgR = document.getElementById("bg-r");
+      const bgG = document.getElementById("bg-g");
+      const bgB = document.getElementById("bg-chb");
+      let chromaTimeout = null;
+
+      function applyChromaticAberration(dx, dy, vel) {
+        if (vel < 2) return;
+        const intensity = Math.min(vel * 0.4, 12);
+        const alpha = Math.min(vel / 80, 0.55);
+        bgR.style.opacity = alpha.toString();
+        bgG.style.opacity = (alpha * 0.6).toString();
+        bgB.style.opacity = alpha.toString();
+        bgR.style.transform =
+          "translate(" +
+          dx * 0.03 * intensity +
+          "px, " +
+          dy * 0.03 * intensity +
+          "px)";
+        bgB.style.transform =
+          "translate(" +
+          -dx * 0.03 * intensity +
+          "px, " +
+          -dy * 0.03 * intensity +
+          "px)";
+        bgG.style.transform =
+          "translate(" +
+          dy * 0.01 * intensity +
+          "px, " +
+          dx * 0.01 * intensity +
+          "px)";
+        clearTimeout(chromaTimeout);
+        chromaTimeout = setTimeout(() => {
+          bgR.style.opacity = "0";
+          bgG.style.opacity = "0";
+          bgB.style.opacity = "0";
+        }, 120);
+      }
+
+      // ── Fondos crossfade ──
+      const bgA = document.getElementById("bg-a");
+      const bgBLayer = document.getElementById("bg-b");
+      let bgIndex = 0;
+      let bgActive = "a";
+
+      function shuffleNext(current) {
+        if (bgImages.length <= 1) return current;
+        let next = current;
+        while (next === current)
+          next = Math.floor(Math.random() * bgImages.length);
+        return next;
+      }
+
+      bgA.style.backgroundImage = 'url("' + bgImages[0] + '")';
+      if (bgImages.length > 1)
+        bgBLayer.style.backgroundImage =
+          'url("' + bgImages[shuffleNext(0)] + '")';
+
+      function crossfadeBg() {
+        if (bgImages.length <= 1) return;
+        const nextIdx = shuffleNext(bgIndex);
+        if (bgActive === "a") {
+          bgBLayer.style.backgroundImage = 'url("' + bgImages[nextIdx] + '")';
+          bgBLayer.style.opacity = "1";
+          bgA.style.opacity = "0";
+          bgActive = "b";
+        } else {
+          bgA.style.backgroundImage = 'url("' + bgImages[nextIdx] + '")';
+          bgA.style.opacity = "1";
+          bgBLayer.style.opacity = "0";
+          bgActive = "a";
+        }
+        bgIndex = nextIdx;
+      }
+      setInterval(crossfadeBg, 14000);
+
+      // ── Nodos de “presencia” ──
+      const sdPreview = document.getElementById("sd-preview");
+      const sdBgPositions = {
+        "sd-01": "20% 30%",
+        "sd-13": "70% 20%",
+        "sd-21": "40% 80%",
+        "sd-34": "80% 60%",
+      };
+      document.querySelectorAll(".sd-node").forEach((node) => {
+        node.addEventListener("mouseenter", () => {
+          sdPreview.style.backgroundPosition =
+            sdBgPositions[node.id] || "50% 50%";
+          sdPreview.style.opacity = "0.75";
+        });
+        node.addEventListener("mousemove", (e) => {
+          sdPreview.style.left = e.clientX + 20 + "px";
+          sdPreview.style.top = e.clientY + 20 + "px";
+        });
+        node.addEventListener("mouseleave", () => {
+          sdPreview.style.opacity = "0";
+        });
+      });
+
+      // ── Persistencia ──
+      const persistLayer = document.getElementById("persistence-layer");
+      document.querySelectorAll(".sd-node").forEach((node) => {
+        node.addEventListener("click", () => {
+          persistLayer.style.opacity = "0.18";
+          setTimeout(() => {
+            persistLayer.style.opacity = "0";
+          }, 2800);
+        });
+      });
+
+      // ── Textos flotantes (presencias) ──
+      const initialPositions = {
+        "ft-registros": { x: 74, y: 19 },
+        "ft-fragmentos": { x: 83, y: 34 },
+        "ft-presencias": { x: 60, y: 41 },
+        "ft-subir": { x: 21, y: 22 },
+        "ft-sinfecha": { x: 14, y: 47 },
+      };
+
+      function W() {
+        return window.innerWidth;
+      }
+      function H() {
+        return window.innerHeight;
+      }
+      function rand(a, b) {
+        return a + Math.random() * (b - a);
+      }
+
+      function randomDir() {
+        const a = Math.random() * Math.PI * 2;
+        return { vx: Math.cos(a) * SPEED, vy: Math.sin(a) * SPEED };
+      }
+      function normalize(vx, vy) {
+        const l = Math.sqrt(vx * vx + vy * vy) || 1;
+        return { vx: (vx / l) * SPEED, vy: (vy / l) * SPEED };
+      }
+
+      const items = {};
+      let dragTarget = null,
+        dragOffX = 0,
+        dragOffY = 0;
+      let lastDX = 0,
+        lastDY = 0,
+        prevDX = 0,
+        prevDY = 0;
+
+      function scheduleFade(id) {
+        const item = items[id];
+        if (!item || item.dragging) return;
+        const visible = item.el.style.opacity !== "0";
+        if (visible) {
+          item.fadeTimer = setTimeout(
+            () => {
+              item.el.style.transition = "opacity " + FADE_DUR + "ms ease";
+              item.el.style.opacity = "0";
+              item.fadeTimer = setTimeout(
+                () => scheduleFade(id),
+                FADE_DUR + rand(FADE_INV_MIN, FADE_INV_MAX),
+              );
+            },
+            rand(FADE_VIS_MIN, FADE_VIS_MAX),
+          );
+        } else {
+          item.fadeTimer = setTimeout(
+            () => {
+              item.el.style.transition = "opacity " + FADE_DUR + "ms ease";
+              item.el.style.opacity = "1";
+              item.fadeTimer = setTimeout(
+                () => scheduleFade(id),
+                FADE_DUR + rand(FADE_VIS_MIN, FADE_VIS_MAX),
+              );
+            },
+            rand(FADE_INV_MIN, FADE_INV_MAX),
+          );
+        }
+      }
+
+      window.addEventListener("load", () => {
+        Object.keys(initialPositions).forEach((id, i) => {
+          const el = document.getElementById(id);
+          if (!el) return;
+          const pos = initialPositions[id];
+          const { vx, vy } = randomDir();
+          el.style.opacity = "1";
+          items[id] = {
+            el,
+            x: (pos.x / 100) * W(),
+            y: (pos.y / 100) * H(),
+            vx,
+            vy,
+            w: el.offsetWidth,
+            h: el.offsetHeight,
+            dragging: false,
+            fadeTimer: null,
+          };
+          setTimeout(() => scheduleFade(id), rand(1000, 5000) * (i + 1));
+          el.addEventListener("mousedown", (e) =>
+            startDrag(e, id, e.clientX, e.clientY),
+          );
+          el.addEventListener(
+            "touchstart",
+            (e) => {
+              e.preventDefault();
+              startDrag(e, id, e.touches[0].clientX, e.touches[0].clientY);
+            },
+            { passive: false },
+          );
+        });
+        requestAnimationFrame(floatLoop);
+      });
+
+      function startDrag(e, id, cx, cy) {
+        dragTarget = id;
+        const item = items[id];
+        item.dragging = true;
+        item.el.classList.add("dragging");
+        clearTimeout(item.fadeTimer);
+        item.el.style.transition = "opacity 200ms ease";
+        item.el.style.opacity = "1";
+        dragOffX = cx - item.x;
+        dragOffY = cy - item.y;
+        item.vx = 0;
+        item.vy = 0;
+      }
+
+      window.addEventListener("mousemove", (e) =>
+        moveDrag(e.clientX, e.clientY),
+      );
+      window.addEventListener(
+        "touchmove",
+        (e) => {
+          if (dragTarget) {
+            e.preventDefault();
+            moveDrag(e.touches[0].clientX, e.touches[0].clientY);
+          }
+        },
+        { passive: false },
+      );
+
+      function moveDrag(cx, cy) {
+        if (!dragTarget) return;
+        const item = items[dragTarget];
+        prevDX = lastDX;
+        prevDY = lastDY;
+        lastDX = cx;
+        lastDY = cy;
+        item.x = cx - dragOffX;
+        item.y = cy - dragOffY;
+      }
+
+      function endDrag() {
+        if (!dragTarget) return;
+        const item = items[dragTarget];
+        item.dragging = false;
+        item.el.classList.remove("dragging");
+        const throwVx = lastDX - prevDX,
+          throwVy = lastDY - prevDY;
+        const len = Math.sqrt(throwVx * throwVx + throwVy * throwVy);
+        if (len > 0.1) {
+          const n = normalize(throwVx, throwVy);
+          item.vx = n.vx;
+          item.vy = n.vy;
+        } else {
+          const d = randomDir();
+          item.vx = d.vx;
+          item.vy = d.vy;
+        }
+        dragTarget = null;
+        setTimeout(
+          () => scheduleFade(item.el.id),
+          rand(FADE_VIS_MIN, FADE_VIS_MAX),
+        );
+      }
+      window.addEventListener("mouseup", endDrag);
+      window.addEventListener("touchend", endDrag);
+
+      function getTitleZone() {
+        const cx = W() / 2,
+          cy = H() / 2;
+        return {
+          x1: cx - W() * 0.24,
+          x2: cx + W() * 0.24,
+          y1: cy - H() * 0.14,
+          y2: cy + H() * 0.14,
+        };
+      }
+
+      function floatLoop() {
+        const ids = Object.keys(items);
+        ids.forEach((id) => {
+          const a = items[id];
+          if (a.dragging) return;
+          a.x += a.vx;
+          a.y += a.vy;
+          if (a.x <= 0) {
+            a.x = 0;
+            a.vx = Math.abs(a.vx);
+          }
+          if (a.x + a.w >= W()) {
+            a.x = W() - a.w;
+            a.vx = -Math.abs(a.vx);
+          }
+          if (a.y <= 0) {
+            a.y = 0;
+            a.vy = Math.abs(a.vy);
+          }
+          if (a.y + a.h >= H()) {
+            a.y = H() - a.h;
+            a.vy = -Math.abs(a.vy);
+          }
+          const z = getTitleZone();
+          const cx = a.x + a.w / 2,
+            cy = a.y + a.h / 2;
+          if (cx > z.x1 && cx < z.x2 && cy > z.y1 && cy < z.y2) {
+            const dx = cx - W() / 2,
+              dy = cy - H() / 2,
+              l = Math.sqrt(dx * dx + dy * dy) || 1;
+            a.vx = (dx / l) * SPEED;
+            a.vy = (dy / l) * SPEED;
+          }
+          const n = normalize(a.vx, a.vy);
+          a.vx = n.vx;
+          a.vy = n.vy;
+        });
+
+        for (let i = 0; i < ids.length; i++) {
+          for (let j = i + 1; j < ids.length; j++) {
+            const a = items[ids[i]],
+              b = items[ids[j]];
+            const ox1 = a.x + a.w - b.x,
+              ox2 = b.x + b.w - a.x;
+            const oy1 = a.y + a.h - b.y,
+              oy2 = b.y + b.h - a.y;
+            if (ox1 > 0 && ox2 > 0 && oy1 > 0 && oy2 > 0) {
+              if (Math.min(ox1, ox2) < Math.min(oy1, oy2)) {
+                if (!a.dragging && !b.dragging) {
+                  const t = a.vx;
+                  a.vx = b.vx;
+                  b.vx = t;
+                } else if (a.dragging) b.vx = -b.vx;
+                else a.vx = -a.vx;
+              } else {
+                if (!a.dragging && !b.dragging) {
+                  const t = a.vy;
+                  a.vy = b.vy;
+                  b.vy = t;
+                } else if (a.dragging) b.vy = -b.vy;
+                else a.vy = -a.vy;
+              }
+              if (!a.dragging) {
+                a.x += a.vx * 0.5;
+                a.y += a.vy * 0.5;
+                const n = normalize(a.vx, a.vy);
+                a.vx = n.vx;
+                a.vy = n.vy;
+              }
+              if (!b.dragging) {
+                b.x += b.vx * 0.5;
+                b.y += b.vy * 0.5;
+                const n = normalize(b.vx, b.vy);
+                b.vx = n.vx;
+                b.vy = n.vy;
+              }
+            }
+          }
+        }
+
+        ids.forEach((id) => {
+          const item = items[id];
+          item.el.style.transform =
+            "translate(" + item.x + "px, " + item.y + "px)";
+        });
+        requestAnimationFrame(floatLoop);
+      }
+
+      window.addEventListener("resize", () => {
+        Object.keys(items).forEach((id) => {
+          const item = items[id];
+          item.w = item.el.offsetWidth;
+          item.h = item.el.offsetHeight;
+          item.x = Math.min(item.x, W() - item.w);
+          item.y = Math.min(item.y, H() - item.h);
+        });
+      });
+    </script>
+  </body>
+</html>

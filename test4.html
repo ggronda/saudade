@@ -1,0 +1,388 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>Saudade — Corriente</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Cormorant+Garamond:ital,wght@1,300&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: #080806;
+        cursor: none;
+        font-family: "Share Tech Mono", monospace;
+      }
+
+      #cur {
+        position: fixed;
+        width: 2px;
+        height: 16px;
+        background: #c8a96e;
+        pointer-events: none;
+        z-index: 9999;
+        transform: translate(-1px, -8px);
+      }
+      #cur-h {
+        position: fixed;
+        width: 16px;
+        height: 2px;
+        background: #c8a96e;
+        pointer-events: none;
+        z-index: 9999;
+        transform: translate(-8px, -1px);
+      }
+
+      #cv {
+        position: fixed;
+        inset: 0;
+        z-index: 1;
+      }
+
+      /* ── Nav ── */
+      #nav {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        padding: 1.6rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        z-index: 50;
+        mix-blend-mode: screen;
+      }
+      .logo {
+        font-family: "Cormorant Garamond", serif;
+        font-size: 1.1rem;
+        font-style: italic;
+        color: #c8a96e;
+        font-weight: 300;
+        letter-spacing: 0.05em;
+      }
+      .links {
+        display: flex;
+        gap: 2rem;
+      }
+      .lk {
+        font-size: 10px;
+        letter-spacing: 0.3em;
+        text-transform: uppercase;
+        color: #4a4840;
+        text-decoration: none;
+        cursor: none;
+        transition: color 0.3s;
+      }
+      .lk:hover {
+        color: #c8a96e;
+      }
+
+      /* ── Status readout ── */
+      #status {
+        position: fixed;
+        bottom: 2rem;
+        left: 2rem;
+        z-index: 50;
+        color: #2a2820;
+        font-size: 10px;
+        letter-spacing: 0.2em;
+        line-height: 2;
+        pointer-events: none;
+        mix-blend-mode: screen;
+      }
+      #status span {
+        color: #c8a96e;
+      }
+
+      /* ── Click ripple ── */
+      .ripple {
+        position: fixed;
+        border: 1px solid rgba(200, 169, 110, 0.6);
+        border-radius: 50%;
+        pointer-events: none;
+        z-index: 30;
+        animation: rip 0.8s ease forwards;
+      }
+      @keyframes rip {
+        from {
+          width: 0;
+          height: 0;
+          opacity: 0.8;
+          transform: translate(-50%, -50%);
+        }
+        to {
+          width: 120px;
+          height: 120px;
+          opacity: 0;
+          transform: translate(-50%, -50%);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="cur"></div>
+    <div id="cur-h"></div>
+    <canvas id="cv"></canvas>
+
+    <nav id="nav">
+      <span class="logo">Saudade</span>
+      <div class="links">
+        <a class="lk" href="#">fragmentos</a>
+        <a class="lk" href="#">SD-07</a>
+      </div>
+    </nav>
+
+    <div id="status">
+      corriente activa<br />
+      fragmentos: <span id="st-count">—</span><br />
+      velocidad: <span id="st-vel">—</span>
+    </div>
+
+    <script>
+      const IMGS = [
+        "resources/fondos/inicio_01.jpg",
+        "resources/fondos/inicio_02.jpg",
+        "resources/fondos/inicio_03.jpg",
+        "resources/fondos/inicio_04.jpg",
+        "resources/fondos/inicio_05.jpg",
+      ];
+
+      const cur = document.getElementById("cur");
+      const curH = document.getElementById("cur-h");
+      let mx = 0,
+        my = 0;
+      document.addEventListener("mousemove", (e) => {
+        mx = e.clientX;
+        my = e.clientY;
+        cur.style.left = mx + "px";
+        cur.style.top = my + "px";
+        curH.style.left = mx + "px";
+        curH.style.top = my + "px";
+      });
+
+      const cv = document.getElementById("cv");
+      const ctx = cv.getContext("2d");
+      function resize() {
+        cv.width = window.innerWidth;
+        cv.height = window.innerHeight;
+      }
+      resize();
+      window.addEventListener("resize", resize);
+
+      const loaded = IMGS.map((src) => {
+        const i = new Image();
+        i.src = src;
+        return i;
+      });
+
+      // Three streams at different vertical bands and speeds
+      const STREAMS = [
+        {
+          vy: 0,
+          speed: 0.55,
+          yCenter: 0.22,
+          fragH: 180,
+          fragW: 142,
+          gap: 240,
+          alpha: 0.75,
+        },
+        {
+          vy: 0,
+          speed: 0.95,
+          yCenter: 0.52,
+          fragH: 220,
+          fragW: 174,
+          gap: 290,
+          alpha: 0.85,
+        },
+        {
+          vy: 0,
+          speed: 0.45,
+          yCenter: 0.8,
+          fragH: 150,
+          fragW: 118,
+          gap: 200,
+          alpha: 0.6,
+        },
+      ];
+
+      const CODES = [
+        "SD-01",
+        "SD-07",
+        "SD-13",
+        "SD-21",
+        "SD-34",
+        "SD-42",
+        "SD-55",
+        "SD-62",
+        "SD-71",
+      ];
+
+      // Generate fragments for each stream
+      const fragSets = STREAMS.map((s, si) => {
+        const count = Math.ceil(window.innerWidth / s.gap) + 3;
+        return Array.from({ length: count }, (_, i) => ({
+          x: i * s.gap - s.gap,
+          baseY: window.innerHeight * s.yCenter,
+          vy: 0,
+          img: loaded[(si * 2 + i) % loaded.length],
+          code: CODES[(si * 3 + i) % CODES.length],
+          stream: si,
+          wobble: Math.random() * Math.PI * 2,
+          wobbleSpeed: 0.004 + Math.random() * 0.003,
+          wobbleAmp: 8 + Math.random() * 14,
+        }));
+      });
+
+      // Turbulence field (simple grid)
+      const FIELD_RES = 40;
+      let turbField = [];
+      function initField() {
+        turbField = [];
+        const cols = Math.ceil(window.innerWidth / FIELD_RES) + 1;
+        const rows = Math.ceil(window.innerHeight / FIELD_RES) + 1;
+        for (let r = 0; r <= rows; r++) {
+          turbField[r] = [];
+          for (let c = 0; c <= cols; c++) turbField[r][c] = 0;
+        }
+      }
+      initField();
+
+      // Mouse affects turbulence
+      let prevMx = 0,
+        prevMy = 0;
+      document.addEventListener("mousemove", (e) => {
+        const col = Math.floor(e.clientX / FIELD_RES);
+        const row = Math.floor(e.clientY / FIELD_RES);
+        const cols = Math.ceil(window.innerWidth / FIELD_RES);
+        const rows = Math.ceil(window.innerHeight / FIELD_RES);
+        const vx = e.clientX - prevMx;
+        const RADIUS = 3;
+        for (
+          let r = Math.max(0, row - RADIUS);
+          r <= Math.min(rows, row + RADIUS);
+          r++
+        ) {
+          for (
+            let c = Math.max(0, col - RADIUS);
+            c <= Math.min(cols, col + RADIUS);
+            c++
+          ) {
+            const dist = Math.sqrt((r - row) ** 2 + (c - col) ** 2);
+            if (dist < RADIUS)
+              turbField[r] &&
+                (turbField[r][c] =
+                  (turbField[r][c] || 0) + vx * (1 - dist / RADIUS) * 0.8);
+          }
+        }
+        prevMx = e.clientX;
+        prevMy = e.clientY;
+      });
+
+      // Click ripple
+      document.addEventListener("click", (e) => {
+        const el = document.createElement("div");
+        el.className = "ripple";
+        el.style.left = e.clientX + "px";
+        el.style.top = e.clientY + "px";
+        document.body.appendChild(el);
+        setTimeout(() => el.remove(), 900);
+      });
+
+      let frame = 0;
+      function loop() {
+        frame++;
+        const W = window.innerWidth,
+          H = window.innerHeight;
+
+        // Dark phosphor decay
+        ctx.fillStyle = "rgba(8,8,6,0.13)";
+        ctx.fillRect(0, 0, W, H);
+
+        // Decay turbulence field
+        const cols = Math.ceil(W / FIELD_RES) + 1;
+        const rows = Math.ceil(H / FIELD_RES) + 1;
+        for (let r = 0; r <= rows; r++) {
+          if (!turbField[r]) continue;
+          for (let c = 0; c <= cols; c++) {
+            turbField[r][c] = (turbField[r][c] || 0) * 0.92;
+          }
+        }
+
+        STREAMS.forEach((s, si) => {
+          const frags = fragSets[si];
+          frags.forEach((f) => {
+            f.wobble += f.wobbleSpeed;
+            const wobbleY = Math.sin(f.wobble) * f.wobbleAmp;
+
+            // Get turbulence at fragment position
+            const col = Math.floor(f.x / FIELD_RES);
+            const row = Math.floor(f.baseY / FIELD_RES);
+            const turb = (turbField[row] && turbField[row][col]) || 0;
+
+            // Move fragment
+            f.x -= s.speed + Math.abs(turb) * 0.3;
+            const fy = f.baseY + wobbleY + turb * 2;
+
+            // Loop
+            const fw = s.fragW,
+              fh = s.fragH;
+            if (f.x + fw < -50) f.x = W + fw;
+
+            // Cursor proximity dimming (nearby cursor = fragment reveals sharper)
+            const dx = f.x + fw / 2 - mx,
+              dy = fy - my;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            const proximity = Math.max(0, 1 - dist / 300);
+
+            ctx.globalAlpha = s.alpha - proximity * 0.3;
+            ctx.globalCompositeOperation =
+              proximity > 0.3 ? "screen" : "multiply";
+
+            if (f.img.complete && f.img.naturalWidth) {
+              ctx.drawImage(f.img, f.x, fy - fh / 2, fw, fh);
+            } else {
+              ctx.fillStyle = `rgba(40,38,30,${s.alpha})`;
+              ctx.fillRect(f.x, fy - fh / 2, fw, fh);
+            }
+
+            // SD code label when close to cursor
+            if (proximity > 0.4) {
+              ctx.globalAlpha = (proximity - 0.4) * 1.5;
+              ctx.globalCompositeOperation = "screen";
+              ctx.fillStyle = "#c8a96e";
+              ctx.font = "9px Share Tech Mono";
+              ctx.letterSpacing = "0.2em";
+              ctx.fillText(f.code, f.x + 6, fy - fh / 2 + 16);
+            }
+
+            ctx.globalAlpha = 1;
+            ctx.globalCompositeOperation = "source-over";
+          });
+        });
+
+        // Status
+        const totalSpeed =
+          STREAMS.reduce((a, s) => a + s.speed, 0) / STREAMS.length;
+        document.getElementById("st-count").textContent =
+          fragSets.flat().length;
+        document.getElementById("st-vel").textContent =
+          totalSpeed.toFixed(2) + " px/f";
+
+        requestAnimationFrame(loop);
+      }
+
+      setTimeout(loop, 400);
+    </script>
+  </body>
+</html>

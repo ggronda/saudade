@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Saudade — SD-07</title>
+<link href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@300,400,500,700&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#080807;
+  --fg:#f0ede6;
+  --muted:#2e2d2b;
+  --mid:#6a6860;
+  --font:'Cabinet Grotesk','Helvetica Neue',sans-serif;
+}
+html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--fg);font-family:var(--font);-webkit-font-smoothing:antialiased;cursor:none}
+
+/* ── Cursor ── */
+#cur{position:fixed;width:10px;height:10px;border-radius:50%;background:var(--fg);pointer-events:none;z-index:9999;mix-blend-mode:difference;transition:width .35s cubic-bezier(.16,1,.3,1),height .35s cubic-bezier(.16,1,.3,1);transform:translate(-5px,-5px)}
+#cur.big{width:64px;height:64px;transform:translate(-32px,-32px)}
+
+/* ── Loader ── */
+#loader{position:fixed;inset:0;background:var(--bg);z-index:600;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:3rem;transition:opacity 1.2s ease}
+#ld-label{font-size:11px;font-weight:300;letter-spacing:.35em;color:var(--mid);text-transform:uppercase}
+#ld-count{font-size:36px;font-weight:500;letter-spacing:-.03em;color:var(--fg);font-variant-numeric:tabular-nums}
+#ld-bar{width:200px;height:1px;background:var(--muted);position:relative}
+#ld-fill{position:absolute;inset:0 100% 0 0;background:var(--mid);transition:right .1s linear}
+#ld-enter{font-size:11px;font-weight:400;letter-spacing:.3em;text-transform:uppercase;color:var(--fg);opacity:0;pointer-events:none;transition:opacity .8s ease;border-bottom:1px solid var(--fg);padding-bottom:2px;cursor:none}
+#ld-enter.on{opacity:1;pointer-events:all}
+
+/* ── Image flash ── */
+#img-flash{position:fixed;inset:0;background-size:cover;background-position:center;opacity:0;transition:opacity .5s ease;pointer-events:none;filter:brightness(.22) saturate(.4);z-index:1}
+
+/* ── Scene ── */
+#scene{position:fixed;inset:0;display:none;z-index:2}
+
+/* ── Nav ── */
+#nav{position:fixed;top:0;left:0;right:0;padding:2rem 2.5rem;display:flex;justify-content:space-between;align-items:flex-start;z-index:30;mix-blend-mode:difference}
+.nav-item{font-size:11px;font-weight:400;letter-spacing:.2em;text-transform:uppercase;color:var(--fg);text-decoration:none;cursor:none}
+
+/* ── Center title ── */
+#title{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;z-index:5;pointer-events:none;mix-blend-mode:difference}
+#title h1{font-size:clamp(3.5rem,8vw,9.5rem);font-weight:700;letter-spacing:-.04em;line-height:.9;color:var(--fg)}
+#title .code{font-size:11px;font-weight:300;letter-spacing:.4em;color:var(--mid);text-transform:uppercase;margin-top:1.4rem}
+
+/* ── Number grid ── */
+#grid{position:fixed;inset:0;z-index:10}
+.num{position:absolute;font-size:11px;font-weight:400;letter-spacing:.18em;color:var(--muted);cursor:none;transition:color .2s ease,transform .3s ease;user-select:none;mix-blend-mode:difference}
+.num:hover,.num.lit{color:var(--fg);transform:scale(1.08) translateZ(0)}
+
+/* ── Footer ── */
+#foot{position:fixed;bottom:0;left:0;right:0;padding:2rem 2.5rem;display:flex;justify-content:space-between;z-index:30;mix-blend-mode:difference;pointer-events:none}
+.foot-item{font-size:10px;font-weight:300;letter-spacing:.25em;color:var(--mid);text-transform:uppercase}
+
+/* ── Intro anim ── */
+#scene{opacity:0;transition:opacity 1s ease}
+#scene.show{opacity:1}
+</style>
+</head>
+<body>
+
+<div id="cur"></div>
+
+<!-- Loader -->
+<div id="loader">
+  <span id="ld-label">recuperando fragmentos</span>
+  <span id="ld-count">000</span>
+  <div id="ld-bar"><div id="ld-fill"></div></div>
+  <span id="ld-enter">entrar</span>
+</div>
+
+<!-- Scene -->
+<div id="scene">
+  <div id="img-flash"></div>
+  <nav id="nav">
+    <span class="nav-item">Saudade</span>
+    <span class="nav-item">archivo parcial</span>
+  </nav>
+  <div id="title">
+    <h1>Saudade</h1>
+    <p class="code">SD — 07</p>
+  </div>
+  <div id="grid"></div>
+  <footer id="foot">
+    <span class="foot-item">registros</span>
+    <span class="foot-item">fragmentos</span>
+    <span class="foot-item">presencias</span>
+    <span class="foot-item">sin fecha</span>
+  </footer>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+const cur = $('cur');
+const imgs = ['resources/fondos/inicio_01.jpg','resources/fondos/inicio_02.jpg','resources/fondos/inicio_03.jpg','resources/fondos/inicio_04.jpg','resources/fondos/inicio_05.jpg'];
+
+// Cursor
+let mx=0,my=0;
+document.addEventListener('mousemove',e=>{
+  mx=e.clientX; my=e.clientY;
+  cur.style.left=mx+'px';
+  cur.style.top=my+'px';
+});
+function bigCursor(){cur.classList.add('big')}
+function normalCursor(){cur.classList.remove('big')}
+
+// Loader
+const countEl=$('ld-count'), fillEl=$('ld-fill'), enterEl=$('ld-enter');
+let n=0,pct=0;
+const inc=setInterval(()=>{
+  n=Math.min(n+Math.floor(Math.random()*3)+1,24);
+  pct=Math.min(pct+Math.random()*5+1,100);
+  countEl.textContent=String(n).padStart(3,'0');
+  fillEl.style.right=(100-pct)+'%';
+  if(n>=24){clearInterval(inc);setTimeout(()=>{enterEl.classList.add('on');enterEl.addEventListener('mouseenter',bigCursor);enterEl.addEventListener('mouseleave',normalCursor)},400)}
+},130);
+
+enterEl.addEventListener('click',()=>{
+  $('loader').style.opacity='0';
+  setTimeout(()=>{
+    $('loader').style.display='none';
+    const s=$('scene');
+    s.style.display='block';
+    setTimeout(()=>s.classList.add('show'),20);
+    buildGrid();
+  },1200);
+});
+
+// Image flash
+const flash=$('img-flash');
+function showImg(i){flash.style.backgroundImage=`url("${imgs[i]}")`;flash.style.opacity='1'}
+function hideImg(){flash.style.opacity='0'}
+
+// Grid of 24 SD nodes
+function buildGrid(){
+  const grid=$('grid');
+  const W=window.innerWidth, H=window.innerHeight;
+  const cols=6,rows=4;
+  const padX=W*.12, padY=H*.16;
+  const cW=(W-padX*2)/cols, cH=(H-padY*2)/rows;
+
+  for(let i=1;i<=24;i++){
+    const el=document.createElement('span');
+    el.className='num';
+    const col=(i-1)%cols, row=Math.floor((i-1)/cols);
+    const jx=(Math.random()-.5)*cW*.35;
+    const jy=(Math.random()-.5)*cH*.4;
+    el.style.left=(padX+col*cW+cW*.5+jx)+'px';
+    el.style.top=(padY+row*cH+cH*.5+jy)+'px';
+    el.textContent='SD-'+String(i).padStart(2,'0');
+    const imgIdx=i%imgs.length;
+    el.addEventListener('mouseenter',()=>{el.classList.add('lit');showImg(imgIdx);bigCursor()});
+    el.addEventListener('mouseleave',()=>{el.classList.remove('lit');hideImg();normalCursor()});
+    el.addEventListener('click',()=>{
+      // Cycle to next image briefly
+      el.classList.add('lit');
+    });
+    grid.appendChild(el);
+  }
+
+  // Ambient: randomly light up nodes
+  setInterval(()=>{
+    const nums=document.querySelectorAll('.num:not(:hover)');
+    const el=nums[Math.floor(Math.random()*nums.length)];
+    if(!el)return;
+    el.classList.add('lit');
+    setTimeout(()=>el.classList.remove('lit'),600+Math.random()*900);
+  },1800);
+}
+
+// Nav/footer cursor
+document.querySelectorAll('.nav-item,.foot-item').forEach(el=>{
+  el.addEventListener('mouseenter',bigCursor);
+  el.addEventListener('mouseleave',normalCursor);
+});
+</script>
+</body>
+</html>
