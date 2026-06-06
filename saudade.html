@@ -30,7 +30,16 @@
       :root {
         --font: "Satoshi", "Helvetica Neue", sans-serif;
         --text: #1a1a18;
-        --muted: #4a4a47;
+        --muted: #b7b7b7;
+        --fixed-edge: 55px;
+        --fixed-y: 21px;
+        --footer-bottom: var(--fixed-y);
+        --upload-bottom: 11.5px;
+        --title-size: 80px;
+        --subtitle-size: 20px;
+        --fixed-text-size: 15px;
+        --upload-size: 34px;
+        --upload-icon-size: 10px;
       }
 
       html,
@@ -47,23 +56,21 @@
       /* ── Nav ── */
       #nav {
         position: fixed;
-        top: 0;
+        top: var(--fixed-y);
         left: 0;
         right: 0;
-        height: 44px;
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding: 0 clamp(1.2rem, 3vw, 2.5rem);
+        padding: 0 var(--fixed-edge);
         z-index: 50;
         pointer-events: none;
       }
       .nav-item {
-        font-size: 13px;
+        font-size: var(--fixed-text-size);
         font-weight: 500;
         color: #1a1a18;
-        letter-spacing: 0.06em;
-        text-transform: lowercase;
+        letter-spacing: 0;
         pointer-events: all;
         text-decoration: none;
         transition: color 0.25s ease;
@@ -79,23 +86,33 @@
       /* ── Footer ── */
       #foot {
         position: fixed;
-        bottom: 0;
         left: 0;
         right: 0;
-        height: 44px;
-        display: flex;
+        bottom: var(--footer-bottom);
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
         align-items: center;
-        justify-content: space-between;
-        padding: 0 clamp(1.2rem, 3vw, 2.5rem);
         z-index: 50;
         pointer-events: none;
       }
+      #foot .foot-item:nth-child(1) {
+        grid-column: 2;
+        justify-self: center;
+      }
+      #foot .foot-item:nth-child(2) {
+        grid-column: 3;
+        justify-self: center;
+      }
+      #foot .foot-item:nth-child(3) {
+        grid-column: 4;
+        justify-self: center;
+      }
       .foot-item {
-        font-size: 13px;
+        font-size: var(--fixed-text-size);
         font-weight: 500;
         color: #1a1a18;
-        letter-spacing: 0.06em;
-        text-transform: lowercase;
+        letter-spacing: 0;
+        line-height: 1;
         pointer-events: all;
         transition: color 0.25s ease;
         text-decoration: none;
@@ -127,7 +144,6 @@
         font-weight: 300;
         color: #7a7974;
         letter-spacing: 0.18em;
-        text-transform: lowercase;
       }
       #loader-dots {
         font-size: 13px;
@@ -143,7 +159,6 @@
         color: #1a1a18;
         letter-spacing: 0.14em;
         text-decoration: none;
-        text-transform: lowercase;
         opacity: 0;
         pointer-events: none;
         transition:
@@ -267,28 +282,28 @@
         pointer-events: none;
       }
       #title-fixed h1 {
-        font-size: clamp(3rem, 0.5rem + 7vw, 8rem);
+        font-size: var(--title-size);
         font-weight: 500;
-        letter-spacing: -0.02em;
-        line-height: 1;
+        letter-spacing: 0;
+        line-height: 0.95;
         color: var(--text);
       }
       #title-fixed .subtitle {
-        font-size: clamp(1rem, 1.8vw, 2rem);
+        font-size: var(--subtitle-size);
         font-weight: 500;
         color: var(--text);
-        letter-spacing: 0.06em;
-        margin-top: 0.7rem;
+        letter-spacing: 0;
+        margin-top: 0.32rem;
       }
 
       .sd-node {
         position: fixed;
         left: 0;
         top: 0;
-        font-size: 13px;
-        font-weight: 400;
+        font-size: var(--fixed-text-size);
+        font-weight: 500;
         color: var(--muted);
-        letter-spacing: 0.08em;
+        letter-spacing: -0.04em;
         z-index: 15;
         will-change: transform, opacity;
         transition:
@@ -347,10 +362,11 @@
       /* Botón flotante */
       .upload-btn {
         position: fixed;
-        bottom: 60px;
-        right: 2.5rem;
-        width: 44px;
-        height: 44px;
+        bottom: var(--upload-bottom);
+        left: 90%;
+        transform: translateX(-50%);
+        width: var(--upload-size);
+        height: var(--upload-size);
         border-radius: 50%;
         background: rgba(0, 0, 0, 0.1);
         color: #f5f4f2;
@@ -366,19 +382,20 @@
       }
 
       .upload-btn:hover {
-        transform: scale(1.08);
+        transform: translateX(-50%) scale(1.08);
         box-shadow: 0 4px 20px rgba(26, 26, 24, 0.25);
       }
 
       .upload-btn:active {
-        transform: scale(0.96);
+        transform: translateX(-50%) scale(0.96);
       }
 
       .upload-icon {
         position: relative;
-        width: 12px;
-        height: 12px;
+        width: var(--upload-icon-size);
+        height: var(--upload-icon-size);
         display: block;
+        transform: translateY(-0.5px);
       }
 
       .upload-icon::before,
@@ -387,7 +404,7 @@
         position: absolute;
         left: 50%;
         top: 50%;
-        width: 12px;
+        width: var(--upload-icon-size);
         height: 1.6px;
         background: currentColor;
         border-radius: 999px;
@@ -459,7 +476,6 @@
         color: var(--text);
         letter-spacing: 0.06em;
         margin: 0;
-        text-transform: lowercase;
       }
 
       .upload-close-btn {
@@ -597,7 +613,6 @@
         font-size: 13px;
         font-weight: 500;
         letter-spacing: 0.05em;
-        text-transform: lowercase;
         cursor: pointer;
         transition: all 0.25s ease;
       }
@@ -694,8 +709,8 @@
         }
 
         .upload-btn {
-          right: 1.5rem;
-          bottom: 48px;
+          bottom: var(--upload-bottom);
+          left: 82.5%;
         }
       }
     </style>
@@ -839,9 +854,9 @@
       </div>
     </div>
     <footer id="foot">
-      <a class="foot-item" href="libro.html">Publicación</a>
-      <a class="foot-item" href="fichas.html">Fichas</a>
-      <a class="foot-item" href="videos.html">Videos</a>
+      <a class="foot-item" href="libro.html">publicación</a>
+      <a class="foot-item" href="fichas.html">fichas de archivo</a>
+      <a class="foot-item" href="videos.html">vídeo</a>
     </footer>
 
     <script>
@@ -1049,11 +1064,14 @@
       }
       function randomNodePosition(item) {
         const marginX = Math.max(24, W() * 0.04);
-        const marginY = Math.max(24, (H() - NAV_H - FOOT_H) * 0.04);
+        const marginY = Math.max(24, (H() - navLimit() - footLimit()) * 0.04);
         const minX = marginX;
         const maxX = Math.max(minX, W() - marginX - (item?.w || 0));
-        const minY = NAV_H + marginY;
-        const maxY = Math.max(minY, H() - FOOT_H - marginY - (item?.h || 0));
+        const minY = navLimit() + marginY;
+        const maxY = Math.max(
+          minY,
+          H() - footLimit() - marginY - (item?.h || 0),
+        );
 
         return {
           x: rand(minX, maxX),
@@ -1065,9 +1083,12 @@
         return { vx: (vx / l) * SPEED, vy: (vy / l) * SPEED };
       }
 
-      // Margen superior/inferior para nav y footer
-      const NAV_H = 52;
-      const FOOT_H = 52;
+      function navLimit() {
+        return 52;
+      }
+      function footLimit() {
+        return 52;
+      }
 
       // Función: posición del preview que no se sale, ni choca con título ni con el nodo
       function getPreviewPosition(mouseX, mouseY, nodeX, nodeY, nodeW, nodeH) {
@@ -1107,7 +1128,7 @@
         if (collidesWithTitle) {
           // Poner encima del nodo
           y = nodeY - previewH - gap;
-          if (y < NAV_H) {
+          if (y < navLimit()) {
             // Si no cabe encima, poner debajo
             y = nodeY + nodeH + gap;
           }
@@ -1115,7 +1136,7 @@
 
         // Clamper dentro de la pantalla (respetando nav/footer)
         x = Math.max(0, Math.min(W() - previewW, x));
-        y = Math.max(NAV_H, Math.min(H() - FOOT_H - previewH, y));
+        y = Math.max(navLimit(), Math.min(H() - footLimit() - previewH, y));
 
         return { x, y };
       }
@@ -1158,25 +1179,28 @@
 
       function scheduleRespawn(id) {
         clearTimeout(respawnTimers[id]);
-        respawnTimers[id] = setTimeout(() => {
-          const item = items[id];
-          if (!item) return;
+        respawnTimers[id] = setTimeout(
+          () => {
+            const item = items[id];
+            if (!item) return;
 
-          const visible = parseFloat(item.el.style.opacity) > 0;
-          if (!item.dragging && !item.frozen && !visible) {
-            const pos = randomNodePosition(item);
-            item.x = pos.x;
-            item.y = pos.y;
-            const dir = randomDirWithVertical();
-            item.vx = dir.vx;
-            item.vy = dir.vy;
-            item.el.style.transform =
-              "translate(" + item.x + "px, " + item.y + "px)";
-            return;
-          }
+            const visible = parseFloat(item.el.style.opacity) > 0;
+            if (!item.dragging && !item.frozen && !visible) {
+              const pos = randomNodePosition(item);
+              item.x = pos.x;
+              item.y = pos.y;
+              const dir = randomDirWithVertical();
+              item.vx = dir.vx;
+              item.vy = dir.vy;
+              item.el.style.transform =
+                "translate(" + item.x + "px, " + item.y + "px)";
+              return;
+            }
 
-          scheduleRespawn(id);
-        }, rand(5000, 10000));
+            scheduleRespawn(id);
+          },
+          rand(5000, 10000),
+        );
       }
 
       function initSDNodes() {
@@ -1192,7 +1216,8 @@
 
           // Posición inicial distribuida por toda la pantalla
           const x = rand(0.03, 0.93) * W();
-          const y = NAV_H + rand(0.03, 0.93) * (H() - NAV_H - FOOT_H);
+          const y =
+            navLimit() + rand(0.03, 0.93) * (H() - navLimit() - footLimit());
 
           // Usar nueva función para asegurar movimiento vertical/diagonal
           const { vx, vy } = randomDirWithVertical();
@@ -1390,8 +1415,8 @@
           a.y += a.vy;
 
           // Rebotar en bordes (respetando nav/footer)
-          const minY = NAV_H;
-          const maxY = H() - FOOT_H - a.h;
+          const minY = navLimit();
+          const maxY = H() - footLimit() - a.h;
 
           if (a.x <= 0) {
             a.x = 0;
@@ -1527,7 +1552,7 @@
           item.w = item.el.offsetWidth;
           item.h = item.el.offsetHeight;
           item.x = Math.min(item.x, W() - item.w);
-          item.y = Math.min(item.y, H() - FOOT_H - item.h);
+          item.y = Math.min(item.y, H() - footLimit() - item.h);
         });
       });
       /* ── UPLOAD SYSTEM ── */

@@ -25,6 +25,8 @@
         --muted: #7a7870;
         --border: #dddbd6;
         --satoshi: "Satoshi", sans-serif;
+        --fixed-text-size: 15px;
+        --content-text-size: 20px;
       }
       html {
         scroll-behavior: smooth;
@@ -34,7 +36,8 @@
         color: var(--fg);
         font-family: var(--satoshi);
         -webkit-font-smoothing: antialiased;
-        font-size: 18px;
+        font-size: var(--content-text-size);
+        font-weight: 500;
         line-height: 1.6;
       }
 
@@ -55,9 +58,9 @@
       }
       .nav-logo {
         font-family: var(--satoshi);
-        font-size: 14px;
-        font-weight: 700;
-        letter-spacing: 0.04em;
+        font-size: var(--fixed-text-size);
+        font-weight: 500;
+        letter-spacing: 0;
         color: var(--fg);
       }
       .nav-links {
@@ -66,9 +69,9 @@
       }
       .nav-link {
         font-family: var(--satoshi);
-        font-size: 12px;
+        font-size: var(--fixed-text-size);
         font-weight: 500;
-        letter-spacing: 0.04em;
+        letter-spacing: 0;
         color: var(--muted);
         text-decoration: none;
         transition: color 0.2s;
@@ -111,15 +114,17 @@
       }
       .slide-id {
         font-family: var(--satoshi);
-        font-size: 11px;
-        letter-spacing: 0.25em;
-        color: rgba(255, 255, 255, 0.6);
+        font-size: var(--fixed-text-size);
+        font-weight: 500;
+        letter-spacing: -0.04em;
+        color: #b7b7b7;
       }
       .slide-num {
-        font-size: 11px;
-        letter-spacing: 0.2em;
+        font-size: var(--fixed-text-size);
+        font-weight: 500;
+        letter-spacing: -0.04em;
         font-family: var(--satoshi);
-        color: rgba(255, 255, 255, 0.5);
+        color: #b7b7b7;
       }
       .carousel-btn {
         position: absolute;
@@ -164,9 +169,10 @@
       }
       .section-id {
         font-family: var(--satoshi);
-        font-size: 11px;
-        letter-spacing: 0.25em;
-        color: var(--muted);
+        font-size: var(--fixed-text-size);
+        font-weight: 500;
+        letter-spacing: -0.04em;
+        color: #b7b7b7;
         margin-top: 0.4rem;
         width: 80px;
         flex-shrink: 0;
@@ -175,7 +181,7 @@
         font-size: clamp(1.8rem, 3vw, 2.8rem);
         font-weight: 500;
         line-height: 1.15;
-        letter-spacing: -0.02em;
+        letter-spacing: 0;
       }
 
       /* ── Two-col layout ── */
@@ -186,7 +192,8 @@
         align-items: start;
       }
       .prose p {
-        font-size: 17px;
+        font-size: var(--content-text-size);
+        font-weight: 500;
         line-height: 1.75;
         color: var(--fg);
         margin-bottom: 1.2rem;
@@ -231,19 +238,21 @@
       }
       .frag-code {
         font-family: var(--satoshi);
-        font-size: 10px;
-        letter-spacing: 0.25em;
-        color: var(--muted);
+        font-size: var(--fixed-text-size);
+        font-weight: 500;
+        letter-spacing: -0.04em;
+        color: #b7b7b7;
       }
       .frag-name {
-        font-size: 16px;
+        font-size: var(--content-text-size);
         font-weight: 500;
       }
       .frag-meta {
         font-family: var(--satoshi);
-        font-size: 10px;
-        color: var(--muted);
-        letter-spacing: 0.1em;
+        font-size: var(--fixed-text-size);
+        font-weight: 500;
+        color: #b7b7b7;
+        letter-spacing: -0.04em;
       }
 
       /* ── About ── */
@@ -256,9 +265,10 @@
       }
       .about-label {
         font-family: var(--satoshi);
-        font-size: 11px;
-        letter-spacing: 0.25em;
-        color: var(--muted);
+        font-size: var(--fixed-text-size);
+        font-weight: 500;
+        letter-spacing: -0.04em;
+        color: #b7b7b7;
         margin-top: 0.35rem;
       }
       .about-body h2 {
@@ -266,10 +276,11 @@
         font-weight: 500;
         line-height: 1.2;
         margin-bottom: 1.5rem;
-        letter-spacing: -0.02em;
+        letter-spacing: 0;
       }
       .about-body p {
-        font-size: 16px;
+        font-size: var(--content-text-size);
+        font-weight: 500;
         line-height: 1.8;
         color: var(--muted);
         margin-bottom: 1rem;
@@ -286,15 +297,17 @@
       }
       .foot-logo {
         font-family: var(--satoshi);
-        font-size: 12px;
-        font-weight: 700;
-        letter-spacing: 0.06em;
+        font-size: var(--fixed-text-size);
+        font-weight: 500;
+        letter-spacing: 0;
+        color: #939393;
       }
       .foot-right {
         font-family: var(--satoshi);
-        font-size: 10px;
-        letter-spacing: 0.2em;
-        color: var(--muted);
+        font-size: var(--fixed-text-size);
+        font-weight: 500;
+        letter-spacing: 0;
+        color: #939393;
       }
 
       /* ── Responsive ── */

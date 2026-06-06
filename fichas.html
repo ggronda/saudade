@@ -31,6 +31,10 @@
         --font: "Satoshi", "Helvetica Neue", sans-serif;
         --text: #1a1a18;
         --muted: #4a4a47;
+        --fixed-edge: 55px;
+        --fixed-y: 21px;
+        --fixed-band: 22px;
+        --fixed-text-size: 15px;
       }
 
       html,
@@ -127,20 +131,19 @@
         top: 0;
         left: 0;
         right: 0;
-        height: 44px;
+        height: var(--fixed-band);
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding: 0 clamp(1.2rem, 3vw, 2.5rem);
+        padding: 0 var(--fixed-edge);
         z-index: 50;
         pointer-events: none;
       }
       .nav-item {
-        font-size: 13px;
+        font-size: var(--fixed-text-size);
         font-weight: 500;
         color: #1a1a18;
-        letter-spacing: 0.06em;
-        text-transform: lowercase;
+        letter-spacing: 0;
         pointer-events: all;
         text-decoration: none;
         transition: opacity 0.25s ease;
@@ -155,23 +158,32 @@
       /* ── Footer ── */
       #foot {
         position: fixed;
-        bottom: 0;
         left: 0;
         right: 0;
-        height: 44px;
-        display: flex;
+        bottom: var(--fixed-y);
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
         align-items: center;
-        justify-content: space-between;
-        padding: 0 clamp(1.2rem, 3vw, 2.5rem);
         z-index: 50;
         pointer-events: none;
       }
+      #foot .foot-item:nth-child(1) {
+        grid-column: 2;
+        justify-self: center;
+      }
+      #foot .foot-item:nth-child(2) {
+        grid-column: 3;
+        justify-self: center;
+      }
+      #foot .foot-item:nth-child(3) {
+        grid-column: 4;
+        justify-self: center;
+      }
       .foot-item {
-        font-size: 13px;
+        font-size: var(--fixed-text-size);
         font-weight: 500;
-        color: #1a1a18;
-        letter-spacing: 0.06em;
-        text-transform: lowercase;
+        color: #939393;
+        letter-spacing: 0;
         pointer-events: all;
         text-decoration: none;
         transition: opacity 0.25s ease;

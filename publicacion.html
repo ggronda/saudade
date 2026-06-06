@@ -8,7 +8,7 @@
       href="https://api.fontshare.com/v2/css?f[]=satoshi@300,400,500,700,900&display=swap"
       rel="stylesheet"
     />
-        <link rel="icon" type="image/png" href="resources/ico/ico.png" />
+    <link rel="icon" type="image/png" href="resources/ico/ico.png" />
 
     <style>
       *,
@@ -25,6 +25,8 @@
         --muted: #7a7870;
         --border: #dddbd6;
         --satoshi: "Satoshi", sans-serif;
+        --fixed-text-size: 15px;
+        --content-text-size: 20px;
       }
       html {
         scroll-behavior: smooth;
@@ -34,7 +36,8 @@
         color: var(--fg);
         font-family: var(--satoshi);
         -webkit-font-smoothing: antialiased;
-        font-size: 16.5px;
+        font-size: var(--content-text-size);
+        font-weight: 500;
         line-height: 1.6;
       }
 
@@ -55,9 +58,9 @@
       }
       .nav-logo {
         font-family: var(--satoshi);
-        font-size: 13px;
-        font-weight: 700;
-        letter-spacing: 0.04em;
+        font-size: var(--fixed-text-size);
+        font-weight: 500;
+        letter-spacing: 0;
         color: var(--fg);
       }
       .nav-links {
@@ -66,9 +69,9 @@
       }
       .nav-link {
         font-family: var(--satoshi);
-        font-size: 11px;
-        font-weight: 400;
-        letter-spacing: 0.04em;
+        font-size: var(--fixed-text-size);
+        font-weight: 500;
+        letter-spacing: 0;
         color: var(--muted);
         text-decoration: none;
         transition: color 0.2s;
@@ -111,15 +114,17 @@
       }
       .slide-id {
         font-family: var(--satoshi);
-        font-size: 10px;
-        letter-spacing: 0.25em;
-        color: rgba(255, 255, 255, 0.6);
+        font-size: var(--fixed-text-size);
+        font-weight: 500;
+        letter-spacing: -0.04em;
+        color: #b7b7b7;
       }
       .slide-num {
-        font-size: 10px;
-        letter-spacing: 0.2em;
+        font-size: var(--fixed-text-size);
+        font-weight: 500;
+        letter-spacing: -0.04em;
         font-family: var(--satoshi);
-        color: rgba(255, 255, 255, 0.5);
+        color: #b7b7b7;
       }
       .carousel-btn {
         position: absolute;
@@ -164,9 +169,10 @@
       }
       .section-id {
         font-family: var(--satoshi);
-        font-size: 10px;
-        letter-spacing: 0.25em;
-        color: var(--muted);
+        font-size: var(--fixed-text-size);
+        font-weight: 500;
+        letter-spacing: -0.04em;
+        color: #b7b7b7;
         margin-top: 0.35rem;
         width: 70px;
         flex-shrink: 0;
@@ -175,7 +181,7 @@
         font-size: clamp(1.6rem, 2.7vw, 2.5rem);
         font-weight: 500;
         line-height: 1.18;
-        letter-spacing: -0.02em;
+        letter-spacing: 0;
       }
 
       /* ── Two-col ── */
@@ -186,7 +192,8 @@
         align-items: start;
       }
       .prose p {
-        font-size: 15.5px;
+        font-size: var(--content-text-size);
+        font-weight: 500;
         line-height: 1.72;
         color: var(--fg);
         margin-bottom: 1.1rem;
@@ -229,7 +236,7 @@
         font-size: clamp(1.6rem, 2.7vw, 2.2rem);
         font-weight: 500;
         line-height: 1.2;
-        letter-spacing: -0.02em;
+        letter-spacing: 0;
         margin: 0 auto;
         max-width: 70ch;
         text-align: center;
@@ -243,7 +250,8 @@
 
       #libro .prose p {
         color: var(--muted);
-        font-size: 15px;
+        font-size: var(--content-text-size);
+        font-weight: 500;
         line-height: 1.68;
         margin: 0 auto;
         text-align: center;
@@ -277,9 +285,10 @@
       .book-notice {
         margin-top: 1.1rem;
         font-family: var(--satoshi);
-        font-size: 10px;
-        letter-spacing: 0.12em;
-        color: var(--muted);
+        font-size: var(--fixed-text-size);
+        font-weight: 500;
+        letter-spacing: -0.04em;
+        color: #b7b7b7;
         text-align: center;
       }
 
@@ -293,9 +302,10 @@
       }
       .about-label {
         font-family: var(--satoshi);
-        font-size: 10px;
-        letter-spacing: 0.25em;
-        color: var(--muted);
+        font-size: var(--fixed-text-size);
+        font-weight: 500;
+        letter-spacing: -0.04em;
+        color: #b7b7b7;
         margin-top: 0.35rem;
       }
       .about-body h2 {
@@ -303,10 +313,11 @@
         font-weight: 500;
         line-height: 1.2;
         margin-bottom: 1.3rem;
-        letter-spacing: -0.02em;
+        letter-spacing: 0;
       }
       .about-body p {
-        font-size: 15px;
+        font-size: var(--content-text-size);
+        font-weight: 500;
         line-height: 1.76;
         color: var(--muted);
         margin-bottom: 0.9rem;
@@ -334,7 +345,7 @@
           height: 460px;
         }
         body {
-          font-size: 15px;
+          font-size: var(--content-text-size);
         }
       }
     </style>
