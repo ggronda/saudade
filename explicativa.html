@@ -3,9 +3,9 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-    <title>Saudade — Conciencia Archival</title>
+    <title>Saudade - Qué es Saudade</title>
     <link
-      href="https://api.fontshare.com/v2/css?f[]=satoshi@300,400,500,700,900&display=swap"
+      href="https://api.fontshare.com/v2/css?f[]=satoshi@300,400,500&display=swap"
       rel="stylesheet"
     />
     <link rel="icon" type="image/png" href="resources/ico/ico.png" />
@@ -18,611 +18,346 @@
         margin: 0;
         padding: 0;
       }
+
       :root {
-        --bg: #ffffff;
-        --bg2: #f5f3ef;
-        --fg: #111110;
-        --muted: #7a7870;
-        --border: #dddbd6;
-        --satoshi: "Satoshi", sans-serif;
+        --font: "Satoshi", sans-serif;
+        --text: #111110;
+        --fixed-edge: 55px;
+        --fixed-y: 21px;
         --fixed-text-size: 15px;
         --content-text-size: 20px;
+        --title-size: 38px;
+        --placeholder-a: #eeeeee;
+        --placeholder-b: #f8f8f8;
       }
+
       html {
         scroll-behavior: smooth;
       }
+
       body {
-        background: var(--bg);
-        color: var(--fg);
-        font-family: var(--satoshi);
-        -webkit-font-smoothing: antialiased;
+        min-height: 100vh;
+        background: #fff;
+        color: var(--text);
+        font-family: var(--font);
         font-size: var(--content-text-size);
         font-weight: 500;
-        line-height: 1.6;
+        line-height: 1.32;
+        -webkit-font-smoothing: antialiased;
       }
 
-      /* ── Nav ── */
       #nav {
-        position: sticky;
-        top: 0;
-        background: var(--bg);
-        border-bottom: 1px solid var(--border);
-        z-index: 100;
-        padding: 0 3rem;
-      }
-      .nav-inner {
+        position: fixed;
+        top: var(--fixed-y);
+        left: 0;
+        right: 0;
         display: flex;
         align-items: center;
-        justify-content: space-between;
-        height: 52px;
+        justify-content: flex-start;
+        padding: 0 var(--fixed-edge);
+        z-index: 50;
+        pointer-events: none;
       }
-      .nav-logo {
-        font-family: var(--satoshi);
+
+      .nav-item {
+        color: var(--text);
         font-size: var(--fixed-text-size);
         font-weight: 500;
+        line-height: 1;
         letter-spacing: 0;
-        color: var(--fg);
-      }
-      .nav-links {
-        display: flex;
-        gap: 2.5rem;
-      }
-      .nav-link {
-        font-family: var(--satoshi);
-        font-size: var(--fixed-text-size);
-        font-weight: 500;
-        letter-spacing: 0;
-        color: var(--muted);
         text-decoration: none;
-        transition: color 0.2s;
-      }
-      .nav-link:hover {
-        color: var(--fg);
+        pointer-events: all;
       }
 
-      /* ── Hero carousel (horizontal scroll) ── */
-      #carousel-wrap {
-        position: relative;
-        overflow: hidden;
-        background: var(--bg2);
-        border-bottom: 1px solid var(--border);
-      }
-      #carousel {
-        display: flex;
-        transition: transform 0.8s cubic-bezier(0.77, 0, 0.18, 1);
-        cursor: grab;
-      }
-      #carousel:active {
-        cursor: grabbing;
-      }
-      .slide {
-        flex-shrink: 0;
-        width: 100vw;
-        height: clamp(320px, 50vw, 580px);
-        background-size: cover;
-        background-position: center;
-        position: relative;
-      }
-      .slide-caption {
-        position: absolute;
-        bottom: 2rem;
-        left: 3rem;
-        right: 3rem;
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-end;
-      }
-      .slide-id {
-        font-family: var(--satoshi);
-        font-size: var(--fixed-text-size);
-        font-weight: 500;
-        letter-spacing: -0.04em;
-        color: #b7b7b7;
-      }
-      .slide-num {
-        font-size: var(--fixed-text-size);
-        font-weight: 500;
-        letter-spacing: -0.04em;
-        font-family: var(--satoshi);
-        color: #b7b7b7;
-      }
-      .carousel-btn {
-        position: absolute;
-        top: 50%;
-        transform: translateY(-50%);
-        background: transparent;
-        border: 1px solid rgba(255, 255, 255, 0.3);
-        color: #fff;
-        width: 40px;
-        height: 40px;
-        cursor: pointer;
-        font-size: 16px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition:
-          background 0.2s,
-          border-color 0.2s;
-        z-index: 5;
-      }
-      .carousel-btn:hover {
-        background: rgba(255, 255, 255, 0.15);
-        border-color: rgba(255, 255, 255, 0.6);
-      }
-      #btn-prev {
-        left: 2rem;
-      }
-      #btn-next {
-        right: 2rem;
+      .content {
+        width: calc(100vw - (var(--fixed-edge) * 2));
+        margin: 0 auto;
+        padding: 154px 0 155px;
       }
 
-      /* ── Section titles ── */
-      .section {
-        padding: 5rem 3rem;
-        border-bottom: 1px solid var(--border);
-      }
-      .section-head {
-        display: flex;
-        align-items: flex-start;
-        gap: 4rem;
-        margin-bottom: 3rem;
-      }
-      .section-id {
-        font-family: var(--satoshi);
-        font-size: var(--fixed-text-size);
-        font-weight: 500;
-        letter-spacing: -0.04em;
-        color: #b7b7b7;
-        margin-top: 0.4rem;
-        width: 80px;
-        flex-shrink: 0;
-      }
-      .section-title {
-        font-size: clamp(1.8rem, 3vw, 2.8rem);
-        font-weight: 500;
-        line-height: 1.15;
-        letter-spacing: 0;
-      }
-
-      /* ── Two-col layout ── */
-      .two-col {
+      .layout-row {
         display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 4rem;
+        grid-template-columns: 0.78fr 1.12fr;
+        gap: 78px;
         align-items: start;
       }
-      .prose p {
-        font-size: var(--content-text-size);
-        font-weight: 500;
-        line-height: 1.75;
-        color: var(--fg);
-        margin-bottom: 1.2rem;
-        max-width: 60ch;
+
+      .layout-row + .layout-row {
+        margin-top: 140px;
+        grid-template-columns: 1.12fr 0.78fr;
       }
-      .prose p:last-child {
+
+      .copy {
+        max-width: 520px;
+      }
+
+      .copy.bottom {
+        max-width: 530px;
+        justify-self: start;
+      }
+
+      .section {
+        margin-bottom: 62px;
+      }
+
+      .section:last-child {
         margin-bottom: 0;
       }
 
-      /* ── Image grid ── */
-      .img-grid {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 1rem;
-      }
-      .img-cell {
-        aspect-ratio: 4/3;
-        background-size: cover;
-        background-position: center;
-        background-color: var(--bg2);
-      }
-      .img-cell.tall {
-        grid-row: span 2;
-        aspect-ratio: auto;
-      }
-
-      /* ── Fragment list ── */
-      #fragments .frag-list {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-        gap: 0;
-      }
-      .frag-item {
-        padding: 1.8rem 0;
-        border-top: 1px solid var(--border);
-        display: flex;
-        flex-direction: column;
-        gap: 0.5rem;
-      }
-      .frag-item:last-child {
-        border-bottom: 1px solid var(--border);
-      }
-      .frag-code {
-        font-family: var(--satoshi);
-        font-size: var(--fixed-text-size);
+      h1,
+      h2 {
+        font-size: var(--title-size);
         font-weight: 500;
-        letter-spacing: -0.04em;
-        color: #b7b7b7;
-      }
-      .frag-name {
-        font-size: var(--content-text-size);
-        font-weight: 500;
-      }
-      .frag-meta {
-        font-family: var(--satoshi);
-        font-size: var(--fixed-text-size);
-        font-weight: 500;
-        color: #b7b7b7;
-        letter-spacing: -0.04em;
-      }
-
-      /* ── About ── */
-      #about {
-        padding: 5rem 3rem 6rem;
-        display: grid;
-        grid-template-columns: 280px 1fr;
-        gap: 5rem;
-        align-items: start;
-      }
-      .about-label {
-        font-family: var(--satoshi);
-        font-size: var(--fixed-text-size);
-        font-weight: 500;
-        letter-spacing: -0.04em;
-        color: #b7b7b7;
-        margin-top: 0.35rem;
-      }
-      .about-body h2 {
-        font-size: clamp(1.5rem, 2.5vw, 2.2rem);
-        font-weight: 500;
-        line-height: 1.2;
-        margin-bottom: 1.5rem;
+        line-height: 1.08;
         letter-spacing: 0;
-      }
-      .about-body p {
-        font-size: var(--content-text-size);
-        font-weight: 500;
-        line-height: 1.8;
-        color: var(--muted);
-        margin-bottom: 1rem;
-        max-width: 62ch;
+        margin-bottom: 16px;
       }
 
-      /* ── Footer ── */
+      p {
+        font-size: var(--content-text-size);
+        font-weight: 500;
+        line-height: 1.32;
+        letter-spacing: 0;
+        margin-bottom: 18px;
+      }
+
+      p:last-child {
+        margin-bottom: 0;
+      }
+
+      .placeholder-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+        padding-top: 16px;
+      }
+
+      .placeholder-stack {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+      }
+
+      .placeholder {
+        background-color: var(--placeholder-b);
+        background-image:
+          linear-gradient(45deg, var(--placeholder-a) 25%, transparent 25%),
+          linear-gradient(-45deg, var(--placeholder-a) 25%, transparent 25%),
+          linear-gradient(45deg, transparent 75%, var(--placeholder-a) 75%),
+          linear-gradient(-45deg, transparent 75%, var(--placeholder-a) 75%);
+        background-position:
+          0 0,
+          0 16px,
+          16px -16px,
+          -16px 0;
+        background-size: 32px 32px;
+      }
+
+      .placeholder.square {
+        aspect-ratio: 1.22 / 1;
+      }
+
+      .placeholder.wide {
+        grid-column: 1 / -1;
+        aspect-ratio: 2.7 / 1;
+      }
+
+      .placeholder.bottom-square {
+        aspect-ratio: 1.2 / 1;
+      }
+
+      .placeholder.bottom-wide {
+        grid-column: 1 / -1;
+        aspect-ratio: 2.75 / 1;
+      }
+
       #foot {
-        border-top: 1px solid var(--border);
-        padding: 2rem 3rem;
-        display: flex;
-        justify-content: space-between;
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: var(--fixed-y);
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
         align-items: center;
-      }
-      .foot-logo {
-        font-family: var(--satoshi);
-        font-size: var(--fixed-text-size);
-        font-weight: 500;
-        letter-spacing: 0;
-        color: #939393;
-      }
-      .foot-right {
-        font-family: var(--satoshi);
-        font-size: var(--fixed-text-size);
-        font-weight: 500;
-        letter-spacing: 0;
-        color: #939393;
+        z-index: 50;
+        pointer-events: none;
       }
 
-      /* ── Responsive ── */
-      @media (max-width: 768px) {
-        #nav,
-        .section,
-        #about {
-          padding-left: 1.5rem;
-          padding-right: 1.5rem;
+      #foot .foot-item:nth-child(1) {
+        grid-column: 2;
+        justify-self: center;
+      }
+
+      #foot .foot-item:nth-child(2) {
+        grid-column: 3;
+        justify-self: center;
+      }
+
+      #foot .foot-item:nth-child(3) {
+        grid-column: 4;
+        justify-self: center;
+      }
+
+      .foot-item {
+        color: #939393;
+        font-size: var(--fixed-text-size);
+        font-weight: 500;
+        line-height: 1;
+        letter-spacing: 0;
+        text-decoration: none;
+        pointer-events: all;
+        transition: color 0.25s ease;
+      }
+
+      .foot-item:hover {
+        color: #7f7f7f;
+      }
+
+      .upload-mini {
+        position: fixed;
+        right: calc(var(--fixed-edge) + 62px);
+        bottom: 11.5px;
+        width: 34px;
+        height: 34px;
+        border: 0;
+        border-radius: 50%;
+        background: rgba(0, 0, 0, 0.1);
+        cursor: pointer;
+        z-index: 51;
+      }
+
+      .upload-mini::before,
+      .upload-mini::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 10px;
+        height: 2px;
+        background: #fff;
+        transform: translate(-50%, -50%);
+      }
+
+      .upload-mini::after {
+        transform: translate(-50%, -50%) rotate(90deg);
+      }
+
+      @media (max-width: 900px) {
+        :root {
+          --fixed-edge: 22px;
+          --title-size: 32px;
         }
-        .two-col,
-        .section-head,
-        #about {
+
+        .content {
+          padding: 105px 0 130px;
+        }
+
+        .layout-row,
+        .layout-row + .layout-row {
           grid-template-columns: 1fr;
-          gap: 2rem;
+          gap: 46px;
+          margin-top: 78px;
         }
-        .section-id {
-          width: auto;
+
+        .copy,
+        .copy.bottom {
+          max-width: none;
+        }
+
+        .placeholder-grid,
+        .placeholder-stack {
+          gap: 18px;
+        }
+
+        .upload-mini {
+          right: 22px;
         }
       }
     </style>
   </head>
   <body>
-    <!-- Nav -->
     <nav id="nav">
-      <div class="nav-inner">
-        <span class="nav-logo" href="saudade.html">Saudade</span>
-        <div class="nav-links">
-          <a class="nav-link" href="publicacion.html">publicación</a>
-          <a class="nav-link" href="fichas.html">fichas</a>
-          <a class="nav-link" href="video.html">video</a>
-        </div>
-      </div>
+      <a class="nav-item" href="saudade.html">Saudade</a>
     </nav>
 
-    <!-- Carousel -->
-    <div id="carousel-wrap">
-      <div id="carousel">
-        <div
-          class="slide"
-          style="
-            background-image: url(&quot;resources/fondos/inicio_01.jpg&quot;);
-          "
-        >
-          <div class="slide-caption">
-            <span class="slide-id">SD-01</span
-            ><span class="slide-num">1 / 5</span>
-          </div>
-        </div>
-        <div
-          class="slide"
-          style="
-            background-image: url(&quot;resources/fondos/inicio_02.jpg&quot;);
-          "
-        >
-          <div class="slide-caption">
-            <span class="slide-id">SD-02</span
-            ><span class="slide-num">2 / 5</span>
-          </div>
-        </div>
-        <div
-          class="slide"
-          style="
-            background-image: url(&quot;resources/fondos/inicio_03.jpg&quot;);
-          "
-        >
-          <div class="slide-caption">
-            <span class="slide-id">SD-03</span
-            ><span class="slide-num">3 / 5</span>
-          </div>
-        </div>
-        <div
-          class="slide"
-          style="
-            background-image: url(&quot;resources/fondos/inicio_04.jpg&quot;);
-          "
-        >
-          <div class="slide-caption">
-            <span class="slide-id">SD-04</span
-            ><span class="slide-num">4 / 5</span>
-          </div>
-        </div>
-        <div
-          class="slide"
-          style="
-            background-image: url(&quot;resources/fondos/inicio_05.jpg&quot;);
-          "
-        >
-          <div class="slide-caption">
-            <span class="slide-id">SD-05</span
-            ><span class="slide-num">5 / 5</span>
-          </div>
-        </div>
-      </div>
-      <button class="carousel-btn" id="btn-prev">&#8592;</button>
-      <button class="carousel-btn" id="btn-next">&#8594;</button>
-    </div>
+    <main class="content">
+      <div class="layout-row">
+        <div class="copy">
+          <section class="section" aria-labelledby="que-es-saudade">
+            <h1 id="que-es-saudade">Qué es Saudade</h1>
+            <p>
+              Es un proyecto de diseño gráfico sobre esa sensación de
+              familiaridad que aparece cuando algo nos suena, pero no sabemos
+              exactamente de dónde viene.
+            </p>
+            <p>
+              Más que reconstruir un recuerdo, trabaja con su huella: con lo
+              que vuelve, cambia y permanece de forma imprecisa.
+            </p>
+          </section>
 
-    <!-- Registros -->
-    <section class="section" id="registros">
-      <div class="section-head">
-        <span class="section-id">SD — 07</span>
-        <h2 class="section-title">
-          Saudade es un archivo visual<br />sobre memoria, ausencia y
-          persistencia
-        </h2>
-      </div>
-      <div class="two-col">
-        <div class="prose">
-          <p>
-            Saudade toma su nombre de una palabra portuguesa asociada a la
-            ausencia, la añoranza y la permanencia de algo en la memoria. Más
-            que una nostalgia literal, propone una forma de mirar aquello que ya
-            no está del todo, pero sigue dejando huella.
-          </p>
-          <p>
-            El proyecto trabaja con imágenes fragmentarias, relaciones parciales
-            y repeticiones que nunca se presentan de la misma manera. Cada
-            aparición modifica a la anterior y desplaza su sentido, como ocurre
-            con los recuerdos cuando vuelven.
-          </p>
-          <p>
-            En lugar de ordenar el material desde una cronología fija, Saudade
-            construye un sistema abierto de asociaciones. La imagen funciona
-            aquí como registro, resto y eco: una presencia incompleta que
-            todavía insiste.
-          </p>
+          <section class="section" aria-labelledby="lo-que-activa">
+            <h2 id="lo-que-activa">Lo que activa</h2>
+            <p>
+              El proyecto parte de una experiencia compartida: reconocer algo
+              sin poder situarlo del todo. Esa sensación, cercana al déjà vu, no
+              aparece aquí como un recuerdo exacto, sino como una forma de
+              memoria difusa que se activa por asociación, repetición y eco.
+            </p>
+          </section>
         </div>
-        <div class="img-grid">
-          <div
-            class="img-cell"
-            style="
-              background-image: url(&quot;resources/fondos/inicio_03.jpg&quot;);
-            "
-          ></div>
-          <div
-            class="img-cell"
-            style="
-              background-image: url(&quot;resources/fondos/inicio_04.jpg&quot;);
-            "
-          ></div>
-          <div
-            class="img-cell"
-            style="
-              background-image: url(&quot;resources/fondos/inicio_05.jpg&quot;);
-              grid-column: span 2;
-            "
-          ></div>
-        </div>
-      </div>
-    </section>
 
-    <!-- Fragmentos -->
-    <section class="section" id="fragmentos">
-      <div class="section-head">
-        <span class="section-id">Índice</span>
-        <h2 class="section-title">Fragmentos del proyecto</h2>
-      </div>
-      <div id="fragments">
-        <div class="frag-list">
-          <div class="frag-item">
-            <span class="frag-code">SD-01</span
-            ><span class="frag-name">Activación</span
-            ><span class="frag-meta">primer vínculo entre texto e imagen</span>
-          </div>
-          <div class="frag-item">
-            <span class="frag-code">SD-02</span
-            ><span class="frag-name">Articulación</span
-            ><span class="frag-meta">la secuencia comienza a definirse</span>
-          </div>
-          <div class="frag-item">
-            <span class="frag-code">SD-03</span
-            ><span class="frag-name">Semejanza</span
-            ><span class="frag-meta">imagen similar, pero no igual</span>
-          </div>
-          <div class="frag-item">
-            <span class="frag-code">SD-12</span
-            ><span class="frag-name">Condensación</span
-            ><span class="frag-meta"
-              >las relaciones visuales se concentran</span
-            >
-          </div>
-          <div class="frag-item">
-            <span class="frag-code">SD-13</span
-            ><span class="frag-name">Interrupción</span
-            ><span class="frag-meta">aparición de un elemento extraño</span>
-          </div>
-          <div class="frag-item">
-            <span class="frag-code">SD-14</span
-            ><span class="frag-name">Semejanza desplazada</span
-            ><span class="frag-meta">la repetición altera la lectura</span>
-          </div>
+        <div class="placeholder-grid" aria-hidden="true">
+          <div class="placeholder square"></div>
+          <div class="placeholder square"></div>
+          <div class="placeholder wide"></div>
         </div>
       </div>
-    </section>
 
-    <!-- Presencias -->
-    <section class="section" id="presencias">
-      <div class="section-head">
-        <span class="section-id">Método</span>
-        <h2 class="section-title">
-          La lectura no avanza en línea recta,<br />se construye por ecos
-        </h2>
-      </div>
-      <div class="two-col">
-        <div class="img-grid">
-          <div
-            class="img-cell"
-            style="
-              background-image: url(&quot;resources/fondos/inicio_02.jpg&quot;);
-              grid-column: span 2;
-              aspect-ratio: 16/9;
-            "
-          ></div>
-          <div
-            class="img-cell"
-            style="
-              background-image: url(&quot;resources/fondos/inicio_01.jpg&quot;);
-            "
-          ></div>
-          <div
-            class="img-cell"
-            style="
-              background-image: url(&quot;resources/fondos/inicio_05.jpg&quot;);
-            "
-          ></div>
+      <div class="layout-row">
+        <div class="placeholder-stack" aria-hidden="true">
+          <div class="placeholder bottom-square"></div>
+          <div class="placeholder bottom-square"></div>
+          <div class="placeholder bottom-wide"></div>
         </div>
-        <div class="prose">
-          <p>
-            Saudade se organiza como una secuencia reversible en la que las
-            imágenes no dependen de un único comienzo ni de un único cierre. El
-            sentido aparece en la relación entre unas y otras, no en una
-            dirección fija de lectura.
-          </p>
-          <p>
-            Las repeticiones, las variaciones y las interrupciones forman un
-            sistema de correspondencias. Algunas imágenes se reconocen por
-            semejanza; otras alteran el ritmo y obligan a releer lo ya visto
-            desde otro lugar.
-          </p>
-          <p>
-            La pieza propone una experiencia de observación lenta: mirar cómo
-            una forma reaparece, se desplaza y cambia sin desaparecer por
-            completo. Lo importante no es llegar a un final, sino habitar ese
-            movimiento entre memoria y transformación.
-          </p>
+
+        <div class="copy bottom">
+          <section class="section" aria-labelledby="como-se-construye">
+            <h2 id="como-se-construye">Cómo se construye</h2>
+            <p>
+              Trabaja con imágenes de entornos cotidianos que resultan
+              familiares sin remitir a un recuerdo concreto. En muchas de ellas,
+              la presencia humana desaparece o queda solo como indicio, de
+              manera que la imagen se mueve entre lo reconocible y lo ausente.
+            </p>
+            <p>
+              A lo largo del proyecto, algunas fotografías reaparecen
+              transformadas en trazos, ecos o versiones desplazadas de sí
+              mismas. Esa repetición no busca insistir en lo mismo, sino
+              producir la sensación de que algo vuelve de otra manera, como
+              ocurre en la memoria.
+            </p>
+          </section>
+
+          <section class="section" aria-labelledby="web-como-archivo">
+            <h2 id="web-como-archivo">La web como archivo</h2>
+            <p>
+              Dentro del proyecto, la web funciona como un espacio de lectura y
+              recorrido. No ordena el material de forma cerrada, sino que
+              permite que las imágenes y fragmentos reaparezcan, se relacionen
+              y generen nuevas lecturas desde una memoria compartida.
+            </p>
+          </section>
         </div>
       </div>
-    </section>
+    </main>
 
-    <!-- About -->
-    <div id="about">
-      <span class="about-label">Acerca de Saudade</span>
-      <div class="about-body">
-        <h2>Un proyecto sobre lo que falta, reaparece y permanece.</h2>
-        <p>
-          Saudade parte de una idea vinculada a la ausencia y a la memoria:
-          aquello que ya no está de forma completa, pero continúa actuando a
-          través de sus restos, sus repeticiones y sus huellas.
-        </p>
-        <p>
-          A través de imágenes, texto y relaciones secuenciales, el proyecto
-          explora cómo una presencia puede persistir sin fijarse del todo. La
-          web funciona como espacio de lectura, archivo y recorrido para esas
-          apariciones parciales.
-        </p>
-      </div>
-    </div>
-
-    <!-- Footer -->
     <footer id="foot">
-      <span class="foot-logo">SAUDADE</span>
-      <span class="foot-right">SD-07 — Archivo visual parcial</span>
+      <a class="foot-item" href="publicacion.html">publicación</a>
+      <a class="foot-item" href="fichas.html">fichas de archivo</a>
+      <a class="foot-item" href="video.html">vídeo</a>
     </footer>
 
-    <script>
-      // Carousel
-      let cur = 0;
-      const slides = document.querySelectorAll(".slide");
-      const c = document.getElementById("carousel");
-      function go(n) {
-        cur = ((n % slides.length) + slides.length) % slides.length;
-        c.style.transform = `translateX(-${cur * 100}vw)`;
-        slides.forEach(
-          (s, i) =>
-            (s.querySelector(".slide-num").textContent =
-              `${i + 1} / ${slides.length}`),
-        );
-      }
-      document
-        .getElementById("btn-prev")
-        .addEventListener("click", () => go(cur - 1));
-      document
-        .getElementById("btn-next")
-        .addEventListener("click", () => go(cur + 1));
-
-      // Drag to swipe
-      let startX = 0,
-        dragging = false;
-      c.addEventListener("mousedown", (e) => {
-        startX = e.clientX;
-        dragging = true;
-      });
-      c.addEventListener("mousemove", (e) => {
-        if (!dragging) return;
-        if (Math.abs(e.clientX - startX) > 60) {
-          go(e.clientX < startX ? cur + 1 : cur - 1);
-          dragging = false;
-        }
-      });
-      c.addEventListener("mouseup", () => (dragging = false));
-      c.addEventListener("mouseleave", () => (dragging = false));
-
-      // Auto-advance
-      setInterval(() => go(cur + 1), 6000);
-    </script>
+    <button class="upload-mini" type="button" aria-label="Añadir"></button>
   </body>
 </html>

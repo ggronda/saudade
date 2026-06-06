@@ -18,437 +18,235 @@
         margin: 0;
         padding: 0;
       }
+
       :root {
         --bg: #ffffff;
-        --bg2: #f5f3ef;
         --fg: #111110;
-        --muted: #7a7870;
-        --border: #dddbd6;
+        --soft: #fafafa;
         --satoshi: "Satoshi", sans-serif;
+        --fixed-edge: 55px;
+        --fixed-y: 21px;
         --fixed-text-size: 15px;
         --content-text-size: 20px;
       }
+
       html {
         scroll-behavior: smooth;
       }
+
       body {
+        min-height: 100vh;
         background: var(--bg);
         color: var(--fg);
         font-family: var(--satoshi);
-        -webkit-font-smoothing: antialiased;
         font-size: var(--content-text-size);
         font-weight: 500;
-        line-height: 1.6;
+        line-height: 1.35;
+        -webkit-font-smoothing: antialiased;
       }
 
-      /* ── Nav ── */
       #nav {
-        position: sticky;
-        top: 0;
-        background: var(--bg);
-        border-bottom: 1px solid var(--border);
-        z-index: 100;
-        padding: 0 2.6rem;
-      }
-      .nav-inner {
+        position: fixed;
+        top: var(--fixed-y);
+        left: 0;
+        right: 0;
+        z-index: 20;
         display: flex;
         align-items: center;
         justify-content: space-between;
-        height: 44px;
+        padding: 0 var(--fixed-edge);
+        pointer-events: none;
       }
-      .nav-logo {
-        font-family: var(--satoshi);
-        font-size: var(--fixed-text-size);
-        font-weight: 500;
-        letter-spacing: 0;
-        color: var(--fg);
-      }
-      .nav-links {
-        display: flex;
-        gap: 2rem;
-      }
+
       .nav-link {
-        font-family: var(--satoshi);
-        font-size: var(--fixed-text-size);
-        font-weight: 500;
-        letter-spacing: 0;
-        color: var(--muted);
-        text-decoration: none;
-        transition: color 0.2s;
-      }
-      .nav-link:hover {
         color: var(--fg);
+        font-size: var(--fixed-text-size);
+        font-weight: 500;
+        line-height: 1;
+        letter-spacing: 0;
+        text-decoration: none;
+        pointer-events: all;
       }
 
-      /* ── Carousel ── */
-      #carousel-wrap {
-        position: relative;
-        overflow: hidden;
-        background: var(--bg2);
-        border-bottom: 1px solid var(--border);
-      }
-      #carousel {
-        display: flex;
-        transition: transform 0.8s cubic-bezier(0.77, 0, 0.18, 1);
-        cursor: grab;
-      }
-      #carousel:active {
-        cursor: grabbing;
-      }
-      .slide {
-        flex-shrink: 0;
-        width: 100vw;
-        height: clamp(290px, 48vw, 540px);
-        background-size: cover;
-        background-position: center;
-        position: relative;
-      }
-      .slide-caption {
-        position: absolute;
-        bottom: 1.6rem;
-        left: 2.6rem;
-        right: 2.6rem;
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-end;
-      }
-      .slide-id {
-        font-family: var(--satoshi);
-        font-size: var(--fixed-text-size);
-        font-weight: 500;
-        letter-spacing: -0.04em;
-        color: #b7b7b7;
-      }
-      .slide-num {
-        font-size: var(--fixed-text-size);
-        font-weight: 500;
-        letter-spacing: -0.04em;
-        font-family: var(--satoshi);
-        color: #b7b7b7;
-      }
-      .carousel-btn {
-        position: absolute;
-        top: 50%;
-        transform: translateY(-50%);
-        background: transparent;
-        border: 1px solid rgba(255, 255, 255, 0.3);
-        color: #fff;
-        width: 36px;
-        height: 36px;
-        cursor: pointer;
-        font-size: 14px;
-        display: flex;
+      #foot {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: var(--fixed-y);
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
         align-items: center;
-        justify-content: center;
-        transition:
-          background 0.2s,
-          border-color 0.2s;
-        z-index: 5;
-      }
-      .carousel-btn:hover {
-        background: rgba(255, 255, 255, 0.15);
-        border-color: rgba(255, 255, 255, 0.6);
-      }
-      #btn-prev {
-        left: 1.6rem;
-      }
-      #btn-next {
-        right: 1.6rem;
+        z-index: 20;
+        pointer-events: none;
       }
 
-      /* ── Sections ── */
-      .section {
-        padding: 4.2rem 2.6rem;
-        border-bottom: 1px solid var(--border);
+      #foot .foot-item:nth-child(1) {
+        grid-column: 2;
+        justify-self: center;
       }
-      .section-head {
-        display: flex;
-        align-items: flex-start;
-        gap: 3.4rem;
-        margin-bottom: 2.6rem;
+
+      #foot .foot-item:nth-child(2) {
+        grid-column: 3;
+        justify-self: center;
       }
-      .section-id {
-        font-family: var(--satoshi);
+
+      #foot .foot-item:nth-child(3) {
+        grid-column: 4;
+        justify-self: center;
+      }
+
+      .foot-item {
+        color: #939393;
         font-size: var(--fixed-text-size);
         font-weight: 500;
-        letter-spacing: -0.04em;
-        color: #b7b7b7;
-        margin-top: 0.35rem;
-        width: 70px;
-        flex-shrink: 0;
+        line-height: 1;
+        letter-spacing: 0;
+        text-decoration: none;
+        pointer-events: all;
+        transition: color 0.25s ease;
       }
-      .section-title {
-        font-size: clamp(1.6rem, 2.7vw, 2.5rem);
+
+      .foot-item:hover {
+        color: #7f7f7f;
+      }
+
+      .publication {
+        width: min(1096px, calc(100vw - 110px));
+        margin: 0 auto;
+        padding: 155px 0 220px;
+      }
+
+      .intro {
+        width: min(620px, 100%);
+        margin: 0 auto 105px;
+        text-align: center;
+      }
+
+      .intro h1 {
+        font-size: 38px;
+        font-weight: 500;
+        line-height: 1.08;
+        letter-spacing: 0;
+        margin-bottom: 18px;
+      }
+
+      .intro p {
+        font-size: 15px;
         font-weight: 500;
         line-height: 1.18;
         letter-spacing: 0;
       }
 
-      /* ── Two-col ── */
-      .two-col {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 3.4rem;
-        align-items: start;
-      }
-      .prose p {
-        font-size: var(--content-text-size);
-        font-weight: 500;
-        line-height: 1.72;
-        color: var(--fg);
-        margin-bottom: 1.1rem;
-        max-width: 58ch;
-      }
-      .prose p:last-child {
-        margin-bottom: 0;
+      .book-panel,
+      .image-panel {
+        width: 100%;
+        border-radius: 10px;
+        background: var(--soft);
       }
 
-      /* ── Image grid ── */
-      .img-grid {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 0.9rem;
-      }
-      .img-cell {
-        aspect-ratio: 4/3;
-        background-size: cover;
-        background-position: center;
-        background-color: var(--bg2);
-      }
-      .img-cell.tall {
-        grid-row: span 2;
-        aspect-ratio: auto;
-      }
-
-      /* ── Libro (iframe) ── */
-      #libro {
-        background: var(--bg);
-        text-align: center;
-      }
-
-      #libro .section-head {
-        justify-content: center;
-        text-align: center;
-        margin-bottom: 1.8rem;
-      }
-
-      #libro .section-title {
-        font-size: clamp(1.6rem, 2.7vw, 2.2rem);
-        font-weight: 500;
-        line-height: 1.2;
-        letter-spacing: 0;
-        margin: 0 auto;
-        max-width: 70ch;
-        text-align: center;
-      }
-
-      #libro .prose {
-        max-width: 66ch;
-        margin: 0 auto 2.2rem;
-        text-align: center;
-      }
-
-      #libro .prose p {
-        color: var(--muted);
-        font-size: var(--content-text-size);
-        font-weight: 500;
-        line-height: 1.68;
-        margin: 0 auto;
-        text-align: center;
-      }
-
-      .book-wrapper {
-        max-width: 1100px;
-        margin: 0 auto;
-        position: relative;
+      .book-panel {
+        padding: 32px 46px;
+        margin-bottom: 165px;
       }
 
       .book-frame {
-        width: 100%;
-        border-radius: 10px;
-        overflow: hidden;
-        background: #fff;
-        border: 1px solid var(--border);
-        box-shadow:
-          0 1px 2px rgba(0, 0, 0, 0.03),
-          0 10px 30px rgba(0, 0, 0, 0.06);
         position: relative;
+        width: 100%;
+        height: 576px;
+        overflow: hidden;
+        background:
+          url("resources/libro/fallback_frame.png") center / contain no-repeat,
+          #fff;
       }
 
       .book-frame iframe {
         width: 100%;
-        height: 660px;
-        border: none;
+        height: 100%;
+        border: 0;
         display: block;
+        opacity: 0;
+        transition: opacity 0.45s ease;
       }
 
-      .book-notice {
-        margin-top: 1.1rem;
-        font-family: var(--satoshi);
-        font-size: var(--fixed-text-size);
-        font-weight: 500;
-        letter-spacing: -0.04em;
-        color: #b7b7b7;
-        text-align: center;
+      .book-frame iframe.is-loaded {
+        opacity: 1;
       }
 
-      /* ── About ── */
-      #about {
-        padding: 4.2rem 2.6rem 5.4rem;
-        display: grid;
-        grid-template-columns: 260px 1fr;
-        gap: 4.4rem;
-        align-items: start;
-      }
-      .about-label {
-        font-family: var(--satoshi);
-        font-size: var(--fixed-text-size);
-        font-weight: 500;
-        letter-spacing: -0.04em;
-        color: #b7b7b7;
-        margin-top: 0.35rem;
-      }
-      .about-body h2 {
-        font-size: clamp(1.4rem, 2.3vw, 2rem);
-        font-weight: 500;
-        line-height: 1.2;
-        margin-bottom: 1.3rem;
-        letter-spacing: 0;
-      }
-      .about-body p {
-        font-size: var(--content-text-size);
-        font-weight: 500;
-        line-height: 1.76;
-        color: var(--muted);
-        margin-bottom: 0.9rem;
-        max-width: 60ch;
+      .image-panel {
+        min-height: 530px;
+        margin-bottom: 120px;
       }
 
-      /* ── Responsive ── */
+      .image-panel.cover {
+        min-height: 535px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .cover-thumb {
+        width: 154px;
+        height: 212px;
+        background:
+          linear-gradient(rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0.2)),
+          url("resources/fondos/inicio_01.jpg") center / cover;
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+      }
+
       @media (max-width: 768px) {
-        #nav,
-        .section,
-        #about {
-          padding-left: 1.3rem;
-          padding-right: 1.3rem;
+        :root {
+          --fixed-edge: 22px;
         }
-        .two-col,
-        .section-head,
-        #about {
-          grid-template-columns: 1fr;
-          gap: 1.8rem;
+
+        .publication {
+          width: calc(100vw - 44px);
+          padding: 110px 0 120px;
         }
-        .section-id {
-          width: auto;
+
+        .intro {
+          margin-bottom: 70px;
         }
-        .book-frame iframe {
-          height: 460px;
+
+        .intro h1 {
+          font-size: 30px;
         }
-        body {
-          font-size: var(--content-text-size);
+
+        .book-panel {
+          padding: 18px;
+          margin-bottom: 90px;
+        }
+
+        .book-frame {
+          height: 430px;
+        }
+
+        .image-panel,
+        .image-panel.cover {
+          min-height: 360px;
+          margin-bottom: 80px;
         }
       }
     </style>
   </head>
   <body>
-    <!-- Nav -->
     <nav id="nav">
-      <div class="nav-inner">
-        <a class="nav-logo" href="saudade.html">Saudade</a>
-        <div class="nav-links">
-          <a class="nav-link" href="explicativa.html">¿Qué es Saudade?</a>
-          <a class="nav-link" href="libro.html">Libro</a>
-          <a class="nav-link" href="fichas.html">Fichas</a>
-          <a class="nav-link" href="carteles.html">Carteles</a>
-          <a class="nav-link" href="videos.html">Videos</a>
-        </div>
-      </div>
+      <a class="nav-link" href="saudade.html">Saudade</a>
+      <a class="nav-link" href="explicativa.html">¿Qué es Saudade?</a>
     </nav>
 
-    <!-- Carousel -->
-    <div id="carousel-wrap">
-      <div id="carousel">
-        <div
-          class="slide"
-          style="
-            background-image: url(&quot;resources/fondos/inicio_01.jpg&quot;);
-          "
-        >
-          <div class="slide-caption">
-            <span class="slide-id">SD-01</span
-            ><span class="slide-num">1 / 5</span>
-          </div>
-        </div>
-        <div
-          class="slide"
-          style="
-            background-image: url(&quot;resources/fondos/inicio_02.jpg&quot;);
-          "
-        >
-          <div class="slide-caption">
-            <span class="slide-id">SD-02</span
-            ><span class="slide-num">2 / 5</span>
-          </div>
-        </div>
-        <div
-          class="slide"
-          style="
-            background-image: url(&quot;resources/fondos/inicio_03.jpg&quot;);
-          "
-        >
-          <div class="slide-caption">
-            <span class="slide-id">SD-03</span
-            ><span class="slide-num">3 / 5</span>
-          </div>
-        </div>
-        <div
-          class="slide"
-          style="
-            background-image: url(&quot;resources/fondos/inicio_04.jpg&quot;);
-          "
-        >
-          <div class="slide-caption">
-            <span class="slide-id">SD-04</span
-            ><span class="slide-num">4 / 5</span>
-          </div>
-        </div>
-        <div
-          class="slide"
-          style="
-            background-image: url(&quot;resources/fondos/inicio_05.jpg&quot;);
-          "
-        >
-          <div class="slide-caption">
-            <span class="slide-id">SD-05</span
-            ><span class="slide-num">5 / 5</span>
-          </div>
-        </div>
-      </div>
-      <button class="carousel-btn" id="btn-prev">&#8592;</button>
-      <button class="carousel-btn" id="btn-next">&#8594;</button>
-    </div>
-
-    <!-- El libro (iframe) -->
-    <section class="section" id="libro">
-      <div class="section-head">
-        <h2 class="section-title">
-          El libro como archivo tangible<br />
-          de memoria y ausencia
-        </h2>
-      </div>
-
-      <div class="prose">
+    <main class="publication">
+      <section class="intro" aria-labelledby="publication-title">
+        <h1 id="publication-title">El libro como atlas de memoria</h1>
         <p>
-          La edición impresa de Saudade recopila la secuencia visual completa
-          del proyecto. Cada página funciona como un registro que conserva la
-          huella de lo que ya no está, pero sigue actuando a través de su
-          presencia parcial. Puedes recorrer el libro directamente aquí, página
-          a página, dejando que las imágenes se sucedan en su ritmo propio:
-          repetición, variación y desplazamiento.
+          La edición impresa de Saudade reúne una secuencia de imágenes que
+          vuelven, cambian y reaparecen. Entre pliegos, transparencias y vacíos,
+          cada página deja ver una huella, un eco o una presencia parcial de
+          algo que no termina de fijarse. La publicación permite un recorrido
+          abierto, sin imponer un único inicio.
         </p>
-      </div>
+      </section>
 
-      <div class="book-wrapper">
+      <section class="book-panel" aria-label="Libro digital Saudade">
         <div class="book-frame">
           <iframe
             allowfullscreen
@@ -456,180 +254,22 @@
             scrolling="no"
             class="fp-iframe"
             src="https://heyzine.com/flip-book/04ab20c2a0.html"
+            onload="this.classList.add('is-loaded')"
           ></iframe>
         </div>
-        <div class="book-notice">
-          Saudade — edición impresa · recorrido en línea
-        </div>
-      </div>
-    </section>
+      </section>
 
-    <!-- Registros -->
-    <section class="section" id="registros">
-      <div class="section-head">
-        <h2 class="section-title">
-          Saudade es un archivo visual<br />
-          sobre memoria, ausencia y persistencia
-        </h2>
-      </div>
-      <div class="two-col">
-        <div class="prose">
-          <p>
-            Saudade toma su nombre de una palabra portuguesa asociada a la
-            ausencia, la añoranza y la permanencia de algo en la memoria. Más
-            que una nostalgia literal, propone una forma de mirar aquello que ya
-            no está del todo, pero sigue dejando huella.
-          </p>
-          <p>
-            El proyecto trabaja con imágenes fragmentarias, relaciones parciales
-            y repeticiones que nunca se presentan de la misma manera. Cada
-            aparición modifica a la anterior y desplaza su sentido, como ocurre
-            con los recuerdos cuando vuelven.
-          </p>
-          <p>
-            En lugar de ordenar el material desde una cronología fija, Saudade
-            construye un sistema abierto de asociaciones. La imagen funciona
-            aquí como registro, resto y eco: una presencia incompleta que
-            todavía insiste.
-          </p>
-        </div>
-        <div class="img-grid">
-          <div
-            class="img-cell"
-            style="
-              background-image: url(&quot;resources/fondos/inicio_03.jpg&quot;);
-            "
-          ></div>
-          <div
-            class="img-cell"
-            style="
-              background-image: url(&quot;resources/fondos/inicio_04.jpg&quot;);
-            "
-          ></div>
-          <div
-            class="img-cell tall"
-            style="
-              background-image: url(&quot;resources/fondos/inicio_05.jpg&quot;);
-            "
-          ></div>
-        </div>
-      </div>
-    </section>
+      <section class="image-panel" aria-hidden="true"></section>
 
-    <!-- Fragmentos -->
+      <section class="image-panel cover" aria-label="Cubierta impresa Saudade">
+        <div class="cover-thumb"></div>
+      </section>
+    </main>
 
-    <!-- Presencias -->
-    <section class="section" id="presencias">
-      <div class="two-col">
-        <div class="img-grid">
-          <div
-            class="img-cell"
-            style="
-              background-image: url(&quot;resources/fondos/inicio_02.jpg&quot;);
-              grid-column: span 2;
-              aspect-ratio: 16/9;
-            "
-          ></div>
-          <div
-            class="img-cell"
-            style="
-              background-image: url(&quot;resources/fondos/inicio_01.jpg&quot;);
-            "
-          ></div>
-          <div
-            class="img-cell"
-            style="
-              background-image: url(&quot;resources/fondos/inicio_05.jpg&quot;);
-            "
-          ></div>
-        </div>
-        <div class="prose">
-          <div class="section-head">
-            <h2 class="section-title">
-              La lectura no avanza en línea recta,<br />
-              se construye por ecos
-            </h2>
-          </div>
-          <p>
-            Saudade se organiza como una secuencia reversible en la que las
-            imágenes no dependen de un único comienzo ni de un único cierre. El
-            sentido aparece en la relación entre unas y otras, no en una
-            dirección fija de lectura.
-          </p>
-          <p>
-            Las repeticiones, las variaciones y las interrupciones forman un
-            sistema de correspondencias. Algunas imágenes se reconocen por
-            semejanza; otras alteran el ritmo y obligan a releer lo ya visto
-            desde otro lugar.
-          </p>
-          <p>
-            La pieza propone una experiencia de observación lenta: mirar cómo
-            una forma reaparece, se desplaza y cambia sin desaparecer por
-            completo. Lo importante no es llegar a un final, sino habitar ese
-            movimiento entre memoria y transformación.
-          </p>
-        </div>
-      </div>
-    </section>
-
-    <!-- About -->
-    <div id="about">
-      <span class="about-label">Acerca de Saudade</span>
-      <div class="about-body">
-        <h2>Un proyecto sobre lo que falta, reaparece y permanece.</h2>
-        <p>
-          Saudade parte de una idea vinculada a la ausencia y a la memoria:
-          aquello que ya no está de forma completa, pero continúa actuando a
-          través de sus restos, sus repeticiones y sus huellas.
-        </p>
-        <p>
-          A través de imágenes, texto y relaciones secuenciales, el proyecto
-          explora cómo una presencia puede persistir sin fijarse del todo. La
-          web funciona como espacio de lectura, archivo y recorrido para esas
-          apariciones parciales.
-        </p>
-      </div>
-    </div>
-
-    <script>
-      // Carousel
-      let cur = 0;
-      const slides = document.querySelectorAll(".slide");
-      const c = document.getElementById("carousel");
-      function go(n) {
-        cur = ((n % slides.length) + slides.length) % slides.length;
-        c.style.transform = `translateX(-${cur * 100}vw)`;
-        slides.forEach((s, i) => {
-          s.querySelector(".slide-num").textContent =
-            `${i + 1} / ${slides.length}`;
-        });
-      }
-      document
-        .getElementById("btn-prev")
-        .addEventListener("click", () => go(cur - 1));
-      document
-        .getElementById("btn-next")
-        .addEventListener("click", () => go(cur + 1));
-
-      // Drag to swipe
-      let startX = 0,
-        dragging = false;
-      c.addEventListener("mousedown", (e) => {
-        startX = e.clientX;
-        dragging = true;
-      });
-      c.addEventListener("mousemove", (e) => {
-        if (!dragging) return;
-        if (Math.abs(e.clientX - startX) > 60) {
-          go(e.clientX < startX ? cur + 1 : cur - 1);
-          dragging = false;
-        }
-      });
-      c.addEventListener("mouseup", () => (dragging = false));
-      c.addEventListener("mouseleave", () => (dragging = false));
-
-      // Auto-advance
-      setInterval(() => go(cur + 1), 6000);
-    </script>
+    <footer id="foot">
+      <a class="foot-item" href="publicacion.html">publicación</a>
+      <a class="foot-item" href="fichas.html">fichas de archivo</a>
+      <a class="foot-item" href="video.html">vídeo</a>
+    </footer>
   </body>
 </html>

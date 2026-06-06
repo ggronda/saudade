@@ -1,0 +1,328 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Saudade - Video</title>
+    <link
+      href="https://api.fontshare.com/v2/css?f[]=satoshi@300,400,500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="icon" type="image/png" href="resources/ico/ico.png" />
+
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      * {
+        -webkit-user-select: none;
+        user-select: none;
+      }
+
+      ::selection,
+      ::-moz-selection {
+        background: transparent;
+      }
+
+      :root {
+        --font: "Satoshi", "Helvetica Neue", sans-serif;
+        --text: #1a1a18;
+        --fixed-edge: 55px;
+        --fixed-y: 21px;
+        --fixed-text-size: 15px;
+      }
+
+      html,
+      body {
+        width: 100%;
+        min-height: 100%;
+        overflow: hidden;
+        font-family: var(--font);
+        -webkit-font-smoothing: antialiased;
+        background: #f5f4f2;
+        color: var(--text);
+      }
+
+      .bg-layer {
+        position: fixed;
+        inset: 0;
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        opacity: 0;
+        transition: opacity 2.8s ease;
+        pointer-events: none;
+        z-index: 0;
+        filter: saturate(0.55) contrast(0.92);
+      }
+
+      #bg-a {
+        opacity: 1;
+      }
+
+      main,
+      #nav,
+      #foot {
+        position: relative;
+        z-index: 2;
+      }
+
+      #nav {
+        position: fixed;
+        top: var(--fixed-y);
+        left: 0;
+        right: 0;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 var(--fixed-edge);
+        z-index: 50;
+        pointer-events: none;
+      }
+
+      .nav-item {
+        font-size: var(--fixed-text-size);
+        font-weight: 500;
+        color: var(--text);
+        letter-spacing: 0;
+        pointer-events: all;
+        text-decoration: none;
+        transition: color 0.25s ease;
+      }
+
+      #foot {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: var(--fixed-y);
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        align-items: center;
+        z-index: 50;
+        pointer-events: none;
+      }
+
+      #foot .foot-item:nth-child(1) {
+        grid-column: 2;
+        justify-self: center;
+      }
+
+      #foot .foot-item:nth-child(2) {
+        grid-column: 3;
+        justify-self: center;
+      }
+
+      #foot .foot-item:nth-child(3) {
+        grid-column: 4;
+        justify-self: center;
+      }
+
+      .foot-item {
+        font-size: var(--fixed-text-size);
+        font-weight: 500;
+        color: #939393;
+        letter-spacing: 0;
+        line-height: 1;
+        pointer-events: all;
+        text-decoration: none;
+        transition: color 0.25s ease;
+      }
+
+      .foot-item:hover {
+        color: #7f7f7f;
+      }
+
+      main {
+        width: 100vw;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 104px var(--fixed-edge) 92px;
+        transform: translateY(-42px);
+      }
+
+      .video-frame {
+        position: relative;
+        width: min(calc(100vw - (var(--fixed-edge) * 2)), calc((100vh - 220px) * 3.5417));
+        aspect-ratio: 680 / 192;
+      }
+
+      .video-frame video {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        background: transparent;
+      }
+
+      .video-play {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: none;
+        background: rgba(0, 0, 0, 0.18);
+        color: #fff;
+        cursor: pointer;
+        opacity: 1;
+        transition:
+          opacity 0.35s ease,
+          background 0.35s ease;
+      }
+
+      .video-play:hover {
+        background: rgba(0, 0, 0, 0.26);
+      }
+
+      .video-play.hidden {
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .video-play-icon {
+        width: 74px;
+        height: 74px;
+        border-radius: 50%;
+        border: 1px solid rgba(255, 255, 255, 0.7);
+        display: grid;
+        place-items: center;
+        backdrop-filter: blur(4px);
+      }
+
+      .video-play-icon::before {
+        content: "";
+        display: block;
+        width: 0;
+        height: 0;
+        border-top: 11px solid transparent;
+        border-bottom: 11px solid transparent;
+        border-left: 16px solid #fff;
+      }
+
+      @media (max-width: 768px) {
+        :root {
+          --fixed-edge: 22px;
+        }
+
+        .video-frame {
+          width: calc(100vw - 44px);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="bg-layer" id="bg-a"></div>
+    <div class="bg-layer" id="bg-b"></div>
+
+    <nav id="nav">
+      <a class="nav-item" href="saudade.html">Saudade</a>
+      <a class="nav-item" href="explicativa.html">¿Qué es Saudade?</a>
+    </nav>
+
+    <main>
+      <div class="video-frame">
+        <video
+          id="saudade-video"
+          src="resources/video/saudade_video.mp4"
+          playsinline
+          loop
+          preload="auto"
+          poster="resources/video/play-video.png"
+        ></video>
+        <button class="video-play" id="video-play" aria-label="Reproducir video">
+          <span class="video-play-icon" aria-hidden="true"></span>
+        </button>
+      </div>
+    </main>
+
+    <footer id="foot">
+      <a class="foot-item" href="publicacion.html">publicación</a>
+      <a class="foot-item" href="fichas.html">fichas de archivo</a>
+      <a class="foot-item" href="video.html">vídeo</a>
+    </footer>
+
+    <script>
+      const bgImages = [
+        "resources/fondos/inicio_01.jpg",
+        "resources/fondos/inicio_02.jpg",
+        "resources/fondos/inicio_03.jpg",
+        "resources/fondos/inicio_04.jpg",
+        "resources/fondos/inicio_05.jpg",
+        "resources/fondos/inicio_06.jpg",
+        "resources/fondos/inicio_07.jpg",
+      ];
+
+      function shuffleNext(current) {
+        if (bgImages.length <= 1) return current;
+        let next = current;
+        while (next === current) {
+          next = Math.floor(Math.random() * bgImages.length);
+        }
+        return next;
+      }
+
+      const bgA = document.getElementById("bg-a");
+      const bgB = document.getElementById("bg-b");
+      let bgIndex = 0;
+      let bgActive = "a";
+
+      function startBackgrounds() {
+        bgA.style.backgroundImage = 'url("' + bgImages[0] + '")';
+        bgA.style.opacity = "1";
+        if (bgImages.length > 1) {
+          bgB.style.backgroundImage =
+            'url("' + bgImages[shuffleNext(0)] + '")';
+        }
+        setInterval(crossfadeBackground, 6000);
+      }
+
+      function crossfadeBackground() {
+        if (bgImages.length <= 1) return;
+        const nextIdx = shuffleNext(bgIndex);
+        if (bgActive === "a") {
+          bgB.style.backgroundImage = 'url("' + bgImages[nextIdx] + '")';
+          bgB.style.opacity = "1";
+          bgA.style.opacity = "0";
+          bgActive = "b";
+        } else {
+          bgA.style.backgroundImage = 'url("' + bgImages[nextIdx] + '")';
+          bgA.style.opacity = "1";
+          bgB.style.opacity = "0";
+          bgActive = "a";
+        }
+        bgIndex = nextIdx;
+      }
+
+      const video = document.getElementById("saudade-video");
+      const playButton = document.getElementById("video-play");
+
+      startBackgrounds();
+
+      playButton.addEventListener("click", async () => {
+        try {
+          await video.play();
+          playButton.classList.add("hidden");
+        } catch (error) {
+          console.error(error);
+        }
+      });
+
+      video.addEventListener("playing", () => {
+        playButton.classList.add("hidden");
+      });
+
+      video.addEventListener("pause", () => {
+        if (!video.ended) {
+          playButton.classList.remove("hidden");
+        }
+      });
+    </script>
+  </body>
+</html>
