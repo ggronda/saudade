@@ -352,15 +352,13 @@
         width: 44px;
         height: 44px;
         border-radius: 50%;
-        background: var(--text);
+        background: rgba(0, 0, 0, 0.1);
         color: #f5f4f2;
         border: none;
         cursor: pointer;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 24px;
-        font-weight: 300;
         z-index: 40;
         transition: all 0.3s ease;
         box-shadow: 0 2px 12px rgba(26, 26, 24, 0.15);
@@ -377,8 +375,31 @@
       }
 
       .upload-icon {
+        position: relative;
+        width: 12px;
+        height: 12px;
         display: block;
-        line-height: 1;
+      }
+
+      .upload-icon::before,
+      .upload-icon::after {
+        content: "";
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: 12px;
+        height: 1.6px;
+        background: currentColor;
+        border-radius: 999px;
+        transform-origin: center;
+      }
+
+      .upload-icon::before {
+        transform: translate(-50%, -50%);
+      }
+
+      .upload-icon::after {
+        transform: translate(-50%, -50%) rotate(90deg);
       }
 
       /* Modal Backdrop */
@@ -738,7 +759,7 @@
 
     <!-- Upload Button (Floating) -->
     <button id="upload-toggle" class="upload-btn" aria-label="Añadir memoria">
-      <span class="upload-icon">+</span>
+      <span class="upload-icon" aria-hidden="true"></span>
     </button>
 
     <!-- Upload Modal -->
@@ -990,6 +1011,7 @@
         lastDY = 0,
         prevDX = 0,
         prevDY = 0;
+      const respawnTimers = {};
 
       function W() {
         return window.innerWidth;
@@ -1023,6 +1045,19 @@
         return {
           vx: (vx / len) * SPEED,
           vy: (vy / len) * SPEED,
+        };
+      }
+      function randomNodePosition(item) {
+        const marginX = Math.max(24, W() * 0.04);
+        const marginY = Math.max(24, (H() - NAV_H - FOOT_H) * 0.04);
+        const minX = marginX;
+        const maxX = Math.max(minX, W() - marginX - (item?.w || 0));
+        const minY = NAV_H + marginY;
+        const maxY = Math.max(minY, H() - FOOT_H - marginY - (item?.h || 0));
+
+        return {
+          x: rand(minX, maxX),
+          y: rand(minY, maxY),
         };
       }
       function normalize(vx, vy) {
@@ -1096,6 +1131,7 @@
               item.el.style.transition = `opacity ${FADE_DUR}ms ease, color 0.25s ease`;
               item.el.style.opacity = "0";
               item.el.classList.remove("visible");
+              scheduleRespawn(id);
               item.fadeTimer = setTimeout(
                 () => scheduleFade(id),
                 FADE_DUR + rand(FADE_INV_MIN, FADE_INV_MAX),
@@ -1118,6 +1154,29 @@
             rand(FADE_INV_MIN, FADE_INV_MAX),
           );
         }
+      }
+
+      function scheduleRespawn(id) {
+        clearTimeout(respawnTimers[id]);
+        respawnTimers[id] = setTimeout(() => {
+          const item = items[id];
+          if (!item) return;
+
+          const visible = parseFloat(item.el.style.opacity) > 0;
+          if (!item.dragging && !item.frozen && !visible) {
+            const pos = randomNodePosition(item);
+            item.x = pos.x;
+            item.y = pos.y;
+            const dir = randomDirWithVertical();
+            item.vx = dir.vx;
+            item.vy = dir.vy;
+            item.el.style.transform =
+              "translate(" + item.x + "px, " + item.y + "px)";
+            return;
+          }
+
+          scheduleRespawn(id);
+        }, rand(5000, 10000));
       }
 
       function initSDNodes() {
@@ -1348,11 +1407,11 @@
           }
           if (a.y + a.h >= maxY) {
             a.y = maxY;
-
-            a.vy = -rand(0.35, 0.8);
+            a.vy = -rand(0.7, 1.25);
+            a.vx += rand(-0.12, 0.12);
 
             if (Math.abs(a.vx) > 0.5) {
-              a.vx *= rand(0.7, 0.9);
+              a.vx *= rand(0.85, 0.98);
             }
           }
 
@@ -1377,7 +1436,7 @@
           // Suavizar velocidad y evitar que se detengan
           // Pequeñas variaciones continuas para evitar trayectorias planas
           a.vx += rand(-0.003, 0.003);
-          a.vy += rand(-0.008, 0.008);
+          a.vy += rand(-0.01, 0.01);
 
           if (Math.random() < 0.0015) {
             a.vy += rand(-0.25, 0.25);
@@ -1386,6 +1445,10 @@
           // Suavizar velocidad y evitar que se detengan
           a.vx *= 0.995;
           a.vy *= 0.995;
+
+          if (a.y + a.h >= maxY - 1 && a.vy > -0.25) {
+            a.vy = -rand(0.55, 1);
+          }
 
           // Velocidad mínima para que sigan moviéndose
           const minSpeed = 0.18;
