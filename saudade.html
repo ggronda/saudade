@@ -944,7 +944,7 @@
     <footer id="foot">
       <a class="foot-item" href="libro.html">publicación</a>
       <a class="foot-item" href="fichas.html">fichas de archivo</a>
-      <a class="foot-item" href="videos.html">vídeo</a>
+      <a class="foot-item" href="video.html">vídeo</a>
     </footer>
 
     <script>
@@ -952,8 +952,11 @@
       // Invisibles la mayor parte del tiempo
       const FADE_VIS_MIN = 800,
         FADE_VIS_MAX = 2500; // visible solo 0.8–2.5 s
-      const FADE_INV_MIN = 7000,
-        FADE_INV_MAX = 20000; // invisible 7–20 s
+      const FADE_INV_MIN = 2500,
+        FADE_INV_MAX = 9000; // invisible 2.5–9 s con variación
+      const FIRST_FADE_INV_MIN = 350,
+        FIRST_FADE_INV_MAX = 2600; // primera aparición mucho antes
+      const LOADER_BG_OPACITY = 1;
       const FADE_DUR = 1200;
       // 33 nodos pares: SD-02, SD-04 ... SD-66
       const SD_NUMBERS = Array.from({ length: 33 }, (_, i) => (i + 1) * 2);
@@ -1012,6 +1015,7 @@
 
       function startLoaderBackgrounds() {
         loaderBgA.style.backgroundImage = 'url("' + bgImages[0] + '")';
+        loaderBgA.style.opacity = String(LOADER_BG_OPACITY);
         if (bgImages.length > 1) {
           loaderBgB.style.backgroundImage =
             'url("' + bgImages[shuffleNext(0)] + '")';
@@ -1024,12 +1028,12 @@
         const nextIdx = shuffleNext(loaderBgIndex);
         if (loaderBgActive === "a") {
           loaderBgB.style.backgroundImage = 'url("' + bgImages[nextIdx] + '")';
-          loaderBgB.style.opacity = "0.12";
+          loaderBgB.style.opacity = String(LOADER_BG_OPACITY);
           loaderBgA.style.opacity = "0";
           loaderBgActive = "b";
         } else {
           loaderBgA.style.backgroundImage = 'url("' + bgImages[nextIdx] + '")';
-          loaderBgA.style.opacity = "0.12";
+          loaderBgA.style.opacity = String(LOADER_BG_OPACITY);
           loaderBgB.style.opacity = "0";
           loaderBgActive = "a";
         }
@@ -1039,6 +1043,7 @@
       startLoaderBackgrounds();
 
       function enterSite() {
+        syncMainBackgroundsWithLoader();
         loader.style.opacity = "0";
         clearInterval(loaderBgInterval);
         setTimeout(() => {
@@ -1104,27 +1109,61 @@
       }
 
       function startBackgrounds() {
-        bgA.style.backgroundImage = 'url("' + bgImages[0] + '")';
-        if (bgImages.length > 1)
+        if (!bgA.style.backgroundImage && !bgBLayer.style.backgroundImage) {
+          bgA.style.backgroundImage = 'url("' + bgImages[0] + '")';
           bgBLayer.style.backgroundImage =
             'url("' + bgImages[shuffleNext(0)] + '")';
+          syncEffectBackgrounds(bgA.style.backgroundImage);
+        }
         setInterval(crossfadeBg, 5000);
+      }
+
+      function syncEffectBackgrounds(backgroundImage) {
+        bgR.style.backgroundImage = backgroundImage;
+        bgG.style.backgroundImage = backgroundImage;
+        bgB.style.backgroundImage = backgroundImage;
+        document.getElementById("persistence-layer").style.backgroundImage =
+          backgroundImage;
+      }
+
+      function syncMainBackgroundsWithLoader() {
+        bgIndex = loaderBgIndex;
+        bgActive = loaderBgActive;
+        const activeBackground =
+          loaderBgActive === "a"
+            ? loaderBgA.style.backgroundImage
+            : loaderBgB.style.backgroundImage;
+
+        if (loaderBgActive === "a") {
+          bgA.style.backgroundImage = loaderBgA.style.backgroundImage;
+          bgA.style.opacity = "1";
+          bgBLayer.style.backgroundImage = loaderBgB.style.backgroundImage;
+          bgBLayer.style.opacity = "0";
+        } else {
+          bgBLayer.style.backgroundImage = loaderBgB.style.backgroundImage;
+          bgBLayer.style.opacity = "1";
+          bgA.style.backgroundImage = loaderBgA.style.backgroundImage;
+          bgA.style.opacity = "0";
+        }
+        syncEffectBackgrounds(activeBackground);
       }
 
       function crossfadeBg() {
         if (bgImages.length <= 1) return;
         const nextIdx = shuffleNext(bgIndex);
+        const nextBackground = 'url("' + bgImages[nextIdx] + '")';
         if (bgActive === "a") {
-          bgBLayer.style.backgroundImage = 'url("' + bgImages[nextIdx] + '")';
+          bgBLayer.style.backgroundImage = nextBackground;
           bgBLayer.style.opacity = "1";
           bgA.style.opacity = "0";
           bgActive = "b";
         } else {
-          bgA.style.backgroundImage = 'url("' + bgImages[nextIdx] + '")';
+          bgA.style.backgroundImage = nextBackground;
           bgA.style.opacity = "1";
           bgBLayer.style.opacity = "0";
           bgActive = "a";
         }
+        syncEffectBackgrounds(nextBackground);
         bgIndex = nextIdx;
       }
 
@@ -1253,7 +1292,7 @@
         return { x, y };
       }
 
-      function scheduleFade(id) {
+      function scheduleFade(id, isFirstAppearance = false) {
         const item = items[id];
         if (!item || item.dragging || item.frozen) return;
         const visible = parseFloat(item.el.style.opacity) > 0;
@@ -1274,6 +1313,8 @@
           );
         } else {
           // Invisible → espera bastante y aparece
+          const waitMin = isFirstAppearance ? FIRST_FADE_INV_MIN : FADE_INV_MIN;
+          const waitMax = isFirstAppearance ? FIRST_FADE_INV_MAX : FADE_INV_MAX;
           item.fadeTimer = setTimeout(
             () => {
               item.el.style.transition = `opacity ${FADE_DUR}ms ease, color 0.25s ease`;
@@ -1284,7 +1325,7 @@
                 FADE_DUR + rand(FADE_VIS_MIN, FADE_VIS_MAX),
               );
             },
-            rand(FADE_INV_MIN, FADE_INV_MAX),
+            rand(waitMin, waitMax),
           );
         }
       }
@@ -1413,12 +1454,12 @@
 
           // Escalonar la medición de dimensiones y arrancar ciclo de fade
           // muy escalonado para que no aparezcan todos a la vez
-          const delay = rand(300, 1200) + i * rand(80, 220);
+          const delay = rand(80, 380) + i * rand(18, 58);
           setTimeout(() => {
             items[id].w = el.offsetWidth;
             items[id].h = el.offsetHeight;
             // La mayoría arranca invisible; solo unos pocos aparecen al inicio
-            if (Math.random() < 0.2) {
+            if (Math.random() < 0.32) {
               el.style.opacity = "1";
               el.classList.add("visible");
               items[id].fadeTimer = setTimeout(
@@ -1426,7 +1467,7 @@
                 rand(FADE_VIS_MIN, FADE_VIS_MAX),
               );
             } else {
-              scheduleFade(id); // arranca desde invisible con delay largo
+              scheduleFade(id, true); // primera aparición rápida
             }
           }, delay);
         });

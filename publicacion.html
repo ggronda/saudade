@@ -175,22 +175,20 @@
       .image-panel {
         min-height: 530px;
         margin-bottom: 120px;
-      }
-
-      .image-panel.cover {
-        min-height: 535px;
         display: flex;
         align-items: center;
         justify-content: center;
       }
 
-      .cover-thumb {
-        width: 154px;
-        height: 212px;
-        background:
-          linear-gradient(rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0.2)),
-          url("resources/fondos/inicio_01.jpg") center / cover;
-        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+      .image-panel img {
+        display: block;
+        max-width: min(78%, 760px);
+        max-height: 78%;
+        object-fit: contain;
+      }
+
+      .image-panel.second {
+        min-height: 535px;
       }
 
       @media (max-width: 768px) {
@@ -221,9 +219,14 @@
         }
 
         .image-panel,
-        .image-panel.cover {
+        .image-panel.second {
           min-height: 360px;
           margin-bottom: 80px;
+        }
+
+        .image-panel img {
+          max-width: 86%;
+          max-height: 82%;
         }
       }
     </style>
@@ -259,10 +262,16 @@
         </div>
       </section>
 
-      <section class="image-panel" aria-hidden="true"></section>
+      <section class="image-panel" aria-label="Animación Saudade">
+        <img src="resources/gifs/GIF.gif" alt="" />
+      </section>
 
-      <section class="image-panel cover" aria-label="Cubierta impresa Saudade">
-        <div class="cover-thumb"></div>
+      <section class="image-panel" aria-label="Cartel A2 Saudade">
+        <img src="resources/gifs/cartel_A2.gif" alt="" />
+      </section>
+
+      <section class="image-panel second" aria-label="Cartel A2 Saudade 02">
+        <img src="resources/gifs/cartel_A2_02.gif" alt="" />
       </section>
     </main>
 

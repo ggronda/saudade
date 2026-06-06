@@ -8,7 +8,7 @@
       href="https://api.fontshare.com/v2/css?f[]=satoshi@300,400,500&display=swap"
       rel="stylesheet"
     />
-        <link rel="icon" type="image/png" href="resources/ico/ico.png" />
+    <link rel="icon" type="image/png" href="resources/ico/ico.png" />
 
     <style>
       *,
@@ -311,7 +311,7 @@
     <footer id="foot">
       <a class="foot-item" href="libro.html">Publicación</a>
       <a class="foot-item" href="fichas.html">Fichas</a>
-      <a class="foot-item" href="videos.html">Videos</a>
+      <a class="foot-item" href="video.html">video</a>
     </footer>
 
     <script>
@@ -324,6 +324,8 @@
         img.src = `resources/fichas/ficha_${String(n).padStart(2, "0")}.png`;
         return img;
       });
+      const FICHA_RATIO = 184 / 224;
+      const FICHA_SCALE = 0.9;
 
       const bgImages = [
         "resources/fondos/inicio_01.jpg",
@@ -414,25 +416,25 @@
       const STREAMS = [
         {
           speed: 0.55,
-          yCenter: 0.22,
-          fragH: 200,
-          fragW: 140,
+          yCenter: 0.25,
+          fragH: 200 * FICHA_SCALE,
+          fragW: 200 * FICHA_SCALE * FICHA_RATIO,
           gap: 220,
           alpha: 0.9,
         },
         {
           speed: 0.9,
           yCenter: 0.52,
-          fragH: 240,
-          fragW: 168,
+          fragH: 240 * FICHA_SCALE,
+          fragW: 240 * FICHA_SCALE * FICHA_RATIO,
           gap: 270,
           alpha: 0.93,
         },
         {
           speed: 0.42,
-          yCenter: 0.8,
-          fragH: 170,
-          fragW: 119,
+          yCenter: 0.76,
+          fragH: 170 * FICHA_SCALE,
+          fragW: 170 * FICHA_SCALE * FICHA_RATIO,
           gap: 195,
           alpha: 0.85,
         },
