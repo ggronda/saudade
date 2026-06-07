@@ -56,30 +56,6 @@ app.post("/api/upload-sd", (req, res) => {
   }
 });
 
-// ── HELPER: Siguiente número par (sin padding) ──
-function findNextSDNumber() {
-  try {
-    const files = fs.readdirSync(SD_DIR).filter((f) => /^sd_\d+\.png$/.test(f));
-
-    if (files.length === 0) return 2;
-
-    const numbers = files
-      .map((f) => {
-        const match = f.match(/sd_(\d+)\.png/);
-        return match ? parseInt(match[1], 10) : null;
-      })
-      .filter((n) => n !== null)
-      .sort((a, b) => a - b);
-
-    if (numbers.length === 0) return 2;
-
-    const maxNum = Math.max(...numbers);
-    return maxNum % 2 === 0 ? maxNum + 2 : maxNum + 1;
-  } catch (error) {
-    console.error("Error en findNextSDNumber:", error);
-    return 2;
-  }
-}
 // ── HELPER: Encontrar siguiente número par ──
 function findNextSDNumber() {
   // Leer archivos existentes
