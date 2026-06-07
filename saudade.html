@@ -628,6 +628,46 @@
         letter-spacing: 0.03em;
       }
 
+      .process-modes {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0.5rem;
+      }
+
+      .process-mode {
+        position: relative;
+      }
+
+      .process-mode input {
+        position: absolute;
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .process-mode span {
+        display: block;
+        padding: 0.68rem 0.55rem;
+        border: 1px solid rgba(74, 74, 71, 0.18);
+        border-radius: 8px;
+        color: var(--muted);
+        font-size: 11px;
+        font-weight: 500;
+        line-height: 1;
+        letter-spacing: 0.04em;
+        text-align: center;
+        cursor: pointer;
+        transition:
+          border-color 0.2s ease,
+          color 0.2s ease,
+          background 0.2s ease;
+      }
+
+      .process-mode input:checked + span {
+        background: rgba(74, 74, 71, 0.06);
+        border-color: rgba(74, 74, 71, 0.42);
+        color: var(--text);
+      }
+
       /* Preview Section */
       .preview-section {
         display: flex;
@@ -901,6 +941,21 @@
               </div>
             </div>
 
+            <div class="process-modes" aria-label="Tipo de procesamiento">
+              <label class="process-mode">
+                <input type="radio" name="process-mode" value="contorno" checked />
+                <span>contorno</span>
+              </label>
+              <label class="process-mode">
+                <input type="radio" name="process-mode" value="grano" />
+                <span>grano</span>
+              </label>
+              <label class="process-mode">
+                <input type="radio" name="process-mode" value="estela" />
+                <span>estela</span>
+              </label>
+            </div>
+
             <!-- Preview Section (Hidden initially) -->
             <div
               id="preview-section"
@@ -998,20 +1053,31 @@
       let loaderBgIndex = 0;
       let loaderBgActive = "a";
       let loaderBgInterval = null;
+      const LOADER_SESSION_KEY = "saudade-loader-seen";
+      const shouldSkipLoader =
+        window.sessionStorage.getItem(LOADER_SESSION_KEY) === "1";
+      let siteStarted = false;
 
       let progress = 0;
-      const barInterval = setInterval(() => {
-        progress += Math.random() * 10 + 0.5;
-        if (progress >= 100) {
-          progress = 100;
-          clearInterval(barInterval);
-        }
-        loaderFill.style.width = progress + "%";
-      }, 80);
+      let barInterval = null;
 
-      setTimeout(() => {
-        loaderEnter.classList.add("visible");
-      }, 3000);
+      if (!shouldSkipLoader) {
+        barInterval = setInterval(() => {
+          progress += Math.random() * 10 + 0.5;
+          if (progress >= 100) {
+            progress = 100;
+            clearInterval(barInterval);
+          }
+          loaderFill.style.width = progress + "%";
+        }, 80);
+
+        setTimeout(() => {
+          loaderEnter.classList.add("visible");
+        }, 3000);
+      } else {
+        loader.style.display = "none";
+        loaderFill.style.width = "100%";
+      }
 
       function startLoaderBackgrounds() {
         loaderBgA.style.backgroundImage = 'url("' + bgImages[0] + '")';
@@ -1040,12 +1106,18 @@
         loaderBgIndex = nextIdx;
       }
 
-      startLoaderBackgrounds();
+      if (!shouldSkipLoader) {
+        startLoaderBackgrounds();
+      }
 
       function enterSite() {
+        if (siteStarted) return;
+        siteStarted = true;
+        window.sessionStorage.setItem(LOADER_SESSION_KEY, "1");
         syncMainBackgroundsWithLoader();
         loader.style.opacity = "0";
         clearInterval(loaderBgInterval);
+        if (barInterval) clearInterval(barInterval);
         setTimeout(() => {
           loader.style.display = "none";
           scene.classList.add("active");
@@ -1724,9 +1796,13 @@
       const previewSection = document.getElementById("preview-section");
       const previewCanvas = document.getElementById("preview-canvas");
       const previewFilename = document.getElementById("preview-filename");
+      const processModeInputs = document.querySelectorAll(
+        'input[name="process-mode"]',
+      );
 
       let selectedFile = null;
       let processedImageData = null;
+      let loadedUploadImage = null;
 
       // ── MODAL CONTROLS ──
       function openUploadModal() {
@@ -1791,6 +1867,7 @@
         reader.onload = (e) => {
           const img = new Image();
           img.onload = () => {
+            loadedUploadImage = img;
             processImage(img);
           };
           img.onerror = () => {
@@ -1800,6 +1877,12 @@
         };
         reader.readAsDataURL(file);
       }
+
+      processModeInputs.forEach((input) => {
+        input.addEventListener("change", () => {
+          if (loadedUploadImage) processImage(loadedUploadImage);
+        });
+      });
 
       // ── IMAGE PROCESSING ──
       function processImage(sourceImg) {
@@ -1827,39 +1910,27 @@
         canvas.width = w;
         canvas.height = h;
 
-        // ── PASO 1: B/N suave como base ──
-        ctx.filter = "grayscale(100%) blur(1.2px)";
-        ctx.drawImage(sourceImg, 0, 0, w, h);
-        ctx.filter = "none";
+        const originalCanvas = document.createElement("canvas");
+        originalCanvas.width = w;
+        originalCanvas.height = h;
+        const originalCtx = originalCanvas.getContext("2d");
+        originalCtx.drawImage(sourceImg, 0, 0, w, h);
+        const mode =
+          document.querySelector('input[name="process-mode"]:checked')?.value ||
+          "contorno";
 
-        // ── PASO 2: Generar 2 cuadrados aleatorios sin overlap ──
-        const rects = generateNonOverlappingRects(w, h);
-        console.log("Rects:", rects);
+        if (mode === "contorno") {
+          const originalImage = originalCtx.getImageData(0, 0, w, h);
+          ctx.putImageData(createEdgeImage(originalImage, w, h), 0, 0);
+        }
 
-        // ── PASO 3: Canvas temporal para extraer zonas saturadas ──
-        const tempCanvas = document.createElement("canvas");
-        tempCanvas.width = w;
-        tempCanvas.height = h;
-        const tempCtx = tempCanvas.getContext("2d");
+        if (mode === "grano") {
+          drawGrainSaturation(ctx, sourceImg, w, h);
+        }
 
-        // Dibujar imagen original saturada en temp
-        tempCtx.filter = "saturate(2) contrast(1.15)";
-        tempCtx.drawImage(sourceImg, 0, 0, w, h);
-        tempCtx.filter = "none";
-
-        // ── PASO 4: Pegar los 2 cuadrados saturados en canvas principal ──
-        rects.forEach((rect) => {
-          const imageData = tempCtx.getImageData(
-            rect.x,
-            rect.y,
-            rect.w,
-            rect.h,
-          );
-          ctx.putImageData(imageData, rect.x, rect.y);
-        });
-
-        // ── PASO 5: Grain texture ──
-        applyGrainEffect(ctx, w, h);
+        if (mode === "estela") {
+          drawMotionTrail(ctx, sourceImg, w, h);
+        }
 
         // ── PREVIEW ──
         previewCanvas.width = w;
@@ -1873,52 +1944,71 @@
         // Guardar canvas para upload
         processedImageData = canvas.toDataURL("image/png");
 
-        showStatus("Listo para procesar", "success");
+        showStatus("Listo para subir", "success");
       }
 
-      // ── GENERAR RECTÁNGULOS NO OVERLAPPING ──
-      function generateNonOverlappingRects(imgW, imgH) {
-        const minMargin = 40; // margen mínimo desde bordes
-        const minGap = 30; // espacio mínimo entre rects
+      // ── CREAR BASE DE CONTORNOS EN GRIS ──
+      function createEdgeImage(sourceImage, w, h) {
+        const src = sourceImage.data;
+        const out = new ImageData(w, h);
+        const gray = new Float32Array(w * h);
 
-        function randomRect(rectSize) {
-          const maxX = imgW - rectSize - minMargin;
-          const maxY = imgH - rectSize - minMargin;
-          return {
-            x: minMargin + Math.random() * Math.max(0, maxX - minMargin),
-            y: minMargin + Math.random() * Math.max(0, maxY - minMargin),
-            w: rectSize,
-            h: rectSize,
-          };
+        for (let i = 0, p = 0; i < src.length; i += 4, p++) {
+          gray[p] = src[i] * 0.299 + src[i + 1] * 0.587 + src[i + 2] * 0.114;
         }
 
-        function rectsCollide(r1, r2) {
-          return !(
-            r1.x + r1.w + minGap < r2.x ||
-            r2.x + r2.w + minGap < r1.x ||
-            r1.y + r1.h + minGap < r2.y ||
-            r2.y + r2.h + minGap < r1.y
-          );
+        for (let y = 0; y < h; y++) {
+          for (let x = 0; x < w; x++) {
+            const p = y * w + x;
+            const right = gray[y * w + Math.min(x + 1, w - 1)];
+            const down = gray[Math.min(y + 1, h - 1) * w + x];
+            const edge = Math.abs(gray[p] - right) + Math.abs(gray[p] - down);
+            const threshold = 58;
+            const strength = Math.max(0, edge - threshold);
+            const line = Math.max(220, 240 - strength * 0.48);
+            const alpha = 255;
+            const i = p * 4;
+            out.data[i] = line;
+            out.data[i + 1] = line;
+            out.data[i + 2] = line;
+            out.data[i + 3] = alpha;
+          }
         }
 
-        // Rect 1: 150-180px
-        const size1 = 150 + Math.random() * 30;
-        const rect1 = randomRect(size1);
+        return out;
+      }
 
-        // Rect 2: 220-270px, sin overlap
-        let rect2;
-        let attempts = 0;
-        do {
-          const size2 = 220 + Math.random() * 50;
-          rect2 = randomRect(size2);
-          attempts++;
-        } while (rectsCollide(rect1, rect2) && attempts < 10);
+      function drawGrainSaturation(ctx, sourceImg, w, h) {
+        ctx.filter = "saturate(1.45) contrast(1.08)";
+        ctx.drawImage(sourceImg, 0, 0, w, h);
+        ctx.filter = "none";
+        applyGrainEffect(ctx, w, h, 0.28, 130);
+      }
 
-        return [rect1, rect2];
+      function drawMotionTrail(ctx, sourceImg, w, h) {
+        ctx.fillStyle = "#f5f4f2";
+        ctx.fillRect(0, 0, w, h);
+
+        ctx.globalAlpha = 0.34;
+        ctx.filter = "grayscale(65%) blur(2.4px) saturate(0.58)";
+        ctx.drawImage(sourceImg, -18, 6, w, h);
+        ctx.globalAlpha = 0.26;
+        ctx.drawImage(sourceImg, 14, -5, w, h);
+
+        ctx.globalAlpha = 0.56;
+        ctx.filter = "grayscale(58%) blur(1.1px) saturate(0.7)";
+        ctx.drawImage(sourceImg, 0, 0, w, h);
+
+        ctx.filter = "none";
+        ctx.globalAlpha = 0.24;
+        ctx.fillStyle = "#fbfaf7";
+        ctx.fillRect(0, 0, w, h);
+        ctx.globalAlpha = 1;
+        applyGrainEffect(ctx, w, h, 0.055, 70);
       }
 
       // ── GRAIN EFFECT ──
-      function applyGrainEffect(ctx, w, h) {
+      function applyGrainEffect(ctx, w, h, alpha = 0.08, maxNoiseAlpha = 80) {
         // Crear canvas de grain
         const grainCanvas = document.createElement("canvas");
         grainCanvas.width = w;
@@ -1934,13 +2024,13 @@
           data[i] = noise; // R
           data[i + 1] = noise; // G
           data[i + 2] = noise; // B
-          data[i + 3] = Math.random() * 80; // A (baja opacidad)
+          data[i + 3] = Math.random() * maxNoiseAlpha; // A (baja opacidad)
         }
 
         grainCtx.putImageData(imageData, 0, 0);
 
         // Aplicar grain al canvas principal
-        ctx.globalAlpha = 0.08;
+        ctx.globalAlpha = alpha;
         ctx.drawImage(grainCanvas, 0, 0);
         ctx.globalAlpha = 1;
       }
@@ -1999,18 +2089,30 @@
       function resetUploadForm() {
         selectedFile = null;
         processedImageData = null;
+        loadedUploadImage = null;
         uploadFile.value = "";
         uploadArea.classList.remove("dragover");
         previewSection.style.display = "none";
         uploadSubmitBtn.disabled = true;
         uploadStatus.textContent = "";
         uploadStatus.className = "upload-status";
+        const defaultMode = document.querySelector(
+          'input[name="process-mode"][value="contorno"]',
+        );
+        if (defaultMode) defaultMode.checked = true;
       }
 
       // ── STATUS MESSAGES ──
       function showStatus(message, type = "") {
         uploadStatus.textContent = message;
         uploadStatus.className = `upload-status ${type}`;
+      }
+
+      if (shouldSkipLoader) {
+        siteStarted = true;
+        scene.classList.add("active");
+        startBackgrounds();
+        initSDNodes();
       }
     </script>
   </body>

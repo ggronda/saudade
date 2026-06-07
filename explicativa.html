@@ -21,29 +21,42 @@
 
       :root {
         --font: "Satoshi", sans-serif;
-        --text: #111110;
+        --text: #151514;
+        --quiet: #77736c;
+        --paper: #fbfaf7;
+        --line: rgba(21, 21, 20, 0.13);
         --fixed-edge: 55px;
         --fixed-y: 21px;
         --fixed-text-size: 15px;
-        --content-text-size: 20px;
-        --title-size: 38px;
-        --placeholder-a: #eeeeee;
-        --placeholder-b: #f8f8f8;
+        --body-size: 20px;
+        --small-size: 13px;
+        --section-size: clamp(31px, 4.2vw, 62px);
       }
 
       html {
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
         scroll-behavior: smooth;
       }
 
       body {
-        min-height: 100vh;
-        background: #fff;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: var(--paper);
         color: var(--text);
         font-family: var(--font);
-        font-size: var(--content-text-size);
-        font-weight: 500;
-        line-height: 1.32;
+        font-size: var(--body-size);
+        font-weight: 400;
+        line-height: 1.28;
         -webkit-font-smoothing: antialiased;
+      }
+
+      img {
+        display: block;
+        width: 100%;
+        height: auto;
       }
 
       #nav {
@@ -53,7 +66,7 @@
         right: 0;
         display: flex;
         align-items: center;
-        justify-content: flex-start;
+        justify-content: space-between;
         padding: 0 var(--fixed-edge);
         z-index: 50;
         pointer-events: none;
@@ -70,105 +83,211 @@
       }
 
       .content {
-        width: calc(100vw - (var(--fixed-edge) * 2));
-        margin: 0 auto;
-        padding: 154px 0 155px;
+        width: 100%;
+        height: 100svh;
+        overflow-x: hidden;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        scroll-behavior: smooth;
+        scroll-snap-type: y mandatory;
+        scrollbar-width: none;
+        padding: 0 var(--fixed-edge);
       }
 
-      .layout-row {
+      .content::-webkit-scrollbar {
+        display: none;
+      }
+
+      .panel {
+        width: 100%;
+        min-height: 100svh;
+        scroll-snap-align: start;
+        scroll-snap-stop: always;
+        border-bottom: 1px solid var(--line);
         display: grid;
-        grid-template-columns: 0.78fr 1.12fr;
-        gap: 78px;
+        grid-template-columns: minmax(0, 0.58fr) minmax(420px, 1fr);
+        gap: 5.4vw;
         align-items: start;
-      }
-
-      .layout-row + .layout-row {
-        margin-top: 140px;
-        grid-template-columns: 1.12fr 0.78fr;
+        align-content: center;
+        padding: 86px 0;
       }
 
       .copy {
-        max-width: 520px;
-      }
-
-      .copy.bottom {
-        max-width: 530px;
-        justify-self: start;
-      }
-
-      .section {
-        margin-bottom: 62px;
-      }
-
-      .section:last-child {
-        margin-bottom: 0;
+        display: grid;
+        gap: 22px;
+        transform: translateY(-15px);
       }
 
       h1,
       h2 {
-        font-size: var(--title-size);
-        font-weight: 500;
-        line-height: 1.08;
+        font-size: var(--section-size);
+        font-weight: 400;
+        line-height: 0.96;
         letter-spacing: 0;
-        margin-bottom: 16px;
       }
 
       p {
-        font-size: var(--content-text-size);
-        font-weight: 500;
-        line-height: 1.32;
+        font-size: var(--body-size);
+        font-weight: 400;
+        line-height: 1.28;
         letter-spacing: 0;
-        margin-bottom: 18px;
       }
 
-      p:last-child {
-        margin-bottom: 0;
+      .visual {
+        position: relative;
+        overflow: hidden;
       }
 
-      .placeholder-grid {
+      .visual img {
+        filter: saturate(0.72) contrast(0.96);
+      }
+
+      .visual.soft img {
+        opacity: 0.84;
+        filter: saturate(0.5) contrast(0.9);
+      }
+
+      .spread img {
+        aspect-ratio: 5787 / 3484;
+        object-fit: cover;
+        max-height: 58vh;
+      }
+
+      .page-pair {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 30px;
-        padding-top: 16px;
+        gap: 18px;
+        align-items: start;
       }
 
-      .placeholder-stack {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 30px;
+      .page-pair img {
+        aspect-ratio: 1358 / 1636;
+        object-fit: cover;
+        max-height: 58vh;
       }
 
-      .placeholder {
-        background-color: var(--placeholder-b);
-        background-image:
-          linear-gradient(45deg, var(--placeholder-a) 25%, transparent 25%),
-          linear-gradient(-45deg, var(--placeholder-a) 25%, transparent 25%),
-          linear-gradient(45deg, transparent 75%, var(--placeholder-a) 75%),
-          linear-gradient(-45deg, transparent 75%, var(--placeholder-a) 75%);
-        background-position:
-          0 0,
-          0 16px,
-          16px -16px,
-          -16px 0;
-        background-size: 32px 32px;
+      .memory-field {
+        position: relative;
+        min-height: min(62vh, 610px);
+        overflow: hidden;
       }
 
-      .placeholder.square {
-        aspect-ratio: 1.22 / 1;
+      .memory-piece {
+        position: absolute;
+        overflow: hidden;
+        opacity: 0.72;
+        filter: saturate(0.56) contrast(0.92);
+        animation: driftMemory 12s ease-in-out infinite;
       }
 
-      .placeholder.wide {
-        grid-column: 1 / -1;
-        aspect-ratio: 2.7 / 1;
+      .memory-piece img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
       }
 
-      .placeholder.bottom-square {
-        aspect-ratio: 1.2 / 1;
+      .memory-piece.spread {
+        aspect-ratio: 5787 / 3484;
       }
 
-      .placeholder.bottom-wide {
-        grid-column: 1 / -1;
-        aspect-ratio: 2.75 / 1;
+      .memory-piece.page {
+        aspect-ratio: 1358 / 1636;
+      }
+
+      .memory-piece:nth-child(1) {
+        left: 4%;
+        top: 4%;
+        width: min(68vw, 760px);
+        opacity: 0.52;
+        animation-delay: -2s;
+      }
+
+      .memory-piece:nth-child(2) {
+        right: 2%;
+        top: 30%;
+        width: min(24vw, 260px);
+        opacity: 0.78;
+        animation-delay: -7s;
+      }
+
+      .memory-piece:nth-child(3) {
+        left: 18%;
+        bottom: 1%;
+        width: min(25vw, 280px);
+        opacity: 0.44;
+        animation-delay: -11s;
+      }
+
+      .memory-piece:nth-child(4) {
+        right: 24%;
+        bottom: 9%;
+        width: min(32vw, 380px);
+        opacity: 0.3;
+        animation-delay: -5s;
+      }
+
+      .memory-field.pages .memory-piece:nth-child(1) {
+        left: 7%;
+        top: 5%;
+        width: min(22vw, 250px);
+      }
+
+      .memory-field.pages .memory-piece:nth-child(2) {
+        left: 36%;
+        top: 18%;
+        width: min(25vw, 290px);
+      }
+
+      .memory-field.pages .memory-piece:nth-child(3) {
+        left: 17%;
+        bottom: 3%;
+        width: min(19vw, 220px);
+      }
+
+      .memory-field.pages .memory-piece:nth-child(4) {
+        right: 5%;
+        bottom: 15%;
+        width: min(22vw, 250px);
+      }
+
+      .memory-field.sequence .memory-piece:nth-child(1) {
+        left: 1%;
+        top: 12%;
+        width: min(62vw, 720px);
+        opacity: 0.7;
+      }
+
+      .memory-field.sequence .memory-piece:nth-child(2) {
+        right: 4%;
+        top: 2%;
+        width: min(20vw, 220px);
+      }
+
+      .memory-field.sequence .memory-piece:nth-child(3) {
+        right: 18%;
+        bottom: 3%;
+        width: min(22vw, 250px);
+      }
+
+      @keyframes driftMemory {
+        0%,
+        100% {
+          transform: translate3d(-8px, 10px, 0) scale(0.985);
+          filter: blur(0.4px) saturate(0.5) contrast(0.9);
+        }
+        50% {
+          transform: translate3d(12px, -12px, 0) scale(1.015);
+          filter: blur(0) saturate(0.7) contrast(0.96);
+        }
+      }
+
+
+      .caption {
+        margin-top: 10px;
+        color: var(--quiet);
+        font-size: var(--small-size);
+        font-weight: 400;
+        line-height: 1.1;
       }
 
       #foot {
@@ -242,35 +361,63 @@
         transform: translate(-50%, -50%) rotate(90deg);
       }
 
-      @media (max-width: 900px) {
+      @media (max-width: 980px) {
         :root {
           --fixed-edge: 22px;
-          --title-size: 32px;
+          --body-size: 18px;
         }
 
-        .content {
-          padding: 105px 0 130px;
-        }
-
-        .layout-row,
-        .layout-row + .layout-row {
+        .panel {
           grid-template-columns: 1fr;
-          gap: 46px;
-          margin-top: 78px;
+          gap: 34px;
+          padding-top: 86px;
+          padding-bottom: 80px;
         }
 
-        .copy,
-        .copy.bottom {
-          max-width: none;
+        .copy {
+          transform: none;
         }
 
-        .placeholder-grid,
-        .placeholder-stack {
-          gap: 18px;
+        .spread img,
+        .page-pair img {
+          max-height: 46vh;
         }
+
+        .memory-field {
+          min-height: 48vh;
+        }
+
+        .memory-piece:nth-child(n) {
+          width: min(72vw, 420px);
+        }
+
+        .memory-field.pages .memory-piece:nth-child(n) {
+          width: min(34vw, 190px);
+        }
+
 
         .upload-mini {
           right: 22px;
+        }
+      }
+
+      @media (max-width: 620px) {
+        :root {
+          --fixed-text-size: 13px;
+          --body-size: 16px;
+        }
+
+        #foot {
+          grid-template-columns: 22px 1fr 1fr 1fr 22px;
+          column-gap: 8px;
+        }
+
+        .foot-item {
+          text-align: center;
+        }
+
+        .page-pair {
+          gap: 10px;
         }
       }
     </style>
@@ -278,78 +425,123 @@
   <body>
     <nav id="nav">
       <a class="nav-item" href="saudade.html">Saudade</a>
+      <a class="nav-item" href="explicativa.html">¿Qué es Saudade?</a>
     </nav>
 
     <main class="content">
-      <div class="layout-row">
+      <section class="panel" aria-labelledby="que-es">
         <div class="copy">
-          <section class="section" aria-labelledby="que-es-saudade">
-            <h1 id="que-es-saudade">Qué es Saudade</h1>
-            <p>
-              Es un proyecto de diseño gráfico sobre esa sensación de
-              familiaridad que aparece cuando algo nos suena, pero no sabemos
-              exactamente de dónde viene.
-            </p>
-            <p>
-              Más que reconstruir un recuerdo, trabaja con su huella: con lo
-              que vuelve, cambia y permanece de forma imprecisa.
-            </p>
-          </section>
-
-          <section class="section" aria-labelledby="lo-que-activa">
-            <h2 id="lo-que-activa">Lo que activa</h2>
-            <p>
-              El proyecto parte de una experiencia compartida: reconocer algo
-              sin poder situarlo del todo. Esa sensación, cercana al déjà vu, no
-              aparece aquí como un recuerdo exacto, sino como una forma de
-              memoria difusa que se activa por asociación, repetición y eco.
-            </p>
-          </section>
+          <h1 id="que-es">Qué es Saudade</h1>
+          <p>
+            Es un proyecto de diseño gráfico sobre esa sensación de familiaridad
+            que aparece cuando algo nos suena, pero no sabemos exactamente de
+            dónde viene.
+          </p>
+          <p>
+            Más que reconstruir un recuerdo, trabaja con su huella: con lo que
+            vuelve, cambia y permanece de forma imprecisa.
+          </p>
         </div>
-
-        <div class="placeholder-grid" aria-hidden="true">
-          <div class="placeholder square"></div>
-          <div class="placeholder square"></div>
-          <div class="placeholder wide"></div>
+        <div class="memory-field">
+          <figure class="memory-piece spread">
+            <img src="resources/SD/sd_2.png" alt="Inicio visual de Saudade" />
+          </figure>
+          <figure class="memory-piece page">
+            <img src="resources/fichas/ficha_12.png" alt="Ficha de archivo" />
+          </figure>
+          <figure class="memory-piece page">
+            <img src="resources/fichas/ficha_13.png" alt="Ficha de archivo" />
+          </figure>
+          <figure class="memory-piece spread">
+            <img src="resources/SD/sd_10.png" alt="Pliego del sistema visual" />
+          </figure>
         </div>
-      </div>
+      </section>
 
-      <div class="layout-row">
-        <div class="placeholder-stack" aria-hidden="true">
-          <div class="placeholder bottom-square"></div>
-          <div class="placeholder bottom-square"></div>
-          <div class="placeholder bottom-wide"></div>
+      <section class="panel" aria-labelledby="activa">
+        <div class="copy">
+          <h2 id="activa">Lo que activa</h2>
+          <p>
+            El proyecto parte de una experiencia compartida: reconocer algo sin
+            poder situarlo del todo. Esa sensación, cercana al déjà vu, no
+            aparece aquí como un recuerdo exacto, sino como una forma de memoria
+            difusa que se activa por asociación, repetición y eco.
+          </p>
         </div>
-
-        <div class="copy bottom">
-          <section class="section" aria-labelledby="como-se-construye">
-            <h2 id="como-se-construye">Cómo se construye</h2>
-            <p>
-              Trabaja con imágenes de entornos cotidianos que resultan
-              familiares sin remitir a un recuerdo concreto. En muchas de ellas,
-              la presencia humana desaparece o queda solo como indicio, de
-              manera que la imagen se mueve entre lo reconocible y lo ausente.
-            </p>
-            <p>
-              A lo largo del proyecto, algunas fotografías reaparecen
-              transformadas en trazos, ecos o versiones desplazadas de sí
-              mismas. Esa repetición no busca insistir en lo mismo, sino
-              producir la sensación de que algo vuelve de otra manera, como
-              ocurre en la memoria.
-            </p>
-          </section>
-
-          <section class="section" aria-labelledby="web-como-archivo">
-            <h2 id="web-como-archivo">La web como archivo</h2>
-            <p>
-              Dentro del proyecto, la web funciona como un espacio de lectura y
-              recorrido. No ordena el material de forma cerrada, sino que
-              permite que las imágenes y fragmentos reaparezcan, se relacionen
-              y generen nuevas lecturas desde una memoria compartida.
-            </p>
-          </section>
+        <div class="memory-field pages">
+          <figure class="memory-piece page">
+            <img src="resources/fichas/ficha_06.png" alt="Ficha de archivo" />
+          </figure>
+          <figure class="memory-piece page">
+            <img src="resources/fichas/ficha_22.png" alt="Ficha de archivo" />
+          </figure>
+          <figure class="memory-piece page">
+            <img src="resources/fichas/ficha_31.png" alt="Ficha de archivo" />
+          </figure>
+          <figure class="memory-piece page">
+            <img src="resources/fichas/ficha_49.png" alt="Ficha de archivo" />
+          </figure>
         </div>
-      </div>
+      </section>
+
+      <section class="panel" aria-labelledby="construye">
+        <div class="copy">
+          <h2 id="construye">Cómo se construye</h2>
+          <p>
+            Trabaja con imágenes de entornos cotidianos que resultan familiares
+            sin remitir a un recuerdo concreto. En muchas de ellas, la presencia
+            humana desaparece o queda solo como indicio, de manera que la imagen
+            se mueve entre lo reconocible y lo ausente.
+          </p>
+          <p>
+            A lo largo del proyecto, algunas fotografías reaparecen
+            transformadas en trazos, ecos o versiones desplazadas de sí mismas.
+            Esa repetición no busca insistir en lo mismo, sino producir la
+            sensación de que algo vuelve de otra manera, como ocurre en la
+            memoria.
+          </p>
+        </div>
+        <div class="memory-field sequence">
+          <figure class="memory-piece spread">
+            <img
+              src="resources/SD/sd_28.png"
+              alt="Pliego con reaparición alterada"
+            />
+          </figure>
+          <figure class="memory-piece page">
+            <img src="resources/fichas/ficha_30.png" alt="Ficha cotidiana" />
+          </figure>
+          <figure class="memory-piece page">
+            <img src="resources/fichas/ficha_36.png" alt="Ficha difusa" />
+          </figure>
+        </div>
+      </section>
+
+      <section class="panel" aria-labelledby="web-archivo">
+        <div class="copy">
+          <h2 id="web-archivo">La web como archivo</h2>
+          <p>
+            Dentro del proyecto, la web funciona como un espacio de lectura y
+            recorrido. No ordena el material de forma cerrada, sino que permite
+            que las imágenes y fragmentos reaparezcan, se relacionen y generen
+            nuevas lecturas desde una memoria compartida.
+          </p>
+        </div>
+        <div class="memory-field">
+          <figure class="memory-piece spread">
+            <img src="resources/SD/sd_44.png" alt="Pliego de lectura abierta" />
+          </figure>
+          <figure class="memory-piece page">
+            <img src="resources/fichas/ficha_48.png" alt="Archivo navegable" />
+          </figure>
+          <figure class="memory-piece page">
+            <img src="resources/fichas/ficha_54.png" alt="Pieza audiovisual" />
+          </figure>
+          <figure class="memory-piece spread">
+            <img src="resources/SD/sd_52.png" alt="Pliego de archivo" />
+          </figure>
+        </div>
+      </section>
     </main>
 
     <footer id="foot">
@@ -359,5 +551,52 @@
     </footer>
 
     <button class="upload-mini" type="button" aria-label="Añadir"></button>
+
+    <script>
+      const content = document.querySelector(".content");
+      const pageSections = Array.from(document.querySelectorAll(".content > section"));
+      let sectionLock = false;
+
+      function activeSectionIndex() {
+        const center = content.scrollTop + content.clientHeight / 2;
+        let nearest = 0;
+        let distance = Infinity;
+
+        pageSections.forEach((section, index) => {
+          const sectionCenter = section.offsetTop + section.offsetHeight / 2;
+          const nextDistance = Math.abs(center - sectionCenter);
+          if (nextDistance < distance) {
+            nearest = index;
+            distance = nextDistance;
+          }
+        });
+
+        return nearest;
+      }
+
+      function goToSection(index) {
+        const next = Math.min(Math.max(index, 0), pageSections.length - 1);
+        sectionLock = true;
+        content.scrollTo({
+          top: pageSections[next].offsetTop,
+          behavior: "smooth",
+        });
+        window.setTimeout(() => {
+          sectionLock = false;
+        }, 760);
+      }
+
+      content.addEventListener(
+        "wheel",
+        (event) => {
+          if (Math.abs(event.deltaY) < 12) return;
+          event.preventDefault();
+          if (sectionLock) return;
+          const dir = event.deltaY > 0 ? 1 : -1;
+          goToSection(activeSectionIndex() + dir);
+        },
+        { passive: false },
+      );
+    </script>
   </body>
 </html>
