@@ -195,24 +195,24 @@
       }
 
       .memory-piece:nth-child(1) {
-        left: 4%;
-        top: 4%;
+        left: 12%;
+        top: 3%;
         width: min(68vw, 760px);
         opacity: 0.52;
         animation-delay: -2s;
       }
 
       .memory-piece:nth-child(2) {
-        right: 2%;
-        top: 30%;
+        right: 7%;
+        top: 24%;
         width: min(24vw, 260px);
         opacity: 0.78;
         animation-delay: -7s;
       }
 
       .memory-piece:nth-child(3) {
-        left: 18%;
-        bottom: 1%;
+        left: 26%;
+        bottom: 4%;
         width: min(25vw, 280px);
         opacity: 0.44;
         animation-delay: -11s;
@@ -227,21 +227,25 @@
       }
 
       .memory-field.pages .memory-piece:nth-child(1) {
-        left: 7%;
-        top: 5%;
-        width: min(22vw, 250px);
+        left: 5%;
+        top: 2%;
+        width: min(30vw, 350px);
+      }
+
+      .memory-field.pages {
+        transform: translate(10vw, -82px);
       }
 
       .memory-field.pages .memory-piece:nth-child(2) {
-        left: 36%;
-        top: 18%;
-        width: min(25vw, 290px);
+        left: 37%;
+        top: 14%;
+        width: min(34vw, 390px);
       }
 
       .memory-field.pages .memory-piece:nth-child(3) {
-        left: 17%;
-        bottom: 3%;
-        width: min(19vw, 220px);
+        left: 20%;
+        bottom: 5%;
+        width: min(27vw, 310px);
       }
 
       .memory-field.pages .memory-piece:nth-child(4) {
@@ -251,22 +255,62 @@
       }
 
       .memory-field.sequence .memory-piece:nth-child(1) {
-        left: 1%;
-        top: 12%;
-        width: min(62vw, 720px);
+        left: 24%;
+        top: 8%;
+        width: min(58vw, 690px);
         opacity: 0.7;
       }
 
       .memory-field.sequence .memory-piece:nth-child(2) {
-        right: 4%;
-        top: 2%;
-        width: min(20vw, 220px);
+        right: 10%;
+        top: 10%;
+        width: min(22vw, 250px);
       }
 
       .memory-field.sequence .memory-piece:nth-child(3) {
-        right: 18%;
-        bottom: 3%;
-        width: min(22vw, 250px);
+        right: 10%;
+        bottom: 15%;
+        width: min(23vw, 260px);
+        opacity: 0.76;
+      }
+
+      .web-archive-field {
+        position: relative;
+        min-height: min(62vh, 610px);
+        overflow: hidden;
+        transform: translateX(4.5vw);
+      }
+
+      .web-archive-piece {
+        position: absolute;
+        opacity: 0.72;
+        filter: saturate(0.56) contrast(0.92);
+        animation: driftMemory 12s ease-in-out infinite;
+      }
+
+      .web-archive-piece img {
+        width: auto;
+        max-width: min(28vw, 320px);
+        height: auto;
+        max-height: 46vh;
+      }
+
+      .web-archive-piece:nth-child(1) {
+        left: 18%;
+        top: 6%;
+        animation-delay: -2s;
+      }
+
+      .web-archive-piece:nth-child(2) {
+        right: 20%;
+        top: 18%;
+        animation-delay: -7s;
+      }
+
+      .web-archive-piece:nth-child(3) {
+        left: 28%;
+        bottom: 7%;
+        animation-delay: -11s;
       }
 
       @keyframes driftMemory {
@@ -280,7 +324,6 @@
           filter: blur(0) saturate(0.7) contrast(0.96);
         }
       }
-
 
       .caption {
         margin-top: 10px;
@@ -387,14 +430,27 @@
           min-height: 48vh;
         }
 
+        .web-archive-field {
+          min-height: 48vh;
+          transform: translateX(2vw);
+        }
+
+        .web-archive-piece img {
+          max-width: min(36vw, 220px);
+          max-height: 34vh;
+        }
+
+        .memory-field.pages {
+          transform: translate(4vw, -32px);
+        }
+
         .memory-piece:nth-child(n) {
           width: min(72vw, 420px);
         }
 
         .memory-field.pages .memory-piece:nth-child(n) {
-          width: min(34vw, 190px);
+          width: min(44vw, 250px);
         }
-
 
         .upload-mini {
           right: 22px;
@@ -444,16 +500,22 @@
         </div>
         <div class="memory-field">
           <figure class="memory-piece spread">
-            <img src="resources/SD/sd_2.png" alt="Inicio visual de Saudade" />
+            <img
+              src="resources/explicativa/que_es_saudade_3.png"
+              alt="Inicio visual de Saudade"
+            />
           </figure>
           <figure class="memory-piece page">
-            <img src="resources/fichas/ficha_12.png" alt="Ficha de archivo" />
+            <img
+              src="resources/explicativa/que_es_saudade_2.png"
+              alt="Ficha de archivo"
+            />
           </figure>
           <figure class="memory-piece page">
-            <img src="resources/fichas/ficha_13.png" alt="Ficha de archivo" />
-          </figure>
-          <figure class="memory-piece spread">
-            <img src="resources/SD/sd_10.png" alt="Pliego del sistema visual" />
+            <img
+              src="resources/explicativa/que_es_saudade_1.png"
+              alt="Ficha de archivo"
+            />
           </figure>
         </div>
       </section>
@@ -470,16 +532,22 @@
         </div>
         <div class="memory-field pages">
           <figure class="memory-piece page">
-            <img src="resources/fichas/ficha_06.png" alt="Ficha de archivo" />
+            <img
+              src="resources/explicativa/activa_3.png"
+              alt="Ficha de archivo"
+            />
           </figure>
           <figure class="memory-piece page">
-            <img src="resources/fichas/ficha_22.png" alt="Ficha de archivo" />
+            <img
+              src="resources/explicativa/activa_2.png"
+              alt="Ficha de archivo"
+            />
           </figure>
           <figure class="memory-piece page">
-            <img src="resources/fichas/ficha_31.png" alt="Ficha de archivo" />
-          </figure>
-          <figure class="memory-piece page">
-            <img src="resources/fichas/ficha_49.png" alt="Ficha de archivo" />
+            <img
+              src="resources/explicativa/activa_1.jpg"
+              alt="Ficha de archivo"
+            />
           </figure>
         </div>
       </section>
@@ -504,15 +572,21 @@
         <div class="memory-field sequence">
           <figure class="memory-piece spread">
             <img
-              src="resources/SD/sd_28.png"
+              src="resources/explicativa/construye_3.png"
               alt="Pliego con reaparición alterada"
             />
           </figure>
           <figure class="memory-piece page">
-            <img src="resources/fichas/ficha_30.png" alt="Ficha cotidiana" />
+            <img
+              src="resources/explicativa/construye_1.png"
+              alt="Ficha cotidiana"
+            />
           </figure>
           <figure class="memory-piece page">
-            <img src="resources/fichas/ficha_36.png" alt="Ficha difusa" />
+            <img
+              src="resources/explicativa/construye_2.png"
+              alt="Ficha difusa"
+            />
           </figure>
         </div>
       </section>
@@ -527,18 +601,24 @@
             nuevas lecturas desde una memoria compartida.
           </p>
         </div>
-        <div class="memory-field">
-          <figure class="memory-piece spread">
-            <img src="resources/SD/sd_44.png" alt="Pliego de lectura abierta" />
+        <div class="web-archive-field">
+          <figure class="web-archive-piece">
+            <img
+              src="resources/explicativa/ficha_archivo_web_1.jpg"
+              alt="Pliego de lectura abierta"
+            />
           </figure>
-          <figure class="memory-piece page">
-            <img src="resources/fichas/ficha_48.png" alt="Archivo navegable" />
+          <figure class="web-archive-piece">
+            <img
+              src="resources/explicativa/ficha_archivo_web_2.jpg"
+              alt="Archivo navegable"
+            />
           </figure>
-          <figure class="memory-piece page">
-            <img src="resources/fichas/ficha_54.png" alt="Pieza audiovisual" />
-          </figure>
-          <figure class="memory-piece spread">
-            <img src="resources/SD/sd_52.png" alt="Pliego de archivo" />
+          <figure class="web-archive-piece">
+            <img
+              src="resources/explicativa/ficha_archivo_web_3.jpg"
+              alt="Pieza audiovisual"
+            />
           </figure>
         </div>
       </section>
@@ -554,7 +634,9 @@
 
     <script>
       const content = document.querySelector(".content");
-      const pageSections = Array.from(document.querySelectorAll(".content > section"));
+      const pageSections = Array.from(
+        document.querySelectorAll(".content > section"),
+      );
       let sectionLock = false;
 
       function activeSectionIndex() {
