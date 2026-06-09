@@ -1,0 +1,676 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Saudade / Publicación</title>
+    <link
+      href="https://api.fontshare.com/v2/css?f[]=satoshi@300,400,500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="icon" type="image/png" href="../resources/ico/ico.png" />
+    <link rel="stylesheet" href="./theme.css" />
+    <style>
+      .publication-viewport {
+        height: 100svh;
+        overflow-y: auto;
+        overflow-x: hidden;
+        scroll-snap-type: y proximity;
+        scrollbar-width: none;
+      }
+
+      .publication-viewport::-webkit-scrollbar {
+        display: none;
+      }
+
+      .pub-section {
+        min-height: 100svh;
+        scroll-snap-align: start;
+        display: grid;
+        align-items: center;
+        padding-bottom: 90px;
+      }
+
+      .pub-hero {
+        display: grid;
+        grid-template-columns: minmax(0, 0.9fr) minmax(360px, 0.84fr);
+        gap: clamp(24px, 5vw, 58px);
+        align-items: center;
+      }
+
+      .pub-hero .chapter-copy {
+        max-width: 46ch;
+      }
+
+      .pub-side {
+        display: grid;
+        gap: 14px;
+      }
+
+      .cover-card {
+        display: grid;
+        gap: 14px;
+      }
+
+      .glass-frame {
+        position: relative;
+        overflow: hidden;
+        border-radius: 28px;
+        border: 1px solid rgba(255, 255, 255, 0.36);
+        background:
+          linear-gradient(180deg, rgba(255, 255, 255, 0.22), rgba(248, 244, 236, 0.78)),
+          rgba(248, 244, 236, 0.68);
+        backdrop-filter: blur(14px) saturate(1.08);
+        box-shadow:
+          0 32px 110px rgba(36, 25, 16, 0.18),
+          inset 0 1px 0 rgba(255, 255, 255, 0.55);
+      }
+
+      .glass-frame::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background:
+          radial-gradient(circle at top left, rgba(255, 255, 255, 0.34), transparent 38%),
+          radial-gradient(circle at bottom right, rgba(141, 79, 52, 0.08), transparent 42%);
+        mix-blend-mode: screen;
+      }
+
+      .glass-frame::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        border-radius: inherit;
+        box-shadow:
+          inset 0 0 0 1px rgba(255, 255, 255, 0.22),
+          inset 0 -24px 48px rgba(17, 16, 14, 0.05);
+      }
+
+      .cover-card .frame {
+        aspect-ratio: 4 / 5;
+      }
+
+      .cover-card .frame img {
+        object-fit: contain;
+      }
+
+      .cover-card .caption {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        align-items: center;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        color: var(--muted);
+      }
+
+      .track-shell {
+        display: grid;
+        gap: 18px;
+      }
+
+      .track-shell .headline {
+        display: flex;
+        align-items: end;
+        justify-content: space-between;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+
+      .carousel-counter {
+        font-size: 12px;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--accent);
+      }
+
+      .pliego-track {
+        display: grid;
+        grid-auto-flow: column;
+        grid-auto-columns: minmax(74vw, 940px);
+        gap: 18px;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        padding-bottom: 6px;
+      }
+
+      .pliego-card {
+        position: relative;
+        scroll-snap-align: center;
+        aspect-ratio: 16 / 10;
+        border: 1px solid var(--line);
+        border-radius: 28px;
+        padding: 0;
+        background: rgba(251, 247, 239, 0.6);
+        box-shadow: var(--shadow);
+        overflow: hidden;
+        cursor: zoom-in;
+      }
+
+      .pliego-card .inner {
+        position: absolute;
+        inset: 0;
+        display: grid;
+      }
+
+      .pliego-card img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        background: rgba(255, 255, 255, 0.2);
+        filter: saturate(0.78) contrast(0.95);
+      }
+
+      .pliego-card .tag {
+        position: absolute;
+        left: 16px;
+        top: 16px;
+        z-index: 1;
+      }
+
+      .archive-grid {
+        display: grid;
+        grid-template-columns: repeat(12, minmax(0, 1fr));
+        gap: 16px;
+        align-items: start;
+      }
+
+      .archive-item {
+        position: relative;
+        border: 1px solid var(--line);
+        border-radius: 24px;
+        overflow: hidden;
+        background: rgba(251, 247, 239, 0.72);
+        box-shadow: var(--shadow-soft);
+        cursor: zoom-in;
+        transition: transform 0.28s ease;
+      }
+
+      .archive-item:hover {
+        transform: translateY(-4px);
+      }
+
+      .archive-item img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        filter: saturate(0.68) contrast(0.92);
+      }
+
+      .archive-item:nth-child(1) {
+        grid-column: span 4;
+      }
+
+      .archive-item:nth-child(2) {
+        grid-column: span 5;
+      }
+
+      .archive-item:nth-child(3) {
+        grid-column: span 3;
+      }
+
+      .archive-item:nth-child(4) {
+        grid-column: span 3;
+      }
+
+      .archive-item:nth-child(5) {
+        grid-column: span 4;
+      }
+
+      .archive-item:nth-child(6) {
+        grid-column: span 5;
+      }
+
+      .archive-item:nth-child(7) {
+        grid-column: span 4;
+      }
+
+      .archive-item:nth-child(8) {
+        grid-column: span 8;
+      }
+
+      .poster-card {
+        display: grid;
+        gap: 14px;
+      }
+
+      .poster-grid {
+        display: grid;
+        gap: 20px;
+      }
+
+      .poster-stage {
+        position: relative;
+        min-height: clamp(440px, 66vh, 760px);
+        border-radius: 32px;
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.34);
+        background:
+          linear-gradient(180deg, rgba(255, 255, 255, 0.2), rgba(248, 244, 236, 0.64)),
+          rgba(248, 244, 236, 0.6);
+        backdrop-filter: blur(14px) saturate(1.08);
+        box-shadow:
+          0 32px 110px rgba(36, 25, 16, 0.16),
+          inset 0 1px 0 rgba(255, 255, 255, 0.55);
+        padding: 22px;
+      }
+
+      .poster-stage.dual {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px;
+        align-items: stretch;
+      }
+
+      .poster-panel {
+        position: relative;
+        border-radius: 26px;
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.28);
+        background: rgba(251, 247, 239, 0.56);
+        box-shadow:
+          0 18px 60px rgba(36, 25, 16, 0.08),
+          inset 0 1px 0 rgba(255, 255, 255, 0.45);
+        min-height: 100%;
+      }
+
+      .poster-sequence {
+        position: relative;
+        width: 100%;
+        height: 100%;
+      }
+
+      .poster-layer {
+        position: absolute;
+        inset: 0;
+        transition: opacity 0.18s linear;
+      }
+
+      .poster-layer img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        filter: saturate(0.74) contrast(0.95);
+      }
+
+      .closing {
+        display: grid;
+        gap: 18px;
+        align-items: center;
+      }
+
+      .closing .panel {
+        max-width: 760px;
+      }
+
+      .closing .action {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        min-height: 44px;
+        width: fit-content;
+        padding: 12px 16px;
+        border-radius: 999px;
+        border: 1px solid rgba(17, 16, 14, 0.14);
+        background: var(--ink);
+        color: var(--paper-strong);
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        font-size: 12px;
+      }
+
+      .closing .action:hover {
+        background: #1d1c19;
+      }
+
+      .spotlight {
+        position: fixed;
+        inset: 0;
+        z-index: 60;
+        display: grid;
+        place-items: center;
+        background: rgba(248, 244, 236, 0.72);
+        backdrop-filter: blur(8px);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.28s ease;
+      }
+
+      .spotlight.is-open {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      .spotlight img {
+        width: min(92vw, 1220px);
+        max-height: 88vh;
+        object-fit: contain;
+        box-shadow: var(--shadow);
+      }
+
+      .spotlight button {
+        position: absolute;
+        top: 18px;
+        right: 18px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: rgba(251, 247, 239, 0.82);
+        padding: 10px 14px;
+        cursor: pointer;
+      }
+
+      @media (max-width: 980px) {
+        .pub-hero,
+        .poster-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .pliego-track {
+          grid-auto-columns: minmax(82vw, 760px);
+        }
+
+        .poster-stage.dual {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 680px) {
+        .archive-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .archive-item:nth-child(n) {
+          grid-column: auto;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="proposal-shell">
+      <div class="bg-stack">
+        <div class="bg-layer is-visible" id="bg-a"></div>
+        <div class="bg-layer" id="bg-b"></div>
+        <div class="bg-glaze"></div>
+      </div>
+
+      <header class="nav-shell">
+        <div class="nav-group">
+          <a class="nav-badge" href="./index.html">propuestas</a>
+          <a class="nav-link" href="./saudade.html">inicio</a>
+          <a class="nav-link" href="./explicativa.html">qué es</a>
+        </div>
+        <div class="nav-group">
+          <span class="nav-badge">publicación / edición</span>
+        </div>
+      </header>
+
+      <main class="layout publication-viewport no-scrollbar" id="publication-viewport">
+        <section class="pub-section">
+          <div class="pub-hero">
+            <div class="chapter-copy">
+              <span class="eyebrow"><span class="pulse-dot"></span> publicación / núcleo</span>
+              <h1 class="display">Una edición más nítida, más lenta y más táctil.</h1>
+              <p class="section-copy">
+                La edición impresa de Saudade funciona como el núcleo del atlas:
+                una secuencia de pliegos donde la memoria aparece, se borra y
+                vuelve alterada.
+              </p>
+              <p class="section-copy">
+                No propone una lectura cerrada. La publicación deja que los
+                vacíos, las transparencias y las reapariciones organicen el
+                recorrido como una memoria que avanza por asociaciones.
+              </p>
+              <div class="chip-row">
+                <span class="chip">pliegos</span>
+                <span class="chip">carteles</span>
+                <span class="chip">flipbook</span>
+              </div>
+            </div>
+
+            <aside class="pub-side">
+              <div class="panel pad cover-card">
+                <div class="glass-frame frame is-hero">
+                  <img src="../resources/gifs/mockup_portada.gif" alt="Mockup de portada" />
+                </div>
+                <div class="caption">
+                  <span>portada impresa</span>
+                  <span>saudade</span>
+                </div>
+              </div>
+
+              <div class="panel pad">
+                <div class="stack">
+                  <span class="eyebrow">lectura</span>
+                  <p class="section-copy">
+                    El recorrido propone una entrada más jerárquica y un ritmo de
+                    consulta más cómodo para mostrar la publicación completa.
+                  </p>
+                </div>
+              </div>
+            </aside>
+          </div>
+        </section>
+
+        <section class="pub-section">
+          <div class="track-shell">
+            <div class="headline">
+              <div class="stack">
+                <span class="eyebrow">pliegos</span>
+                <h2 class="section-title">Contacto, secuencia y lectura.</h2>
+              </div>
+              <span class="carousel-counter" id="slide-counter">edición 01 / 34</span>
+            </div>
+
+            <div class="pliego-track no-scrollbar" id="pliego-track" tabindex="0" aria-label="Carrusel de pliegos"></div>
+          </div>
+        </section>
+
+        <section class="pub-section">
+          <div class="stack" style="gap: 22px;">
+            <div class="headline" style="display:flex;justify-content:space-between;gap:12px;align-items:end;flex-wrap:wrap;">
+              <div class="stack">
+                <span class="eyebrow">archivo</span>
+                <h2 class="section-title">Pliegos en movimiento.</h2>
+              </div>
+              <p class="section-copy" style="max-width: 36ch;">
+                Una constelación más ordenada para que el material secundario no
+                compita con la lectura principal.
+              </p>
+            </div>
+
+            <div class="archive-grid" id="archive-grid"></div>
+          </div>
+        </section>
+
+        <section class="pub-section">
+          <div class="poster-grid">
+            <article class="poster-card">
+              <div class="stack">
+                <span class="eyebrow">carteles</span>
+                <h2 class="section-title">Dos piezas, un solo marco.</h2>
+                <p class="section-copy">
+                  Los dos carteles se presentan juntos dentro de un vidrio
+                  translúcido, con un tratamiento más cercano al spotlight de
+                  las propuestas.
+                </p>
+              </div>
+              <div class="poster-stage dual glass-frame">
+                <div class="poster-panel">
+                  <div class="poster-sequence" id="poster-a" aria-label="Cartel A2 Saudade"></div>
+                </div>
+                <div class="poster-panel">
+                  <div class="poster-sequence" id="poster-b" aria-label="Cartel A2 Saudade 02"></div>
+                </div>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="pub-section">
+          <div class="closing">
+            <div class="panel pad">
+              <div class="stack">
+                <span class="eyebrow">cierre</span>
+                <p class="pull-quote">
+                  Un sistema impreso de lectura y consulta.
+                </p>
+                <p class="section-copy">
+                  La publicación se entiende aquí como un objeto que organiza el
+                  archivo, no como un simple contenedor.
+                </p>
+                <a class="action" href="https://heyzine.com/flip-book/04ab20c2a0.html" target="_blank" rel="noreferrer">
+                  abrir publicación digital ↗
+                </a>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer class="footer-shell">
+        <a class="footer-chip" href="./saudade.html">inicio</a>
+        <a class="footer-chip" href="./explicativa.html">qué es saudade</a>
+        <a class="footer-chip is-active" href="./publicacion.html">publicación</a>
+        <a class="footer-chip" href="./fichas.html">fichas</a>
+        <a class="footer-chip" href="./video.html">vídeo</a>
+      </footer>
+    </div>
+
+    <div class="spotlight" id="spotlight">
+      <button type="button" id="spotlight-close">cerrar</button>
+      <img id="spotlight-img" alt="" />
+    </div>
+
+    <script src="./shared.js"></script>
+    <script>
+      const pliegoImages = [
+        "../resources/gifs/mockup_portada.gif",
+        "../resources/mockups_pliegos/pliego02.png",
+        "../resources/mockups_pliegos/pliego03.png",
+        "../resources/mockups_pliegos/pliego04.png",
+        "../resources/mockups_pliegos/pliego05.png",
+        "../resources/mockups_pliegos/pliego06.png",
+        "../resources/mockups_pliegos/pliego07.png",
+        "../resources/mockups_pliegos/pliego08.png",
+        "../resources/mockups_pliegos/pliego09.png",
+        "../resources/mockups_pliegos/pliego10.png",
+        "../resources/mockups_pliegos/pliego11.png",
+        "../resources/mockups_pliegos/pliego12.png",
+        "../resources/mockups_pliegos/pliego13.png",
+        "../resources/mockups_pliegos/pliego14.png",
+        "../resources/mockups_pliegos/pliego15.png",
+        "../resources/mockups_pliegos/pliego16.png",
+        "../resources/mockups_pliegos/pliego17.png",
+        "../resources/mockups_pliegos/pliego18.png",
+        "../resources/mockups_pliegos/pliego19.png",
+        "../resources/mockups_pliegos/pliego20.png",
+        "../resources/mockups_pliegos/pliego21.png",
+        "../resources/mockups_pliegos/pliego22.png",
+        "../resources/mockups_pliegos/pliego23.png",
+        "../resources/mockups_pliegos/pliego24.png",
+        "../resources/mockups_pliegos/pliego25.png",
+        "../resources/mockups_pliegos/pliego26.png",
+        "../resources/mockups_pliegos/pliego27.png",
+        "../resources/mockups_pliegos/pliego28.png",
+        "../resources/mockups_pliegos/pliego29.png",
+        "../resources/mockups_pliegos/pliego30.png",
+        "../resources/mockups_pliegos/pliego31.png",
+        "../resources/mockups_pliegos/pliego32.png",
+        "../resources/mockups_pliegos/pliego33.png",
+        "../resources/mockups_pliegos/pliego34.png",
+      ];
+
+      const archiveImages = [
+        "../resources/mockups_pliegos/pliego06.png",
+        "../resources/mockups_pliegos/pliego09.png",
+        "../resources/mockups_pliegos/pliego12.png",
+        "../resources/mockups_pliegos/pliego16.png",
+        "../resources/mockups_pliegos/pliego21.png",
+        "../resources/mockups_pliegos/pliego25.png",
+        "../resources/mockups_pliegos/pliego29.png",
+        "../resources/mockups_pliegos/pliego33.png",
+      ];
+
+      const posterFrames = {
+        a: [
+          "../resources/gifs/A2-1/cartel1_1.png",
+          "../resources/gifs/A2-1/cartel1_2.png",
+          "../resources/gifs/A2-1/cartel1_3.png",
+          "../resources/gifs/A2-1/cartel1_4.png",
+        ],
+        b: [
+          "../resources/gifs/A2-2/Cartel2_1.png",
+          "../resources/gifs/A2-2/cartel2_2.png",
+          "../resources/gifs/A2-2/cartel2_3.png",
+          "../resources/gifs/A2-2/cartel2_4.png",
+        ],
+      };
+
+      const track = document.getElementById("pliego-track");
+      const archiveGrid = document.getElementById("archive-grid");
+      const spotlight = document.getElementById("spotlight");
+      const spotlightImg = document.getElementById("spotlight-img");
+      const spotlightClose = document.getElementById("spotlight-close");
+
+      SaudadeProposal.setupBackgroundCrossfade({
+        layerA: "#bg-a",
+        layerB: "#bg-b",
+        interval: 7600,
+      });
+
+      pliegoImages.forEach((src, index) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "pliego-card";
+        button.dataset.zoom = src;
+        button.innerHTML = `
+          <span class="tag chip">${index === 0 ? "portada" : `pliego ${String(index + 1).padStart(2, "0")}`}</span>
+          <div class="inner">
+            <img src="${src}" alt="Mockup ${index === 0 ? "portada" : `pliego ${String(index + 1).padStart(2, "0")}`}" />
+          </div>
+        `;
+        track.appendChild(button);
+      });
+
+      archiveImages.forEach((src, index) => {
+        const figure = document.createElement("button");
+        figure.type = "button";
+        figure.className = "archive-item";
+        figure.dataset.zoom = src;
+        figure.innerHTML = `<img src="${src}" alt="Archivo ${String(index + 1).padStart(2, "0")}" />`;
+        archiveGrid.appendChild(figure);
+      });
+
+      SaudadeProposal.setupCarouselCounter({
+        track,
+        counter: "#slide-counter",
+        prefix: "edición",
+      });
+
+      SaudadeProposal.setupPosterSequence("#poster-a", posterFrames.a);
+      SaudadeProposal.setupPosterSequence("#poster-b", posterFrames.b);
+
+      const openSpotlight = (src) => {
+        spotlightImg.src = src;
+        spotlight.classList.add("is-open");
+      };
+
+      const closeSpotlight = () => {
+        spotlight.classList.remove("is-open");
+        spotlightImg.src = "";
+      };
+
+      document.querySelectorAll("[data-zoom]").forEach((button) => {
+        button.addEventListener("click", () => openSpotlight(button.dataset.zoom));
+      });
+
+      spotlightClose.addEventListener("click", closeSpotlight);
+      spotlight.addEventListener("click", (event) => {
+        if (event.target === spotlight) closeSpotlight();
+      });
+    </script>
+  </body>
+</html>

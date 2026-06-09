@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Saudade / Propuestas</title>
+    <link
+      href="https://api.fontshare.com/v2/css?f[]=satoshi@300,400,500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="icon" type="image/png" href="../resources/ico/ico.png" />
+    <link rel="stylesheet" href="./theme.css" />
+    <style>
+      .index-grid {
+        margin-top: clamp(26px, 4vw, 42px);
+      }
+
+      .index-layout {
+        height: 100svh;
+        overflow-y: auto;
+        overflow-x: hidden;
+        scrollbar-width: none;
+        padding-bottom: 104px;
+      }
+
+      .index-layout::-webkit-scrollbar {
+        display: none;
+      }
+
+      .intro-grid {
+        display: grid;
+        gap: 18px;
+        grid-template-columns: minmax(0, 0.96fr) minmax(280px, 0.68fr);
+        align-items: end;
+      }
+
+      .index-note {
+        max-width: 34ch;
+        color: var(--muted);
+        line-height: 1.6;
+        font-size: 14px;
+      }
+
+      .selector-rail {
+        display: grid;
+        gap: 12px;
+      }
+
+      .selector-card {
+        position: relative;
+        min-height: 170px;
+        padding: 18px;
+        border-radius: 24px;
+        border: 1px solid var(--line);
+        background: rgba(251, 247, 239, 0.76);
+        box-shadow: var(--shadow-soft);
+        overflow: hidden;
+        transition:
+          transform 0.28s ease,
+          border-color 0.28s ease;
+      }
+
+      .selector-card:hover {
+        transform: translateY(-4px);
+        border-color: rgba(17, 16, 14, 0.18);
+      }
+
+      .selector-card .bg {
+        position: absolute;
+        inset: 0;
+        background-size: cover;
+        background-position: center;
+        opacity: 0.22;
+        filter: saturate(0.7) contrast(0.95);
+        transform: scale(1.03);
+      }
+
+      .selector-card .content {
+        position: relative;
+        z-index: 1;
+        display: grid;
+        gap: 14px;
+        align-content: space-between;
+        height: 100%;
+      }
+
+      .selector-card h2 {
+        margin: 0;
+        font-size: clamp(1.5rem, 2.6vw, 2.4rem);
+        line-height: 0.95;
+        letter-spacing: -0.04em;
+      }
+
+      .selector-card p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.55;
+        max-width: 28ch;
+      }
+
+      .selector-card .meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: end;
+        gap: 10px;
+      }
+
+      .index-panel {
+        margin-top: 18px;
+        padding: 20px;
+      }
+
+      .link-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      @media (max-width: 980px) {
+        .intro-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="proposal-shell">
+      <div class="bg-stack">
+        <div class="bg-layer is-visible" id="bg-a"></div>
+        <div class="bg-layer" id="bg-b"></div>
+        <div class="bg-glaze"></div>
+      </div>
+
+      <header class="nav-shell">
+        <div class="nav-group">
+          <a class="nav-badge is-active" href="./index.html">propuestas</a>
+          <a class="nav-link" href="./saudade.html">inicio</a>
+          <a class="nav-link" href="./explicativa.html">qué es</a>
+        </div>
+        <div class="nav-group">
+          <span class="nav-badge">satoshi / atlas editorial</span>
+        </div>
+      </header>
+
+      <main class="layout index-layout">
+        <section class="intro-grid">
+          <div class="stack-hero">
+            <span class="eyebrow"><span class="pulse-dot"></span> propuesta paralela</span>
+            <h1 class="display">Saudade, en clave editorial.</h1>
+            <p class="lede">
+              Esta carpeta reúne una versión alternativa de toda la web: mismo
+              universo visual, más contraste, más aire y una puesta en escena
+              pensada como atlas de consulta.
+            </p>
+            <div class="chip-row">
+              <span class="chip"><strong>Satoshi</strong> como única voz tipográfica</span>
+              <span class="chip">fondos y archivos existentes</span>
+              <span class="chip">sin tocar la versión actual</span>
+            </div>
+          </div>
+
+          <aside class="selector-rail">
+            <article class="selector-card">
+              <div class="bg" style="background-image:url('../resources/gifs/mockup_portada.gif')"></div>
+              <div class="content">
+                <div>
+                  <span class="eyebrow">entrada</span>
+                  <h2>Inicio / Saudade</h2>
+                </div>
+                <div class="meta">
+                  <p>Una portada más atmosférica, con capas móviles y acceso directo a las páginas.</p>
+                  <a class="arrow" href="./saudade.html">↗</a>
+                </div>
+              </div>
+            </article>
+            <article class="selector-card">
+              <div class="bg" style="background-image:url('../resources/explicativa/que_es_saudade_3.png')"></div>
+              <div class="content">
+                <div>
+                  <span class="eyebrow">lectura</span>
+                  <h2>Qué es Saudade</h2>
+                </div>
+                <div class="meta">
+                  <p>Capítulos en secuencia, con imágenes ancladas y paneles más claros.</p>
+                  <a class="arrow" href="./explicativa.html">↗</a>
+                </div>
+              </div>
+            </article>
+          </aside>
+        </section>
+
+        <section class="panel pad index-panel index-grid">
+          <div class="two-col">
+            <div class="stack">
+              <span class="eyebrow">ruta completa</span>
+              <h2 class="section-title">Las cinco páginas se rediseñan como una sola familia.</h2>
+              <p class="section-copy">
+                La propuesta trabaja con los mismos recursos y ordena la navegación
+                para que todo se sienta conectado: portada, explicación, publicación,
+                fichas y vídeo.
+              </p>
+            </div>
+            <div class="info-grid">
+              <div class="info-card">
+                <span class="eyebrow">criterio</span>
+                <h3>Claridad editorial</h3>
+                <p>Más jerarquía, más respiración y una lectura menos fragmentada.</p>
+              </div>
+              <div class="info-card">
+                <span class="eyebrow">criterio</span>
+                <h3>Archivo vivo</h3>
+                <p>Los fondos y piezas siguen siendo protagonistas, pero con un marco más pulido.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="card-grid index-grid">
+            <a class="proposal-card large" href="./publicacion.html">
+              <div class="thumb" style="background-image:url('../resources/gifs/mockup_portada.gif')"></div>
+              <div class="meta">
+                <div class="stack">
+                  <span class="label">pliegos / carteles / lectura</span>
+                  <h3>Publicación</h3>
+                  <p>Un sistema de presentación más cinematográfico, con secciones nítidas y foco sobre los pliegos.</p>
+                </div>
+                <div class="foot">
+                  <span class="chip">scroll guiado</span>
+                  <span class="arrow">↗</span>
+                </div>
+              </div>
+            </a>
+
+            <a class="proposal-card" href="./fichas.html">
+              <div class="thumb" style="background-image:url('../resources/SD/sd_28.png')"></div>
+              <div class="meta">
+                <div class="stack">
+                  <span class="label">constelación / archivo</span>
+                  <h3>Fichas</h3>
+                  <p>Una sala de archivo más precisa, con interacción y foco sobre cada ficha.</p>
+                </div>
+                <div class="foot">
+                  <span class="chip">hover & focus</span>
+                  <span class="arrow">↗</span>
+                </div>
+              </div>
+            </a>
+
+            <a class="proposal-card" href="./video.html">
+              <div class="thumb" style="background-image:url('../resources/video/play-video.png')"></div>
+              <div class="meta">
+                <div class="stack">
+                  <span class="label">vídeo / reproducción</span>
+                  <h3>Vídeo</h3>
+                  <p>Más escenográfico, con una composición de pantalla que le da peso al material audiovisual.</p>
+                </div>
+                <div class="foot">
+                  <span class="chip">play integrado</span>
+                  <span class="arrow">↗</span>
+                </div>
+              </div>
+            </a>
+          </div>
+        </section>
+      </main>
+
+      <footer class="footer-shell">
+        <a class="footer-chip is-active" href="./index.html">selector</a>
+        <a class="footer-chip" href="./saudade.html">inicio</a>
+        <a class="footer-chip" href="./publicacion.html">publicación</a>
+        <a class="footer-chip" href="./fichas.html">fichas</a>
+        <a class="footer-chip" href="./video.html">vídeo</a>
+      </footer>
+    </div>
+
+    <script src="./shared.js"></script>
+    <script>
+      SaudadeProposal.setupBackgroundCrossfade({
+        layerA: "#bg-a",
+        layerB: "#bg-b",
+        interval: 6800,
+      });
+    </script>
+  </body>
+</html>

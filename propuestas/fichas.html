@@ -1,0 +1,515 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Saudade / Fichas</title>
+    <link
+      href="https://api.fontshare.com/v2/css?f[]=satoshi@300,400,500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="icon" type="image/png" href="../resources/ico/ico.png" />
+    <link rel="stylesheet" href="./theme.css" />
+    <style>
+      .fichas-layout {
+        display: grid;
+        grid-template-rows: auto 1fr;
+        gap: 18px;
+        height: 100svh;
+        overflow-y: auto;
+        overflow-x: hidden;
+        scrollbar-width: none;
+        padding-bottom: 104px;
+      }
+
+      .fichas-layout::-webkit-scrollbar {
+        display: none;
+      }
+
+      .fichas-grid {
+        min-height: calc(100svh - 182px);
+        display: grid;
+        grid-template-columns: minmax(280px, 0.34fr) minmax(0, 1fr);
+        gap: 18px;
+        align-items: stretch;
+      }
+
+      .fichas-legend,
+      .fichas-stage {
+        min-height: 100%;
+      }
+
+      .fichas-legend {
+        display: grid;
+        gap: 18px;
+        align-content: start;
+      }
+
+      .fichas-legend .section-copy {
+        max-width: 34ch;
+      }
+
+      .legend-list {
+        display: grid;
+        gap: 10px;
+      }
+
+      .legend-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        align-items: center;
+        padding: 12px 14px;
+        border-radius: 16px;
+        border: 1px solid var(--line);
+        background: rgba(251, 247, 239, 0.7);
+        color: var(--muted);
+        font-size: 12px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+
+      .legend-row strong {
+        color: var(--ink);
+        font-weight: 500;
+      }
+
+      .stage-shell {
+        position: relative;
+        overflow: hidden;
+        border-radius: 30px;
+        border: 1px solid var(--line);
+        background:
+          radial-gradient(circle at 50% 40%, rgba(255, 255, 255, 0.26), transparent 42%),
+          rgba(251, 247, 239, 0.3);
+        box-shadow: var(--shadow);
+        min-height: 100%;
+      }
+
+      #ficha-canvas {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+      }
+
+      .stage-hud {
+        position: absolute;
+        inset: 16px 16px auto 16px;
+        z-index: 2;
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        pointer-events: none;
+        flex-wrap: wrap;
+      }
+
+      .hud-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        min-height: 36px;
+        padding: 9px 12px;
+        border-radius: 999px;
+        border: 1px solid var(--line);
+        background: rgba(251, 247, 239, 0.76);
+        color: var(--muted);
+        font-size: 11px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        backdrop-filter: blur(10px);
+      }
+
+      .hud-pill strong {
+        color: var(--ink);
+      }
+
+      #readout {
+        position: fixed;
+        z-index: 50;
+        pointer-events: none;
+        transform: translate(14px, 14px);
+        padding: 8px 10px;
+        border-radius: 999px;
+        background: rgba(17, 16, 14, 0.9);
+        color: var(--paper-strong);
+        font-size: 11px;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        opacity: 0;
+        transition: opacity 0.16s ease;
+        box-shadow: var(--shadow-soft);
+      }
+
+      #spotlight {
+        position: fixed;
+        inset: 0;
+        z-index: 60;
+        display: grid;
+        place-items: center;
+        background: rgba(248, 244, 236, 0.72);
+        backdrop-filter: blur(10px);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.28s ease;
+      }
+
+      #spotlight.is-open {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      #spotlight img {
+        width: min(88vw, 740px);
+        max-height: 86vh;
+        object-fit: contain;
+        box-shadow: var(--shadow);
+      }
+
+      #spotlight button {
+        position: absolute;
+        top: 18px;
+        right: 18px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: rgba(251, 247, 239, 0.86);
+        padding: 10px 14px;
+        cursor: pointer;
+      }
+
+      .ripple {
+        position: fixed;
+        border: 1px solid rgba(17, 16, 14, 0.22);
+        border-radius: 50%;
+        pointer-events: none;
+        z-index: 40;
+        animation: ripple 0.8s ease forwards;
+      }
+
+      @keyframes ripple {
+        from {
+          width: 0;
+          height: 0;
+          opacity: 0.55;
+          transform: translate(-50%, -50%);
+        }
+        to {
+          width: 110px;
+          height: 110px;
+          opacity: 0;
+          transform: translate(-50%, -50%);
+        }
+      }
+
+      @media (max-width: 980px) {
+        .fichas-grid {
+          grid-template-columns: 1fr;
+          min-height: auto;
+        }
+
+        .fichas-layout {
+          gap: 14px;
+        }
+
+        .stage-shell {
+          min-height: 58svh;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="proposal-shell">
+      <div class="bg-stack">
+        <div class="bg-layer is-visible" id="bg-a"></div>
+        <div class="bg-layer" id="bg-b"></div>
+        <div class="bg-glaze"></div>
+      </div>
+
+      <header class="nav-shell">
+        <div class="nav-group">
+          <a class="nav-badge" href="./index.html">propuestas</a>
+          <a class="nav-link" href="./saudade.html">inicio</a>
+          <a class="nav-link" href="./explicativa.html">qué es</a>
+        </div>
+        <div class="nav-group">
+          <span class="nav-badge">fichas / archivo</span>
+        </div>
+      </header>
+
+      <main class="layout fichas-layout">
+        <section class="fichas-grid">
+          <aside class="panel pad fichas-legend">
+            <span class="eyebrow"><span class="pulse-dot"></span> sala de consulta</span>
+            <h1 class="display">Fichas de archivo</h1>
+            <p class="section-copy">
+              La propuesta convierte la pantalla en una mesa de archivo: las
+              fichas se desplazan en corrientes, se pueden tocar y cada una
+              abre su propia ampliación.
+            </p>
+
+            <div class="legend-list">
+              <div class="legend-row">
+                <span><strong>click</strong></span>
+                <span>abrir foco</span>
+              </div>
+              <div class="legend-row">
+                <span><strong>hover</strong></span>
+                <span>leer referencia</span>
+              </div>
+              <div class="legend-row">
+                <span><strong>arrastre</strong></span>
+                <span>seguir el flujo</span>
+              </div>
+            </div>
+
+            <div class="panel pad" style="margin-top:auto;">
+              <div class="stack">
+                <span class="eyebrow">señal</span>
+                <p class="section-copy">
+                  El fondo sigue respirando con los archivos `inicio_*`, pero
+                  ahora el protagonismo cae sobre los fragmentos SD.
+                </p>
+                <div class="chip-row">
+                  <span class="chip">17 fichas</span>
+                  <span class="chip">3 corrientes</span>
+                </div>
+              </div>
+            </div>
+          </aside>
+
+          <section class="stage-shell">
+            <div class="stage-hud">
+              <span class="hud-pill">archivo <strong>activo</strong></span>
+              <span class="hud-pill" id="counter-pill">piezas <strong>17</strong></span>
+              <span class="hud-pill">interacción <strong>cinética</strong></span>
+            </div>
+            <canvas id="ficha-canvas"></canvas>
+          </section>
+        </section>
+      </main>
+
+      <footer class="footer-shell">
+        <a class="footer-chip" href="./saudade.html">inicio</a>
+        <a class="footer-chip" href="./explicativa.html">qué es saudade</a>
+        <a class="footer-chip" href="./publicacion.html">publicación</a>
+        <a class="footer-chip is-active" href="./fichas.html">fichas</a>
+        <a class="footer-chip" href="./video.html">vídeo</a>
+      </footer>
+    </div>
+
+    <div id="readout"></div>
+    <div id="spotlight">
+      <button type="button" id="spotlight-close">cerrar</button>
+      <img id="spotlight-img" alt="" />
+    </div>
+
+    <script src="./shared.js"></script>
+    <script>
+      const fichaIds = [6, 12, 13, 19, 20, 22, 23, 26, 30, 31, 36, 48, 49, 50, 52, 54, 55];
+      const fichaSources = fichaIds.map(
+        (n) => `../resources/SD/sd_${String(n).padStart(2, "0")}.png`,
+      );
+      const bgSources = SaudadeProposal.bgImages;
+
+      const canvas = document.getElementById("ficha-canvas");
+      const ctx = canvas.getContext("2d");
+      const spotlight = document.getElementById("spotlight");
+      const spotlightImg = document.getElementById("spotlight-img");
+      const spotlightClose = document.getElementById("spotlight-close");
+      const readout = document.getElementById("readout");
+      const counterPill = document.getElementById("counter-pill");
+
+      const images = fichaSources.map((src) => {
+        const img = new Image();
+        img.src = src;
+        return img;
+      });
+
+      let bgA = document.getElementById("bg-a");
+      let bgB = document.getElementById("bg-b");
+      let bgIndex = 0;
+      let bgActive = bgA;
+      let bgInactive = bgB;
+
+      function applyBg() {
+        bgActive.style.backgroundImage = `url("${bgSources[bgIndex]}")`;
+        bgInactive.style.backgroundImage = `url("${bgSources[(bgIndex + 1) % bgSources.length]}")`;
+      }
+
+      function cycleBg() {
+        bgIndex = SaudadeProposal.pickNextIndex(bgIndex, bgSources.length);
+        bgInactive.style.backgroundImage = `url("${bgSources[bgIndex]}")`;
+        bgInactive.classList.add("is-visible");
+        bgActive.classList.remove("is-visible");
+        [bgActive, bgInactive] = [bgInactive, bgActive];
+      }
+
+      let width = 0;
+      let height = 0;
+      let pixelRatio = Math.max(1, Math.min(window.devicePixelRatio || 1, 2));
+      let streams = [];
+      let drawn = [];
+      let hoverTarget = null;
+
+      function resizeCanvas() {
+        width = canvas.clientWidth;
+        height = canvas.clientHeight;
+        pixelRatio = Math.max(1, Math.min(window.devicePixelRatio || 1, 2));
+        canvas.width = Math.floor(width * pixelRatio);
+        canvas.height = Math.floor(height * pixelRatio);
+        ctx.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+        buildStreams();
+      }
+
+      function buildStreams() {
+        const config = [
+          { speed: 0.55, y: 0.26, size: 0.9, gap: 220, alpha: 0.86 },
+          { speed: 0.88, y: 0.53, size: 1.02, gap: 270, alpha: 0.92 },
+          { speed: 0.4, y: 0.77, size: 0.82, gap: 210, alpha: 0.8 },
+        ];
+
+        streams = config.map((s, streamIndex) => {
+          const count = Math.ceil(width / s.gap) + 4;
+          return Array.from({ length: count }, (_, index) => {
+            const base = images[(streamIndex * 5 + index * 2) % images.length];
+            return {
+              x: index * s.gap - s.gap,
+              y: height * s.y,
+              wobble: Math.random() * Math.PI * 2,
+              wobbleSpeed: 0.0024 + Math.random() * 0.002,
+              wobbleAmp: 8 + Math.random() * 10,
+              speed: s.speed,
+              size: s.size,
+              alpha: s.alpha,
+              img: base,
+            };
+          });
+        });
+      }
+
+      function drawFrame() {
+        ctx.clearRect(0, 0, width, height);
+        drawn = [];
+
+        streams.forEach((stream, streamIndex) => {
+          stream.forEach((piece, pieceIndex) => {
+            piece.x -= piece.speed;
+            piece.wobble += piece.wobbleSpeed;
+            if (piece.x + 220 * piece.size < -80) {
+              piece.x = width + 180;
+              piece.img = images[(streamIndex * 7 + pieceIndex * 3 + Math.floor(Math.random() * images.length)) % images.length];
+            }
+
+            const w = 200 * piece.size;
+            const h = 244 * piece.size;
+            const y = piece.y + Math.sin(piece.wobble) * piece.wobbleAmp;
+            const drawX = piece.x;
+            const drawY = y - h / 2;
+            const alphaBoost = hoverTarget && hoverTarget.img === piece.img ? 1.1 : 1;
+
+            ctx.globalAlpha = piece.alpha * alphaBoost;
+            if (piece.img.complete && piece.img.naturalWidth) {
+              ctx.drawImage(piece.img, drawX, drawY, w, h);
+            } else {
+              ctx.fillStyle = "rgba(210, 206, 198, 0.75)";
+              ctx.fillRect(drawX, drawY, w, h);
+            }
+            ctx.globalAlpha = 1;
+
+            drawn.push({
+              img: piece.img,
+              x: drawX,
+              y: drawY,
+              w,
+              h,
+            });
+          });
+        });
+
+        requestAnimationFrame(drawFrame);
+      }
+
+      function findHit(x, y) {
+        return drawn
+          .slice()
+          .reverse()
+          .find(
+            (piece) =>
+              x >= piece.x &&
+              x <= piece.x + piece.w &&
+              y >= piece.y &&
+              y <= piece.y + piece.h,
+          );
+      }
+
+      function showSpotlight(src) {
+        spotlightImg.src = src;
+        spotlight.classList.add("is-open");
+      }
+
+      function hideSpotlight() {
+        spotlight.classList.remove("is-open");
+        spotlightImg.src = "";
+      }
+
+      function rippleAt(x, y) {
+        const el = document.createElement("div");
+        el.className = "ripple";
+        el.style.left = `${x}px`;
+        el.style.top = `${y}px`;
+        document.body.appendChild(el);
+        window.setTimeout(() => el.remove(), 900);
+      }
+
+      canvas.addEventListener("mousemove", (event) => {
+        const rect = canvas.getBoundingClientRect();
+        const x = event.clientX - rect.left;
+        const y = event.clientY - rect.top;
+        const hit = findHit(x, y);
+        hoverTarget = hit || null;
+
+        if (hit) {
+          readout.textContent = hit.img.src.split("/").pop().replace(".png", "");
+          readout.style.left = `${event.clientX}px`;
+          readout.style.top = `${event.clientY}px`;
+          readout.style.opacity = "1";
+          canvas.style.cursor = "zoom-in";
+        } else {
+          readout.style.opacity = "0";
+          canvas.style.cursor = "default";
+        }
+      });
+
+      canvas.addEventListener("mouseleave", () => {
+        hoverTarget = null;
+        readout.style.opacity = "0";
+      });
+
+      canvas.addEventListener("click", (event) => {
+        const rect = canvas.getBoundingClientRect();
+        const x = event.clientX - rect.left;
+        const y = event.clientY - rect.top;
+        const hit = findHit(x, y);
+        if (hit) {
+          showSpotlight(hit.img.src);
+        } else {
+          rippleAt(event.clientX, event.clientY);
+        }
+      });
+
+      spotlightClose.addEventListener("click", hideSpotlight);
+      spotlight.addEventListener("click", (event) => {
+        if (event.target === spotlight) hideSpotlight();
+      });
+
+      window.addEventListener("resize", resizeCanvas);
+
+      applyBg();
+      resizeCanvas();
+      requestAnimationFrame(drawFrame);
+      window.setInterval(cycleBg, 13000);
+
+      counterPill.innerHTML = `piezas <strong>${String(fichaIds.length).padStart(2, "0")}</strong>`;
+    </script>
+  </body>
+</html>

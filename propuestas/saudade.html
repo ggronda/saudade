@@ -1,0 +1,341 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Saudade / Inicio</title>
+    <link
+      href="https://api.fontshare.com/v2/css?f[]=satoshi@300,400,500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="icon" type="image/png" href="../resources/ico/ico.png" />
+    <link rel="stylesheet" href="./theme.css" />
+    <style>
+      .home-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1.08fr) minmax(340px, 0.84fr);
+        gap: clamp(24px, 5vw, 64px);
+        align-items: center;
+      }
+
+      .home-layout {
+        height: 100svh;
+        overflow-y: auto;
+        overflow-x: hidden;
+        scrollbar-width: none;
+        padding-bottom: 104px;
+      }
+
+      .home-layout::-webkit-scrollbar {
+        display: none;
+      }
+
+      .home-panel {
+        display: grid;
+        gap: 22px;
+      }
+
+      .hero-copy {
+        display: grid;
+        gap: 18px;
+        align-content: start;
+      }
+
+      .hero-copy .lede {
+        max-width: 46ch;
+      }
+
+      .home-aside {
+        display: grid;
+        gap: 14px;
+      }
+
+      .home-aside .panel {
+        min-height: 180px;
+      }
+
+      .route-grid {
+        display: grid;
+        gap: 12px;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .route-card {
+        position: relative;
+        overflow: hidden;
+        min-height: 154px;
+        border-radius: 24px;
+        border: 1px solid var(--line);
+        background: rgba(251, 247, 239, 0.74);
+        box-shadow: var(--shadow-soft);
+        padding: 16px;
+        display: grid;
+        align-content: space-between;
+        gap: 14px;
+        transition:
+          transform 0.28s ease,
+          border-color 0.28s ease,
+          box-shadow 0.28s ease;
+      }
+
+      .route-card:hover {
+        transform: translateY(-4px);
+        border-color: rgba(17, 16, 14, 0.18);
+        box-shadow: var(--shadow);
+      }
+
+      .route-card .bg {
+        position: absolute;
+        inset: 0;
+        background-size: cover;
+        background-position: center;
+        opacity: 0.18;
+        filter: saturate(0.7) contrast(0.94);
+        transform: scale(1.04);
+      }
+
+      .route-card .copy {
+        position: relative;
+        z-index: 1;
+        display: grid;
+        gap: 10px;
+      }
+
+      .route-card h3 {
+        margin: 0;
+        font-size: 1.2rem;
+        line-height: 1;
+        letter-spacing: -0.03em;
+      }
+
+      .route-card p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.45;
+      }
+
+      .route-card .meta {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        justify-content: space-between;
+        align-items: end;
+        gap: 10px;
+      }
+
+      .home-banner {
+        min-height: 100%;
+        display: grid;
+        gap: 18px;
+      }
+
+      .home-banner .frame {
+        aspect-ratio: 4 / 5;
+      }
+
+      .home-banner .caption {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        font-size: 12px;
+        color: var(--muted);
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+
+      .home-foot {
+        display: grid;
+        gap: 12px;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .story-card {
+        display: grid;
+        gap: 12px;
+        align-content: space-between;
+        min-height: 100%;
+      }
+
+      .story-card p {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.6;
+        font-size: 14px;
+      }
+
+      @media (max-width: 980px) {
+        .home-grid,
+        .home-foot {
+          grid-template-columns: 1fr;
+        }
+
+        .route-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+
+      @media (max-width: 640px) {
+        .route-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="proposal-shell">
+      <div class="bg-stack">
+        <div class="bg-layer is-visible" id="bg-a"></div>
+        <div class="bg-layer" id="bg-b"></div>
+        <div class="bg-glaze"></div>
+      </div>
+
+      <header class="nav-shell">
+        <div class="nav-group">
+          <a class="nav-badge" href="./index.html">propuestas</a>
+          <a class="nav-link is-active" href="./saudade.html">inicio</a>
+          <a class="nav-link" href="./explicativa.html">qué es</a>
+        </div>
+        <div class="nav-group">
+          <span class="nav-badge">portada alternativa</span>
+        </div>
+      </header>
+
+      <main class="layout home-layout">
+        <section class="home-grid">
+          <div class="home-panel">
+            <div class="hero-copy">
+              <span class="eyebrow"><span class="pulse-dot"></span> saudade / atlas de memoria</span>
+              <h1 class="display">Una entrada más clara, más densa y más editorial.</h1>
+              <p class="lede">
+                La propuesta mantiene Satoshi y el material original, pero cambia la
+                puesta en escena: menos pantalla de carga, más lectura, más ritmo y
+                una navegación que se siente como hojear una edición viva.
+              </p>
+            </div>
+
+            <div class="home-foot">
+              <article class="panel pad story-card">
+                <div class="stack tight">
+                  <span class="eyebrow">criterio</span>
+                  <h2 class="section-title">Archivo vivo</h2>
+                </div>
+                <p>
+                  Los fondos existentes se usan como atmósfera persistente, con un
+                  ciclo lento que acompaña sin invadir.
+                </p>
+              </article>
+
+              <article class="panel pad story-card">
+                <div class="stack tight">
+                  <span class="eyebrow">criterio</span>
+                  <h2 class="section-title">Más guía</h2>
+                </div>
+                <p>
+                  La portada deja más visibles las rutas hacia publicación,
+                  fichas, vídeo y la explicación conceptual.
+                </p>
+              </article>
+            </div>
+
+            <div class="panel pad">
+              <div class="stack">
+                <span class="eyebrow">lectura rápida</span>
+                <p class="section-copy">
+                  Saudade se presenta aquí como un atlas de consulta: cada página
+                  es un capítulo, pero el recorrido completo tiene una misma voz
+                  visual.
+                </p>
+                <div class="chip-row">
+                  <span class="chip"><strong>04</strong> páginas clave</span>
+                  <span class="chip">fondos `inicio_*`</span>
+                  <span class="chip">sistema editorial</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <aside class="home-aside">
+            <div class="panel pad home-banner">
+              <div class="frame is-hero">
+                <img src="../resources/gifs/mockup_portada.gif" alt="Mockup de portada" />
+              </div>
+              <div class="caption">
+                <span>portada</span>
+                <a href="./publicacion.html">ver publicación ↗</a>
+              </div>
+            </div>
+
+            <div class="route-grid">
+              <a class="route-card" href="./publicacion.html">
+                <div class="bg" style="background-image:url('../resources/mockups_pliegos/pliego12.png')"></div>
+                <div class="copy">
+                  <span class="eyebrow">publicación</span>
+                  <h3>Pliegos, carteles y edición.</h3>
+                </div>
+                <div class="meta">
+                  <span class="chip">abrir</span>
+                  <span>↗</span>
+                </div>
+              </a>
+
+              <a class="route-card" href="./fichas.html">
+                <div class="bg" style="background-image:url('../resources/SD/sd_42.png')"></div>
+                <div class="copy">
+                  <span class="eyebrow">fichas</span>
+                  <h3>Archivo en movimiento.</h3>
+                </div>
+                <div class="meta">
+                  <span class="chip">abrir</span>
+                  <span>↗</span>
+                </div>
+              </a>
+
+              <a class="route-card" href="./video.html">
+                <div class="bg" style="background-image:url('../resources/video/play-video.png')"></div>
+                <div class="copy">
+                  <span class="eyebrow">vídeo</span>
+                  <h3>Reproducción cinematográfica.</h3>
+                </div>
+                <div class="meta">
+                  <span class="chip">abrir</span>
+                  <span>↗</span>
+                </div>
+              </a>
+
+              <a class="route-card" href="./explicativa.html">
+                <div class="bg" style="background-image:url('../resources/explicativa/construye_3.png')"></div>
+                <div class="copy">
+                  <span class="eyebrow">qué es</span>
+                  <h3>El marco conceptual.</h3>
+                </div>
+                <div class="meta">
+                  <span class="chip">abrir</span>
+                  <span>↗</span>
+                </div>
+              </a>
+            </div>
+          </aside>
+        </section>
+      </main>
+
+      <footer class="footer-shell">
+        <a class="footer-chip is-active" href="./saudade.html">inicio</a>
+        <a class="footer-chip" href="./explicativa.html">qué es saudade</a>
+        <a class="footer-chip" href="./publicacion.html">publicación</a>
+        <a class="footer-chip" href="./fichas.html">fichas</a>
+        <a class="footer-chip" href="./video.html">vídeo</a>
+      </footer>
+    </div>
+
+    <script src="./shared.js"></script>
+    <script>
+      SaudadeProposal.setupBackgroundCrossfade({
+        layerA: "#bg-a",
+        layerB: "#bg-b",
+        interval: 7200,
+      });
+    </script>
+  </body>
+</html>

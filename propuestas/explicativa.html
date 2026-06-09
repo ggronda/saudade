@@ -1,0 +1,439 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Saudade / Qué es</title>
+    <link
+      href="https://api.fontshare.com/v2/css?f[]=satoshi@300,400,500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="icon" type="image/png" href="../resources/ico/ico.png" />
+    <link rel="stylesheet" href="./theme.css" />
+    <style>
+      .explain-viewport {
+        height: 100svh;
+        overflow-y: auto;
+        overflow-x: hidden;
+        scroll-snap-type: y proximity;
+        scrollbar-width: none;
+      }
+
+      .explain-viewport::-webkit-scrollbar {
+        display: none;
+      }
+
+      .chapter {
+        min-height: 100svh;
+        padding-top: clamp(22px, 4vh, 44px);
+        padding-bottom: 90px;
+        display: grid;
+        align-items: center;
+        scroll-snap-align: start;
+      }
+
+      .chapter-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 0.86fr) minmax(360px, 1fr);
+        gap: clamp(24px, 4vw, 56px);
+        align-items: center;
+      }
+
+      .chapter-copy {
+        display: grid;
+        gap: 18px;
+        max-width: 46ch;
+      }
+
+      .chapter-copy .section-copy {
+        max-width: 42ch;
+      }
+
+      .chapter-media {
+        display: grid;
+        gap: 16px;
+      }
+
+      .chapter-media.grid-2 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .chapter-media.grid-3 {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .chapter-media .frame {
+        min-height: 100%;
+      }
+
+      .chapter-media .frame img {
+        transition: transform 0.45s ease;
+      }
+
+      .chapter-media .frame:hover img {
+        transform: scale(1.035);
+      }
+
+      .stack-rail {
+        position: fixed;
+        right: var(--page-pad);
+        top: 102px;
+        z-index: 15;
+        width: min(250px, calc(100vw - 32px));
+      }
+
+      .stack-rail .panel {
+        display: grid;
+        gap: 14px;
+      }
+
+      .toc {
+        display: grid;
+        gap: 8px;
+      }
+
+      .toc a {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        padding: 10px 12px;
+        border-radius: 14px;
+        border: 1px solid transparent;
+        background: rgba(251, 247, 239, 0.42);
+        color: var(--muted);
+        font-size: 12px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        transition:
+          transform 0.25s ease,
+          border-color 0.25s ease,
+          background 0.25s ease,
+          color 0.25s ease;
+      }
+
+      .toc a:hover,
+      .toc a.is-active {
+        transform: translateX(-2px);
+        color: var(--ink);
+        background: rgba(251, 247, 239, 0.82);
+        border-color: rgba(17, 16, 14, 0.14);
+      }
+
+      .chapter-id {
+        font-size: 11px;
+        letter-spacing: 0.18em;
+        color: var(--accent);
+        text-transform: uppercase;
+      }
+
+      .chapter-index-note {
+        font-size: 13px;
+        color: var(--muted);
+        line-height: 1.5;
+      }
+
+      .web-montage {
+        display: grid;
+        gap: 14px;
+      }
+
+      .web-montage .frame:first-child {
+        aspect-ratio: 16 / 10;
+      }
+
+      .web-montage .frame:last-child {
+        aspect-ratio: 14 / 10;
+      }
+
+      .wide-stack {
+        display: grid;
+        gap: 14px;
+      }
+
+      .wide-stack .frame {
+        aspect-ratio: 16 / 9;
+      }
+
+      .overlap-grid {
+        position: relative;
+        min-height: 66vh;
+      }
+
+      .overlap-grid .frame {
+        position: absolute;
+        box-shadow: var(--shadow);
+      }
+
+      .overlap-grid .frame:nth-child(1) {
+        left: 6%;
+        top: 2%;
+        width: min(62%, 600px);
+        transform: rotate(-2deg);
+      }
+
+      .overlap-grid .frame:nth-child(2) {
+        right: 0;
+        top: 18%;
+        width: min(34%, 310px);
+        transform: rotate(1.2deg);
+      }
+
+      .overlap-grid .frame:nth-child(3) {
+        left: 20%;
+        bottom: 2%;
+        width: min(38%, 350px);
+        transform: rotate(-1.1deg);
+      }
+
+      .chapter-spacer {
+        height: 16px;
+      }
+
+      @media (max-width: 1180px) {
+        .stack-rail {
+          position: static;
+          width: auto;
+          margin-top: 18px;
+        }
+
+        .chapter-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 920px) {
+        .chapter-media.grid-2,
+        .chapter-media.grid-3 {
+          grid-template-columns: 1fr;
+        }
+
+        .overlap-grid {
+          min-height: auto;
+          display: grid;
+          gap: 14px;
+        }
+
+        .overlap-grid .frame {
+          position: static;
+          width: 100% !important;
+          transform: none !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="proposal-shell">
+      <div class="bg-stack">
+        <div class="bg-layer is-visible" id="bg-a"></div>
+        <div class="bg-layer" id="bg-b"></div>
+        <div class="bg-glaze"></div>
+      </div>
+
+      <header class="nav-shell">
+        <div class="nav-group">
+          <a class="nav-badge" href="./index.html">propuestas</a>
+          <a class="nav-link" href="./saudade.html">inicio</a>
+          <a class="nav-link is-active" href="./explicativa.html">qué es</a>
+        </div>
+        <div class="nav-group">
+          <span class="nav-badge">capítulos / lectura</span>
+        </div>
+      </header>
+
+      <aside class="stack-rail hidden-mobile">
+        <div class="panel pad">
+          <span class="eyebrow"><span class="pulse-dot"></span> índice</span>
+          <div class="toc" id="chapter-toc">
+            <a href="#que-es" class="is-active"><span>01</span><span>Qué es</span></a>
+            <a href="#activa"><span>02</span><span>Lo que activa</span></a>
+            <a href="#construye"><span>03</span><span>Cómo se construye</span></a>
+            <a href="#web-archivo"><span>04</span><span>La web como archivo</span></a>
+          </div>
+          <p class="chapter-index-note">
+            La lectura se organiza por capítulos y cada bloque mantiene el mismo
+            equilibrio entre texto e imagen.
+          </p>
+        </div>
+      </aside>
+
+      <main class="layout explain-viewport no-scrollbar" id="explain-viewport">
+        <section class="chapter" id="que-es">
+          <div class="chapter-grid">
+            <div class="chapter-copy">
+              <span class="chapter-id">01 / concepto</span>
+              <h1 class="display">Qué es Saudade</h1>
+              <p class="section-copy">
+                Es un proyecto de diseño gráfico sobre esa sensación de
+                familiaridad que aparece cuando algo nos suena, pero no sabemos
+                exactamente de dónde viene.
+              </p>
+              <p class="section-copy">
+                Más que reconstruir un recuerdo, trabaja con su huella: con lo
+                que vuelve, cambia y permanece de forma imprecisa.
+              </p>
+              <div class="chip-row">
+                <span class="chip">archivo</span>
+                <span class="chip">eco</span>
+                <span class="chip">memoria difusa</span>
+              </div>
+            </div>
+
+            <div class="chapter-media grid-2">
+              <div class="frame is-wide">
+                <img src="../resources/explicativa/que_es_saudade_3.png" alt="Inicio visual de Saudade" />
+              </div>
+              <div class="chapter-media" style="grid-template-rows: repeat(2, minmax(0, 1fr));">
+                <div class="frame is-tall">
+                  <img src="../resources/explicativa/que_es_saudade_2.png" alt="Ficha de archivo" />
+                </div>
+                <div class="frame is-tall">
+                  <img src="../resources/explicativa/que_es_saudade_1.png" alt="Ficha de archivo" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="chapter" id="activa">
+          <div class="chapter-grid">
+            <div class="chapter-copy">
+              <span class="chapter-id">02 / activación</span>
+              <h2 class="section-title">Lo que activa</h2>
+              <p class="section-copy">
+                El proyecto parte de una experiencia compartida: reconocer algo
+                sin poder situarlo del todo. Esa sensación, cercana al déjà vu,
+                no aparece aquí como un recuerdo exacto, sino como una forma de
+                memoria difusa que se activa por asociación, repetición y eco.
+              </p>
+            </div>
+
+            <div class="chapter-media grid-3">
+              <div class="frame is-tall">
+                <img src="../resources/explicativa/activa_3.png" alt="Ficha de archivo" />
+              </div>
+              <div class="frame is-tall">
+                <img src="../resources/explicativa/activa_2.png" alt="Ficha de archivo" />
+              </div>
+              <div class="frame is-tall">
+                <img src="../resources/explicativa/activa_1.jpg" alt="Ficha de archivo" />
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="chapter" id="construye">
+          <div class="chapter-grid">
+            <div class="chapter-copy">
+              <span class="chapter-id">03 / construcción</span>
+              <h2 class="section-title">Cómo se construye</h2>
+              <p class="section-copy">
+                Trabaja con imágenes de entornos cotidianos que resultan
+                familiares sin remitir a un recuerdo concreto. En muchas de
+                ellas, la presencia humana desaparece o queda solo como
+                indicio, de manera que la imagen se mueve entre lo reconocible
+                y lo ausente.
+              </p>
+              <p class="section-copy">
+                A lo largo del proyecto, algunas fotografías reaparecen
+                transformadas en trazos, ecos o versiones desplazadas de sí
+                mismas. Esa repetición no busca insistir en lo mismo, sino
+                producir la sensación de que algo vuelve de otra manera.
+              </p>
+            </div>
+
+            <div class="wide-stack">
+              <div class="frame is-wide">
+                <img src="../resources/explicativa/construye_3.png" alt="Pliego con reaparición alterada" />
+              </div>
+              <div class="chapter-media grid-2">
+                <div class="frame is-tall">
+                  <img src="../resources/explicativa/construye_1.png" alt="Ficha cotidiana" />
+                </div>
+                <div class="frame is-tall">
+                  <img src="../resources/explicativa/construye_2.png" alt="Ficha difusa" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="chapter" id="web-archivo">
+          <div class="chapter-grid">
+            <div class="chapter-copy">
+              <span class="chapter-id">04 / navegación</span>
+              <h2 class="section-title">La web como archivo</h2>
+              <p class="section-copy">
+                Dentro del proyecto, la web funciona como un espacio de lectura
+                y recorrido. No ordena el material de forma cerrada, sino que
+                permite que las imágenes y fragmentos reaparezcan, se
+                relacionen y generen nuevas lecturas desde una memoria
+                compartida.
+              </p>
+              <div class="chip-row">
+                <span class="chip">consulta</span>
+                <span class="chip">reaparición</span>
+                <span class="chip">lectura abierta</span>
+              </div>
+            </div>
+
+            <div class="web-montage">
+              <div class="frame is-wide">
+                <img src="../resources/explicativa/ficha_archivo_web_1.jpg" alt="Pliego de lectura abierta" />
+              </div>
+              <div class="chapter-media grid-2">
+                <div class="frame is-tall">
+                  <img src="../resources/explicativa/ficha_archivo_web_2.jpg" alt="Archivo navegable" />
+                </div>
+                <div class="frame is-tall">
+                  <img src="../resources/explicativa/ficha_archivo_web_3.jpg" alt="Pieza audiovisual" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer class="footer-shell">
+        <a class="footer-chip" href="./saudade.html">inicio</a>
+        <a class="footer-chip is-active" href="./explicativa.html">qué es saudade</a>
+        <a class="footer-chip" href="./publicacion.html">publicación</a>
+        <a class="footer-chip" href="./fichas.html">fichas</a>
+        <a class="footer-chip" href="./video.html">vídeo</a>
+      </footer>
+    </div>
+
+    <script src="./shared.js"></script>
+    <script>
+      const scroller = document.getElementById("explain-viewport");
+      const tocLinks = Array.from(document.querySelectorAll("#chapter-toc a"));
+      const chapters = Array.from(document.querySelectorAll(".chapter"));
+
+      SaudadeProposal.setupBackgroundCrossfade({
+        layerA: "#bg-a",
+        layerB: "#bg-b",
+        interval: 7800,
+      });
+
+      const observer = new IntersectionObserver(
+        (entries) => {
+          const visible = entries
+            .filter((entry) => entry.isIntersecting)
+            .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+          if (!visible) return;
+
+          const id = `#${visible.target.id}`;
+          tocLinks.forEach((link) => {
+            link.classList.toggle("is-active", link.getAttribute("href") === id);
+          });
+        },
+        {
+          root: scroller,
+          threshold: [0.42, 0.58, 0.72],
+        },
+      );
+
+      chapters.forEach((chapter) => observer.observe(chapter));
+    </script>
+  </body>
+</html>

@@ -53,6 +53,47 @@
         -webkit-font-smoothing: antialiased;
       }
 
+      .bg-stack {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        pointer-events: none;
+        overflow: hidden;
+      }
+
+      .bg-layer {
+        position: absolute;
+        inset: 0;
+        background-size: cover;
+        background-position: center;
+        opacity: 0;
+        transform: scale(1.03);
+        transition:
+          opacity 1.5s ease,
+          transform 7s linear;
+        filter: saturate(0.76) contrast(0.95) brightness(0.96);
+      }
+
+      .bg-layer.is-visible {
+        opacity: 1;
+      }
+
+      .bg-glaze {
+        position: absolute;
+        inset: 0;
+        background:
+          linear-gradient(180deg, rgba(248, 244, 236, 0.18), rgba(248, 244, 236, 0.54)),
+          radial-gradient(circle at 50% 22%, rgba(255, 255, 255, 0.28), transparent 38%),
+          linear-gradient(90deg, rgba(17, 16, 14, 0.1), transparent 35%, transparent 65%, rgba(17, 16, 14, 0.12));
+        mix-blend-mode: multiply;
+      }
+
+      #nav,
+      .content {
+        position: relative;
+        z-index: 1;
+      }
+
       img {
         display: block;
         width: 100%;
@@ -117,12 +158,19 @@
         transform: translateY(-15px);
       }
 
-      h1,
-      h2 {
+      h1 {
         font-size: var(--section-size);
         font-weight: 400;
         line-height: 0.96;
         letter-spacing: 0;
+      }
+
+      .section-title {
+        margin: 0;
+        font-size: clamp(2rem, 4vw, 4.8rem);
+        line-height: 0.94;
+        letter-spacing: -0.045em;
+        font-weight: 500;
       }
 
       p {
@@ -478,6 +526,12 @@
     </style>
   </head>
   <body>
+    <div class="bg-stack">
+      <div class="bg-layer is-visible" id="bg-a"></div>
+      <div class="bg-layer" id="bg-b"></div>
+      <div class="bg-glaze"></div>
+    </div>
+
     <nav id="nav">
       <a class="nav-item" href="saudade.html">Inicio</a>
       <a class="nav-item" href="explicativa.html">¿Qué es Saudade?</a>
@@ -486,7 +540,7 @@
     <main class="content">
       <section class="panel" aria-labelledby="que-es">
         <div class="copy">
-          <h1 id="que-es">Qué es Saudade</h1>
+          <h1 id="que-es" class="section-title">Qué es Saudade</h1>
           <p>
             Es un proyecto de diseño gráfico sobre esa sensación de familiaridad
             que aparece cuando algo nos suena, pero no sabemos exactamente de
@@ -521,7 +575,7 @@
 
       <section class="panel" aria-labelledby="activa">
         <div class="copy">
-          <h2 id="activa">Lo que activa</h2>
+          <h2 id="activa" class="section-title">Lo que activa</h2>
           <p>
             El proyecto parte de una experiencia compartida: reconocer algo sin
             poder situarlo del todo. Esa sensación, cercana al déjà vu, no
@@ -553,7 +607,7 @@
 
       <section class="panel" aria-labelledby="construye">
         <div class="copy">
-          <h2 id="construye">Cómo se construye</h2>
+          <h2 id="construye" class="section-title">Cómo se construye</h2>
           <p>
             Trabaja con imágenes de entornos cotidianos que resultan familiares
             sin remitir a un recuerdo concreto. En muchas de ellas, la presencia
@@ -592,7 +646,7 @@
 
       <section class="panel" aria-labelledby="web-archivo">
         <div class="copy">
-          <h2 id="web-archivo">La web como archivo</h2>
+          <h2 id="web-archivo" class="section-title">La web como archivo</h2>
           <p>
             Dentro del proyecto, la web funciona como un espacio de lectura y
             recorrido. No ordena el material de forma cerrada, sino que permite
@@ -678,6 +732,47 @@
         },
         { passive: false },
       );
+
+      const bgImages = [
+        "resources/fondos/inicio_01.jpg",
+        "resources/fondos/inicio_02.jpg",
+        "resources/fondos/inicio_03.jpg",
+        "resources/fondos/inicio_04.jpg",
+        "resources/fondos/inicio_05.jpg",
+        "resources/fondos/inicio_06.jpg",
+        "resources/fondos/inicio_07.jpg",
+      ];
+
+      const bgA = document.getElementById("bg-a");
+      const bgB = document.getElementById("bg-b");
+      let bgIndex = 0;
+      let bgActive = bgA;
+      let bgInactive = bgB;
+
+      function pickNextIndex(current, length) {
+        if (length <= 1) return current;
+        let next = current;
+        while (next === current) {
+          next = Math.floor(Math.random() * length);
+        }
+        return next;
+      }
+
+      function initBackgrounds() {
+        bgActive.style.backgroundImage = `url("${bgImages[0]}")`;
+        bgInactive.style.backgroundImage = `url("${bgImages[pickNextIndex(0, bgImages.length)]}")`;
+      }
+
+      function crossfadeBackground() {
+        bgIndex = pickNextIndex(bgIndex, bgImages.length);
+        bgInactive.style.backgroundImage = `url("${bgImages[bgIndex]}")`;
+        bgInactive.classList.add("is-visible");
+        bgActive.classList.remove("is-visible");
+        [bgActive, bgInactive] = [bgInactive, bgActive];
+      }
+
+      initBackgrounds();
+      window.setInterval(crossfadeBackground, 6800);
     </script>
   </body>
 </html>
