@@ -158,14 +158,14 @@
         grid-template-columns: minmax(0, 0.58fr) minmax(420px, 1fr);
         gap: 5.4vw;
         align-items: start;
-        align-content: center;
-        padding: 86px 0;
+        align-content: start;
+        padding: 116px 0 82px;
       }
 
       .hero-copy {
         display: grid;
         gap: 22px;
-        transform: translateY(-15px);
+        transform: translateY(-9px);
       }
 
       .hero h1 {
@@ -241,7 +241,7 @@
       .hero-media:has(> img[src*="mockup_portada"]) {
         width: min(42vw, 560px);
         justify-self: center;
-        transform: translateY(-8px);
+        transform: translateY(-9px);
         overflow: visible;
       }
 
@@ -310,7 +310,7 @@
         grid-template-columns: 0.76fr 1fr;
         gap: 8vw;
         align-items: start;
-        transform: translateY(-15px);
+        transform: translateY(-9px);
         margin-bottom: 48px;
       }
 
@@ -503,7 +503,7 @@
       }
 
       .posters {
-        padding: 72px 0 56px;
+        padding: 116px 0 56px;
         display: grid;
         gap: 14px;
         align-items: start;
@@ -511,7 +511,7 @@
 
       .posters .copy {
         max-width: 700px;
-        transform: translateY(-15px);
+        transform: translateY(-9px);
       }
 
       .poster-board {
@@ -789,7 +789,7 @@
         }
 
         .hero {
-          padding-top: 86px;
+          padding-top: 104px;
           padding-bottom: 80px;
         }
 
@@ -801,7 +801,7 @@
         .archive,
         .posters,
         .synthesis {
-          padding-top: 86px;
+          padding-top: 104px;
           padding-bottom: 80px;
         }
 
@@ -903,7 +903,6 @@
       <section class="carousel-section" aria-labelledby="pliegos">
         <div class="section-head">
           <h2 id="pliegos" class="section-title">Pliegos</h2>
-          </div>
         </div>
 
         <div class="carousel-tools">
@@ -988,12 +987,15 @@
           lectura y consulta
         </p>
         <figure class="qr-card">
-          <img
-            src="https://api.qrserver.com/v1/create-qr-code/?size=420x420&margin=18&data=https%3A%2F%2Fheyzine.com%2Fflip-book%2F04ab20c2a0.html"
-            alt="QR para abrir el flipbook de Saudade"
-          />
+          <a href="https://heyzine.com/flip-book/d9a8dbae9d.html" target="_blank" rel="noreferrer" class="heyzine-link fp-link">
+            <img
+              src="https://cdnc.heyzine.com/flip-book/qr-code/d9a8dbae9d-768051.png?dm="
+              alt="flipbook QR Code"
+              class="fp-qr"
+            />
+          </a>
           <figcaption class="caption">QR / flipbook completo</figcaption>
-          <a href="https://heyzine.com/flip-book/04ab20c2a0.html" target="_blank" rel="noreferrer">
+          <a href="https://heyzine.com/flip-book/d9a8dbae9d.html" target="_blank" rel="noreferrer">
             abrir publicación digital
           </a>
         </figure>
