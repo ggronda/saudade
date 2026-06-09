@@ -953,9 +953,13 @@
 
       slides.forEach((slide, index) => {
         slide.addEventListener("click", () => {
+          if (slide.classList.contains("is-active")) {
+            pauseAutoplay();
+            showSpot(slide.querySelector("img"));
+            return;
+          }
           pauseAutoplay();
           goToSlide(index);
-          showSpot(slide.querySelector("img"));
         });
       });
 
